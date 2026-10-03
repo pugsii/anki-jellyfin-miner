@@ -54,6 +54,14 @@ class Jellyfin:
     def series(self, user_id):
         return self._get("/Items", userId=user_id, IncludeItemTypes="Series", Recursive="true", SortBy="SortName")["Items"]
 
+    def ignored_series(self, user_id, libraries):
+        """Ids of the series in the libraries named (any case), e.g. a Jellyseerr/JellyBridge "Discover" library
+        full of shows you haven't watched."""
+        names = {n.lower() for n in libraries}
+        views = [v["Id"] for v in self._get(f"/Users/{user_id}/Views")["Items"] if v["Name"].lower() in names]
+        return {s["Id"] for v in views for s in self._get("/Items", userId=user_id, ParentId=v, IncludeItemTypes="Series",
+                                                           Recursive="true", Fields="")["Items"]}
+
     def episodes(self, series_id, user_id):
         return self._get(f"/Shows/{series_id}/Episodes", userId=user_id, Fields="MediaStreams,MediaSources")["Items"]
 

@@ -2,6 +2,7 @@
   "jellyfin_url": "http://localhost:8096",
   "jellyfin_api_key": "",
   "jellyfin_user": "",
+  "ignore_libraries": [],
   "auto_mine": true,
   "check_every_minutes": 30,
   "max_episodes_per_run": 3,

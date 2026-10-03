@@ -160,7 +160,10 @@ def run(episodes=None, announce=False):
         jf = Jellyfin(c["jellyfin_url"], c["jellyfin_api_key"])
         items = episodes
         if not manual:
-            items = [i for i in jf.recently_watched(jf.user_id(c["jellyfin_user"]), since) if i["Id"] not in state["done"]]
+            user_id = jf.user_id(c["jellyfin_user"])
+            ignored = jf.ignored_series(user_id, c["ignore_libraries"])
+            items = [i for i in jf.recently_watched(user_id, since)
+                     if i["Id"] not in state["done"] and i.get("SeriesId") not in ignored]
         caught_up = manual or len(items) <= c["max_episodes_per_run"]
         dict_, results = Dictionary(), []
         for item in (items if manual else items[:c["max_episodes_per_run"]]):
@@ -208,13 +211,14 @@ def run(episodes=None, announce=False):
 class EpisodePicker(QDialog):
     """Tools → Jellyfin Miner → Mine an episode…: pick a series and episodes."""
 
-    def __init__(self, jf, user_id):
+    def __init__(self, jf, user_id, ignore_libraries):
         super().__init__(mw)
         self.jf, self.user_id = jf, user_id
         self.setWindowTitle("Mine an episode")
         self.resize(480, 520)
         self.series = QComboBox()
-        self.series_items = jf.series(user_id)
+        ignored = jf.ignored_series(user_id, ignore_libraries)
+        self.series_items = [s for s in jf.series(user_id) if s["Id"] not in ignored]
         self.series.addItems([s["Name"] for s in self.series_items])
         self.episodes = QListWidget()
         self.episodes.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
@@ -257,7 +261,7 @@ def pick_episodes():
         return showWarning("Set the Jellyfin address, API key and user first: Tools → Add-ons → Jellyfin Miner → Config.")
     try:
         jf = Jellyfin(c["jellyfin_url"], c["jellyfin_api_key"])
-        picker = EpisodePicker(jf, jf.user_id(c["jellyfin_user"]))
+        picker = EpisodePicker(jf, jf.user_id(c["jellyfin_user"]), c["ignore_libraries"])
     except Exception as e:
         return showWarning(f"Couldn't reach Jellyfin: {e}")
     if picker.exec() and picker.selected():

@@ -4,6 +4,7 @@
 - `jellyfin_url`: your server's address, e.g. `http://192.168.1.10:8096`
 - `jellyfin_api_key`: create one in Jellyfin under *Dashboard → API Keys*
 - `jellyfin_user`: the Jellyfin user whose watching should be mined
+- `ignore_libraries`: names of Jellyfin libraries to leave out, e.g. `["Discover"]` for a Jellyseerr/JellyBridge library of shows you haven't chosen to watch
 
 **When it runs**
 - `auto_mine`: check for newly watched episodes when Anki opens and every `check_every_minutes` while it's open. Only episodes you actually played count, not ones marked as watched.
