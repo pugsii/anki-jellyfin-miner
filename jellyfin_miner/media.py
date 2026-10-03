@@ -13,26 +13,22 @@ def find_ffmpeg(configured=""):
 
 def _run(ffmpeg, args, timeout=90):
     subprocess.run([ffmpeg, "-nostdin", "-loglevel", "error", "-y", *args], check=True, timeout=timeout,
-                   capture_output=True)
+                   capture_output=True, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))  # no console on Windows
 
 
-def audio_clip(ffmpeg, url, start, end, out, pad=0.25):
-    """MP3 of [start, end] seconds from the Japanese audio track (or the first track if none is tagged)."""
+def audio_clip(ffmpeg, url, headers, start, end, track, out, pad=0.25):
+    """MP3 of [start, end] seconds from audio track number `track` (see jellyfin.japanese_audio)."""
     start = max(0.0, start - pad)
-    common = ["-ss", f"{start:.2f}", "-i", url, "-t", f"{end + pad - start:.2f}"]
-    encode = ["-vn", "-ac", "1", "-c:a", "libmp3lame", "-b:a", "96k", str(out)]
-    try:
-        _run(ffmpeg, [*common, "-map", "0:a:m:language:jpn", *encode])
-    except subprocess.CalledProcessError:
-        _run(ffmpeg, [*common, "-map", "0:a:0", *encode])
+    _run(ffmpeg, ["-headers", headers, "-ss", f"{start:.2f}", "-i", url, "-t", f"{end + pad - start:.2f}",
+                  "-map", f"0:a:{track}", "-vn", "-ac", "1", "-c:a", "libmp3lame", "-b:a", "96k", str(out)])
 
 
-def screenshot(ffmpeg, url, start, end, out, width=640):
+def screenshot(ffmpeg, url, headers, start, end, out, width=640):
     """A frame from the middle of the line. A near-blank frame (a fade or flash: tiny as a JPEG) is retried at
     other points of the line, keeping the most detailed."""
     best, attempt = 0, f"{out}.try.jpg"
     for at in ((start + end) / 2, start + (end - start) * 0.2, start + (end - start) * 0.8):
-        _run(ffmpeg, ["-ss", f"{at:.2f}", "-i", url, "-frames:v", "1", "-vf", f"scale={width}:-2", "-q:v", "4", attempt])
+        _run(ffmpeg, ["-headers", headers, "-ss", f"{at:.2f}", "-i", url, "-frames:v", "1", "-vf", f"scale={width}:-2", "-q:v", "4", attempt])
         if os.path.getsize(attempt) > best:
             best = os.path.getsize(attempt)
             os.replace(attempt, out)

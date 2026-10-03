@@ -2,7 +2,7 @@
 import os
 
 from . import analysis, cards, media, subtitles, translate
-from .jellyfin import ENGLISH, JAPANESE, label
+from .jellyfin import ENGLISH, JAPANESE, japanese_audio, label
 
 
 def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
@@ -20,7 +20,8 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
     cues = subtitles.parse(*subs)
     english = jf.subtitles(item, ENGLISH)
     english_cues = subtitles.parse(*english) if english else []
-    url, ffmpeg = jf.stream_url(item), media.find_ffmpeg(cfg.get("ffmpeg_path", ""))
+    url, headers, track = jf.stream_url(item), jf.stream_headers(), japanese_audio(item)
+    ffmpeg = media.find_ffmpeg(cfg.get("ffmpeg_path", ""))
     llm = cfg.get("translation") or {}
 
     def scene(i, target):
@@ -35,12 +36,12 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
         base = os.path.join(workdir, f"jfm_{item['Id'][:8]}_{int(start * 10)}")
         audio, picture = base + ".mp3", base + ".jpg"
         try:
-            media.audio_clip(ffmpeg, url, start, end, audio)
+            media.audio_clip(ffmpeg, url, headers, start, end, track, audio)
         except Exception as e:
             log(f"audio clip failed at {start:.0f}s ({e})")
             audio = None
         try:
-            media.screenshot(ffmpeg, url, start, end, picture)
+            media.screenshot(ffmpeg, url, headers, start, end, picture)
         except Exception as e:
             log(f"screenshot failed at {start:.0f}s ({e})")
             picture = None

@@ -72,10 +72,20 @@ class Jellyfin:
         return text, fmt
 
     def stream_url(self, item):
-        """The original file over HTTP, for ffmpeg to seek into (nothing is downloaded whole)."""
-        source = item["MediaSources"][0]
-        query = urllib.parse.urlencode({"static": "true", "mediaSourceId": source["Id"], "api_key": self.key})
+        """The original file over HTTP, for ffmpeg to seek into (nothing is downloaded whole).
+        Authenticate with stream_headers(), so the key never appears in a process list."""
+        query = urllib.parse.urlencode({"static": "true", "mediaSourceId": item["MediaSources"][0]["Id"]})
         return f"{self.url}/Videos/{item['Id']}/stream?{query}"
+
+    def stream_headers(self):
+        return f"X-Emby-Token: {self.key}\r\n"
+
+
+def japanese_audio(item):
+    """Position of the first Japanese track among the file's audio tracks (ffmpeg's 0:a:N), else 0.
+    By position rather than by language tag: a file can have two Japanese tracks (e.g. commentary)."""
+    audio = [s for s in item["MediaSources"][0].get("MediaStreams", []) if s["Type"] == "Audio" and not s.get("IsExternal")]
+    return next((n for n, s in enumerate(audio) if (s.get("Language") or "").lower() in JAPANESE), 0)
 
 
 def label(item):

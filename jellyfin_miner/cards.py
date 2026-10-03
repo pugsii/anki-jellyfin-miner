@@ -5,7 +5,11 @@ word, gloss, sentence, translation, sentence_audio, picture, source, definitions
 """
 import re
 
-from . import analysis, dictionary
+if __package__:
+    from . import analysis, dictionary
+else:  # run directly for the self-check
+    import analysis
+    import dictionary
 
 
 def word_fields(word, info, dict_):
@@ -35,17 +39,18 @@ def sentence_count(note_value):
     return len([s for s in note_value.split("<hr>") if s.strip()])
 
 
-def append_scene(note, scene_pieces, mapping, max_sentences):
-    """Add a scene as one more sentence on an existing multi-sentence note (entries separated by <hr>).
-    Returns False if the note is full or already has this sentence."""
-    sentence_field = mapping.get("sentence")
-    if not sentence_field:
-        return False
-    current = note[sentence_field]
+def has_room(note, sentence, mapping, max_sentences):
+    """Whether a multi-sentence note can take this sentence: not full, and doesn't already have it."""
+    field = mapping.get("sentence")
     plain = lambda s: re.sub(r"<[^>]+>|\[[^\]]*\]|\s", "", s)
-    if sentence_count(current) >= max_sentences or plain(scene_pieces["sentence"]) in plain(current):
-        return False
-    count = sentence_count(current)
+    return bool(field) and sentence_count(note[field]) < max_sentences and plain(sentence) not in plain(note[field])
+
+
+def append_scene(note, scene_pieces, mapping):
+    """Add a scene as one more sentence on an existing multi-sentence note (entries separated by <hr>).
+    Entries line up by position, empty ones included, as the card template reads them. Check has_room first."""
+    current = note[mapping["sentence"]]
+    count = len(current.split("<hr>")) if current.strip() else 0
     for piece in ("sentence", "translation", "sentence_audio", "picture", "source"):
         field = mapping.get(piece)
         if not field:
@@ -55,4 +60,13 @@ def append_scene(note, scene_pieces, mapping, max_sentences):
             continue  # one picture shared by every sentence (a word illustration): leave it
         entries += [""] * (count - len(entries))  # keep entries lined up with sentences
         note[field] = "<hr>".join(entries[:count] + [scene_pieces.get(piece, "")])
-    return True
+
+
+if __name__ == "__main__":  # self-check
+    mapping = {"sentence": "S", "translation": "T", "sentence_audio": "A", "picture": "P", "source": ""}
+    note = {"S": "<hr>二つ目", "T": "<hr>second", "A": "<hr>", "P": "illustration"}  # an empty first entry
+    assert has_room(note, "三つ目", mapping, 3) and not has_room(note, "二つ目", mapping, 3)
+    append_scene(note, {"sentence": "三つ目", "translation": "third", "sentence_audio": "a3", "picture": "p3"}, mapping)
+    assert note == {"S": "<hr>二つ目<hr>三つ目", "T": "<hr>second<hr>third", "A": "<hr><hr>a3", "P": "illustration"}, note
+    assert not has_room(note, "四つ目", {"sentence": "S"}, 2)
+    print("selftest ok")

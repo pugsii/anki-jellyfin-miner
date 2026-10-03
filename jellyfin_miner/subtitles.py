@@ -2,7 +2,7 @@
 import re
 
 # ASS styles that aren't spoken dialogue: on-screen signs, song lyrics, karaoke, titles
-NON_DIALOGUE = re.compile(r"sign|song|lyric|kara|op\b|ed\b|opening|ending|title|insert|note|caption|logo", re.I)
+NON_DIALOGUE = re.compile(r"sign|song|lyric|kara|\bop\b|\bed\b|opening|ending|title|insert|note|caption|logo", re.I)
 KANA = r"[぀-ヿー]"
 
 
@@ -65,4 +65,6 @@ if __name__ == "__main__":  # self-check
            "Dialogue: 0,0:00:06.00,0:00:08.00,Signs,,0,0,0,,看板\n"
            "Dialogue: 0,0:01:00.00,0:01:05.00,OP Romaji,,0,0,0,,kimi no\n")
     assert parse_ass(ass) == [(5.1, 7.0, "見逃してあげましょう")], parse_ass(ass)
+    assert not NON_DIALOGUE.search("Main Italicized") and not NON_DIALOGUE.search("Narrated")
+    assert NON_DIALOGUE.search("ED-Romaji") and NON_DIALOGUE.search("OP Kanji") and NON_DIALOGUE.search("Signs")
     print("selftest ok")
