@@ -16,7 +16,7 @@ def word_fields(word, info, dict_):
     """The word-level pieces of a new note."""
     entry, reading = info["entry"], info["reading"]
     return {"word": analysis.with_reading(word, reading), "gloss": dictionary.gloss(entry),
-            "definitions": dictionary.definitions_html(entry), "pitch": dict_.pitch(word, reading),
+            "definitions": dict_.definitions(word, reading) or dictionary.definitions_html(entry), "pitch": dict_.pitch(word, reading),
             "frequency": str(entry["rank"])}
 
 

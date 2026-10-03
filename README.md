@@ -5,7 +5,7 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 - the line the word was said in, with furigana and the word in bold
 - an English translation (from the episode's English subtitles, or optionally an AI model)
 - an audio clip of the line and a screenshot of the scene
-- reading, pitch accent, meaning and a dictionary entry
+- reading, pitch accent, meaning, and full dictionary entries in English (Jitendex) and Japanese (Wiktionary)
 
 Words you already have can also get the new scene added as an extra example sentence.
 
@@ -39,7 +39,9 @@ pip download janome --no-deps --only-binary=:all: -d /tmp/janome
 unzip -q /tmp/janome/Janome-*.whl -d jellyfin_miner/vendor
 curl -O http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
 curl -O https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/source_files/raw/accents.txt
-python3 tools/build_data.py JMdict_e.gz accents.txt
+curl -LO https://github.com/stephenmk/stephenmk.github.io/releases/latest/download/jitendex-yomitan.zip
+curl -Lo kty-ja-ja.zip https://pub-c3d38cca4dc2403b88934c56748f5144.r2.dev/releases/latest/kty-ja-ja.zip
+python3 tools/build_data.py JMdict_e.gz accents.txt jitendex-yomitan.zip "Jitendex.org" kty-ja-ja.zip "Wiktionary 国語"
 ```
 
 The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py`.
@@ -48,4 +50,6 @@ The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles
 
 - [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html) © the Electronic Dictionary Research and Development Group, CC BY-SA 4.0
 - [Kanjium](https://github.com/mifunetoshiro/kanjium) pitch accent data, CC BY-SA 4.0
+- [Jitendex](https://jitendex.org) © Stephen Kraus, CC BY-SA 4.0 (English definitions; built on JMdict with Tatoeba example sentences)
+- [Japanese Wiktionary](https://ja.wiktionary.org) via [Kaikki](https://kaikki.org) and [kaikki-to-yomitan](https://github.com/yomidevs/kaikki-to-yomitan), CC BY-SA 4.0 (Japanese definitions)
 - [Janome](https://github.com/mocobeta/janome) (Apache 2.0) with the mecab-ipadic dictionary (NAIST licence)

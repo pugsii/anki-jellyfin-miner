@@ -2,10 +2,12 @@
 
 JMdict (EDRDG, CC-BY-SA 4.0): readings, an approximate frequency rank and the first senses.
 Kanjium (CC-BY-SA 4.0): pitch accents as downstep numbers, e.g. "0" or "0,2".
+Jitendex (CC-BY-SA 4.0, English) and Japanese Wiktionary (CC-BY-SA 4.0, Japanese): full entries as Yomitan HTML.
 """
 import json
 import re
 import sqlite3
+import zlib
 from pathlib import Path
 
 PATH = Path(__file__).parent / "data" / "dictionary.sqlite"
@@ -14,6 +16,7 @@ PATH = Path(__file__).parent / "data" / "dictionary.sqlite"
 class Dictionary:
     def __init__(self, path=PATH):
         self.db = sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=False)
+        self.zdicts = dict(self.db.execute("select dict, data from zdict"))
 
     def entry(self, word, reading=None):
         """The best entry for a dictionary form: one with this reading if given, else the most common.
@@ -23,6 +26,19 @@ class Dictionary:
         if reading:
             rows = [e for e in rows if reading in e["readings"]] or rows
         return min(rows, key=lambda e: e["rank"], default=None)
+
+    def definitions(self, word, reading):
+        """The bundled dictionaries' entries for a word, in the format Yomitan gives Anki (Kotoba shows one tab
+        per dictionary), or "". Entries with the word's reading are preferred; Wiktionary often has none."""
+        by_dict = {}
+        for name, r, packed in self.db.execute("select dict, reading, html from definition where form = ? order by rowid", (word,)):
+            by_dict.setdefault(name, []).append((r, packed))
+        html = ""
+        for name, rows in by_dict.items():
+            rows = [x for x in rows if x[0] == reading] or [x for x in rows if x[0] == word] or rows
+            unpack = lambda b: (lambda d: d.decompress(b) + d.flush())(zlib.decompressobj(zdict=self.zdicts[name]))
+            html += "".join(unpack(b).decode() for _, b in rows)
+        return f"<ol>{html}</ol>" if html else ""
 
     def pitch(self, word, reading):
         row = self.db.execute("select accent from pitch where word = ? and reading = ?", (word, reading)).fetchone()
@@ -48,4 +64,8 @@ if __name__ == "__main__":  # self-check against the bundled data
     assert gloss(d.entry("たぶん")) == "probably"  # picks the common adverb, not the rare noun
     assert d.pitch("電車", "でんしゃ") == "0,1" and d.entry("ありえない言葉") is None
     assert definitions_html(e).startswith('<ol><li data-dictionary="JMdict">')
+    html = d.definitions("面接", "めんせつ")
+    assert 'data-dictionary="Jitendex.org"' in html and "interview" in html, html[:300]
+    assert 'data-dictionary="Wiktionary 国語"' in html and "対話" in html, html[:300]
+    assert "dangerous" in d.definitions("危ない", "あぶない") and d.definitions("ありえない言葉", "") == ""
     print("selftest ok")
