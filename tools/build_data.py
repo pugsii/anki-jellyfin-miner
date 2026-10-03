@@ -100,18 +100,45 @@ def structured(node):
 def glossary(items):
     return "<br>".join(structured(g["content"]) if isinstance(g, dict) and g.get("type") == "structured-content"
                        else structured(g.get("text", "")) if isinstance(g, dict) else structured(g)
-                       for g in items if not (isinstance(g, dict) and g.get("type") == "image"))
+                       for g in items if not (isinstance(g, dict) and g.get("type") == "image") and not isinstance(g, list))
+
+
+def read_terms(path, forms):
+    """{form: [Yomitan term, ...]} for the given forms, in dictionary order."""
+    zf, out = zipfile.ZipFile(path), {}
+    for member in sorted(n for n in zf.namelist() if n.startswith("term_bank")):
+        for term in json.load(zf.open(member)):
+            if term[0] in forms:
+                out.setdefault(term[0], []).append(term)
+    return out
+
+
+def pointers(term):
+    """Where an entry that only points elsewhere sends you: a form-of entry (["むし", ["kanji"]] glosses, e.g.
+    Wiktionary's 虫) or a stub like 「かみがた」の漢字表記. [] for a real entry."""
+    targets = [g[0] for g in term[5] if isinstance(g, list) and g]
+    text = re.sub(r"<[^>]+>|Wiktionary", "", glossary(term[5])).strip()
+    stub = re.fullmatch(r"(?:1\.\s*)?「?([^「」。]+?)」?の\S{0,4}表記。?", text)
+    return targets + ([stub.group(1)] if stub else [])
+
+
+def lookup(path, forms, hops=2):
+    """{form: [term, ...]} with pointer-only entries replaced by the entries they point to, following up to
+    `hops` pointers (仕舞った → 仕舞う → しまう)."""
+    terms = read_terms(path, forms)
+    real = lambda ts: [t for t in ts if not pointers(t)]
+    follow = {f: list(dict.fromkeys(p for t in ts for p in pointers(t))) for f, ts in terms.items() if not real(ts)}
+    more = lookup(path, {p for ps in follow.values() for p in ps}, hops - 1) if hops and follow else {}
+    return {f: real(ts) or [t for p in follow[f] for t in more.get(p, [])] for f, ts in terms.items()}
 
 
 def build_yomitan(path, name, wanted):
     """[(form, reading, html)] for Yomitan terms whose form the miner can pick; entries for the same form and
     reading are joined as separate <li> blocks, like Yomitan does."""
-    zf, out = zipfile.ZipFile(path), {}
-    for member in sorted(n for n in zf.namelist() if n.startswith("term_bank")):
-        for term in json.load(zf.open(member)):
-            form, reading, tags = term[0], term[1] or term[0], term[2]
-            if form not in wanted:
-                continue
+    out = {}
+    for form, terms in lookup(path, wanted).items():
+        for term in terms:
+            reading, tags = term[1] or term[0], term[2]
             label = ", ".join(t for t in [tags, name] if t)
             body = glossary(term[5])
             if body:
@@ -119,7 +146,19 @@ def build_yomitan(path, name, wanted):
     return [(f, r, "".join(items)) for (f, r), items in out.items()]
 
 
+def selftest():
+    term = lambda form, gloss: [form, "", "", "", 0, gloss, 0, ""]
+    assert pointers(term("虫", [["むし", ["kanji"]]])) == ["むし"]
+    assert pointers(term("食べる", ["たべるの漢字表記。"])) == ["たべる"] and pointers(term("髪型", ["「かみがた」の漢字表記。"])) == ["かみがた"]
+    assert pointers(term("面接", ["人柄や能力を調べるため、直接その人に会って対話すること。"])) == []
+    assert structured({"tag": "li", "style": {"listStyleType": '"①"'}, "data": {"content": "sense", "x": 1}, "content": ["a<b", {"tag": "br"}]}) \
+        == '<li data-sc-content="sense" style="list-style-type: &quot;①&quot;">a&lt;b<br></li>'
+    print("selftest ok")
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--selftest"]:
+        sys.exit(selftest())
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / "dictionary.sqlite"
     path.unlink(missing_ok=True)

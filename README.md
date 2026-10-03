@@ -44,7 +44,7 @@ curl -Lo kty-ja-ja.zip https://pub-c3d38cca4dc2403b88934c56748f5144.r2.dev/relea
 python3 tools/build_data.py JMdict_e.gz accents.txt jitendex-yomitan.zip "Jitendex.org" kty-ja-ja.zip "Wiktionary 国語"
 ```
 
-The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py`.
+The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py`, and `python3 tools/build_data.py --selftest`.
 
 ## Credits and licences
 
