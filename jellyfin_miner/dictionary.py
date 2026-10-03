@@ -79,6 +79,11 @@ class Dictionary:
     def definitions(self, word, reading):
         """Every dictionary's entries for a word, in the format Yomitan gives Anki (Kotoba shows one tab per
         dictionary), then its kanji; or "". Entries with the word's reading are preferred; Wiktionary often has none."""
+        html = "".join(h for _, h in self.tabs(word, reading))
+        return f"<ol>{html}</ol>" if html else ""
+
+    def tabs(self, word, reading):
+        """[(dictionary name, its <li> entries)] for the word: what definitions() puts together."""
         # A word written in kana may be filed under another kana spelling (ドキドキ under どきどき)
         keys = list(dict.fromkeys([word] + ([hira(word), hira(reading)] if not HAS_KANJI.search(word) else [])))
         by_dict = {}
@@ -89,16 +94,16 @@ class Dictionary:
                 found.setdefault(name, {}).setdefault(form, []).append((r, packed))
             for name, forms in found.items():  # per dictionary, the closest spelling it has
                 by_dict[name] = forms[next(k for k in keys if k in forms)]
-        html = ""
+        out = []
         for name, rows in by_dict.items():
             rows = [x for x in rows if x[0] in (reading, hira(reading))] or [x for x in rows if x[0] in (word, hira(word))] or rows
             unpack = lambda b: (lambda d: d.decompress(b) + d.flush())(zlib.decompressobj(zdict=self.zdicts[name]))
-            html += "".join(unpack(b).decode() for _, b in rows)
+            out.append((name, "".join(unpack(b).decode() for _, b in rows)))
         kanji = "".join(row[0] for c in dict.fromkeys(word)
                         for row in self.db.execute("select html from kanji where char = ?", (c,)))
-        if html and kanji:  # only alongside a real entry: a word no dictionary knows gets no card details anyway
-            html += f'<li data-dictionary="{KANJI}"><i>({KANJI}, KANJIDIC)</i> <span>{kanji}</span></li>'
-        return f"<ol>{html}</ol>" if html else ""
+        if out and kanji:  # only alongside a real entry: a word no dictionary knows gets no card details anyway
+            out.append((KANJI, f'<li data-dictionary="{KANJI}"><i>({KANJI}, KANJIDIC)</i> <span>{kanji}</span></li>'))
+        return out
 
     def is_name(self, word):
         return self.db.execute("select 1 from name where form = ?", (word,)).fetchone() is not None
