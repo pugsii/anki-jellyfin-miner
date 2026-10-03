@@ -15,7 +15,7 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
     """
     subs = jf.subtitles(item, JAPANESE)
     if not subs:
-        log(f"{label(item)}: no Japanese text subtitles, skipped")
+        log(f"{label(item)}: no Japanese text subtitles (or none that are really Japanese), skipped")
         return [], []
     cues = subtitles.parse(*subs)
     english = jf.subtitles(item, ENGLISH)
@@ -50,13 +50,13 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
                 "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}"}
 
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
-    words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["max_rank"])
+    words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"])
     new = [{"word": w, "word_fields": cards.word_fields(w, words[w], dict_),
             "scene": scene(analysis.best_line(cues, words[w]), w), "tags": tags}
-           for w in analysis.pick(words, cfg["words_per_episode"])]
+           for w in analysis.pick(words, cfg["words"]["per_episode"])]
     appends = []
-    if cfg.get("max_sentences", 1) > 1 and extendable:
-        for w, lines in list(analysis.known_lines(cues, extendable).items())[:cfg["extra_sentences_per_episode"]]:
+    if cfg["cards"]["max_sentences"] > 1 and extendable:
+        for w, lines in list(analysis.known_lines(cues, extendable).items())[:cfg["cards"]["extra_sentences_per_episode"]]:
             appends.append({"word": w, "scene": scene(min(lines, key=lambda i: abs(len(cues[i][2]) - 18)), w)})
     log(f"{label(item)}: {len(words)} unknown words found, {len(new)} new cards, {len(appends)} extra sentences")
     return new, appends

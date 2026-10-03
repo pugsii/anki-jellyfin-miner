@@ -1,5 +1,6 @@
 """A small Jellyfin API client: watch history, episodes, subtitles and stream URLs (stdlib only)."""
 import json
+import re
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -66,7 +67,9 @@ class Jellyfin:
         return self._get(f"/Shows/{series_id}/Episodes", userId=user_id, Fields="MediaStreams,MediaSources")["Items"]
 
     def subtitles(self, item, languages):
-        """(text, format) of the item's best text subtitle track in one of `languages`, or None."""
+        """(text, format) of the item's best text subtitle track in one of `languages`, or None.
+        Downloaded subtitles are sometimes mislabelled (a Chinese file saved as .ja.srt), so Japanese tracks
+        must actually read as Japanese."""
         source = item["MediaSources"][0]
         tracks = [s for s in source.get("MediaStreams", []) if s["Type"] == "Subtitle"
                   and (s.get("Language") or "").lower() in languages and (s.get("Codec") or "").lower() in TEXT_SUBS]
@@ -74,10 +77,12 @@ class Jellyfin:
             return None
         # prefer full dialogue over signs/songs tracks, then non-forced
         title = lambda s: (s.get("Title") or s.get("DisplayTitle") or "").lower()
-        track = min(tracks, key=lambda s: ("sign" in title(s) or "song" in title(s), bool(s.get("IsForced"))))
-        fmt = TEXT_SUBS[track["Codec"].lower()]
-        text = self._get(f"/Videos/{item['Id']}/{source['Id']}/Subtitles/{track['Index']}/0/Stream.{fmt}", raw=True)
-        return text, fmt
+        for track in sorted(tracks, key=lambda s: ("sign" in title(s) or "song" in title(s), bool(s.get("IsForced")))):
+            fmt = TEXT_SUBS[track["Codec"].lower()]
+            text = self._get(f"/Videos/{item['Id']}/{source['Id']}/Subtitles/{track['Index']}/0/Stream.{fmt}", raw=True)
+            if languages != JAPANESE or looks_japanese(text):
+                return text, fmt
+        return None
 
     def stream_url(self, item):
         """The original file over HTTP, for ffmpeg to seek into (nothing is downloaded whole).
@@ -87,6 +92,12 @@ class Jellyfin:
 
     def stream_headers(self):
         return f"X-Emby-Token: {self.key}\r\n"
+
+
+def looks_japanese(text):
+    """Japanese is mostly kana; Chinese, which shares the kanji, has next to none."""
+    kana, han = len(re.findall(r"[ぁ-ゖァ-ヺー]", text)), len(re.findall(r"[一-鿿]", text))
+    return kana > 0.25 * (kana + han)
 
 
 def japanese_audio(item):
@@ -99,3 +110,9 @@ def japanese_audio(item):
 def label(item):
     """'無職転生 S1E3' style label for an episode."""
     return f"{item.get('SeriesName', '')} S{item.get('ParentIndexNumber', 0)}E{item.get('IndexNumber', 0)}"
+
+
+if __name__ == "__main__":  # self-check
+    assert looks_japanese("もしかしてなんだけど、あなた魔物に襲われたの？") and looks_japanese("魔物討伐だ！行くぞ")
+    assert not looks_japanese("遭到了魔物的蹂躪\n我們必須馬上離開這裡") and not looks_japanese("Hello")
+    print("selftest ok")

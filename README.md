@@ -25,8 +25,8 @@ Only episodes you actually played count, not ones marked as watched (it checks J
 ## Setup
 
 1. Install the add-on, then open *Tools → Add-ons → Jellyfin Miner → Config*.
-2. Set `jellyfin_url`, `jellyfin_api_key` and `jellyfin_user`.
-3. Optionally point it at your own note type and deck (`note_type`, `deck`, `fields`) and list the note types that hold words you already know (`known_words`). Every setting is explained in the config screen.
+2. Under `jellyfin`, set `url`, `api_key` and `user`.
+3. Optionally point it at your own note type and deck (`cards`) and list the note types that hold words you already know (`words` → `known`). Every setting is explained in the config screen.
 
 It checks for newly watched episodes when Anki opens and every 30 minutes. *Tools → Jellyfin Miner → Mine an episode…* mines any episode on demand.
 
@@ -42,7 +42,7 @@ curl -O https://raw.githubusercontent.com/mifunetoshiro/kanjium/master/data/sour
 python3 tools/build_data.py JMdict_e.gz accents.txt
 ```
 
-The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py`.
+The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py`.
 
 ## Credits and licences
 

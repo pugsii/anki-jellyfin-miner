@@ -1,31 +1,39 @@
 {
-  "jellyfin_url": "http://localhost:8096",
-  "jellyfin_api_key": "",
-  "jellyfin_user": "",
-  "ignore_libraries": [],
-  "auto_mine": true,
-  "check_every_minutes": 30,
-  "max_episodes_per_run": 3,
-  "words_per_episode": 3,
-  "extra_sentences_per_episode": 3,
-  "max_rank": 20000,
-  "deck": "Default",
-  "note_type": "Jellyfin Miner",
-  "fields": {
-    "word": "Word",
-    "gloss": "Meaning",
-    "sentence": "Sentence",
-    "translation": "Translation",
-    "sentence_audio": "Audio",
-    "picture": "Picture",
-    "source": "Source",
-    "definitions": "Definitions",
-    "pitch": "",
-    "frequency": ""
+  "jellyfin": {
+    "url": "http://localhost:8096",
+    "api_key": "",
+    "user": "",
+    "ignored_libraries": []
   },
-  "known_words": [{"note_type": "Jellyfin Miner", "field": "Word"}],
-  "max_sentences": 1,
-  "audio_format": "sound",
-  "ffmpeg_path": "",
-  "translation": {"base_url": "", "model": "", "api_key": "", "extra_prompt": ""}
+  "auto_mine": {
+    "enabled": true,
+    "check_every_minutes": 30,
+    "max_episodes_per_run": 3
+  },
+  "words": {
+    "per_episode": 3,
+    "max_rank": 20000,
+    "known": [{"note_type": "Jellyfin Miner", "field": "Word"}]
+  },
+  "cards": {
+    "deck": "Default",
+    "note_type": "Jellyfin Miner",
+    "fields": {
+      "word": "Word",
+      "gloss": "Meaning",
+      "sentence": "Sentence",
+      "translation": "Translation",
+      "sentence_audio": "Audio",
+      "picture": "Picture",
+      "source": "Source",
+      "definitions": "Definitions",
+      "pitch": "",
+      "frequency": ""
+    },
+    "max_sentences": 1,
+    "extra_sentences_per_episode": 3,
+    "audio_format": "sound"
+  },
+  "translation": {"base_url": "", "model": "", "api_key": "", "extra_prompt": ""},
+  "ffmpeg_path": ""
 }

@@ -27,12 +27,14 @@ def config():
     too, except the field mapping: that describes the user's note type and is taken as it is."""
     defaults = mw.addonManager.addonConfigDefaults(ADDON) or {}
     user = mw.addonManager.getConfig(ADDON) or {}
-    return {k: {**defaults[k], **user.get(k, {})} if isinstance(defaults.get(k), dict) and k != "fields"
-            else user.get(k, defaults.get(k)) for k in {*defaults, *user}}
+    def merge(d, u):
+        return {k: merge(d[k], u[k]) if isinstance(d.get(k), dict) and isinstance(u.get(k), dict) and k != "fields"
+                else u.get(k, d.get(k)) for k in {*d, *u}}
+    return merge(defaults, user)
 
 
 def configured(c):
-    return bool(c["jellyfin_url"] and c["jellyfin_api_key"] and c["jellyfin_user"])
+    return bool(c["jellyfin"]["url"] and c["jellyfin"]["api_key"] and c["jellyfin"]["user"])
 
 
 def plain(text):
@@ -42,22 +44,22 @@ def plain(text):
 def known_words(c):
     """Words in your decks, and {word: note id} for target notes that can take another sentence."""
     known, extendable = set(), {}
-    specs = c["known_words"] + [{"note_type": c["note_type"], "field": c["fields"]["word"]}]
+    specs = c["words"]["known"] + [{"note_type": c["cards"]["note_type"], "field": c["cards"]["fields"]["word"]}]
     for spec in specs:
         model = mw.col.models.by_name(spec["note_type"])
         names = [f["name"] for f in model["flds"]] if model else []
         if spec["field"] not in names:
             continue
         word_at = names.index(spec["field"])
-        sentence = c["fields"].get("sentence")
-        sentence_at = names.index(sentence) if spec["note_type"] == c["note_type"] and sentence in names else None
+        sentence = c["cards"]["fields"].get("sentence")
+        sentence_at = names.index(sentence) if spec["note_type"] == c["cards"]["note_type"] and sentence in names else None
         for nid, flds in mw.col.db.all("select id, flds from notes where mid = ?", model["id"]):
             fields = flds.split("\x1f")
             word = plain(fields[word_at])
             if not word:
                 continue
             known.add(word)
-            if sentence_at is not None and cards.sentence_count(fields[sentence_at]) < c["max_sentences"]:
+            if sentence_at is not None and cards.sentence_count(fields[sentence_at]) < c["cards"]["max_sentences"]:
                 extendable[word] = nid
     return known, extendable
 
@@ -65,10 +67,10 @@ def known_words(c):
 def note_type(c):
     """The configured note type; the simple built-in one is created on first use."""
     models = mw.col.models
-    model = models.by_name(c["note_type"])
-    if model or c["note_type"] != "Jellyfin Miner":
+    model = models.by_name(c["cards"]["note_type"])
+    if model or c["cards"]["note_type"] != "Jellyfin Miner":
         if not model:
-            raise ValueError(f'Note type "{c["note_type"]}" not found. Check note_type in the add-on config.')
+            raise ValueError(f'Note type "{c["cards"]["note_type"]}" not found. Check cards → note_type in the add-on config.')
         return model
     model = models.new("Jellyfin Miner")
     for name in NOTE_TYPE_FIELDS:
@@ -96,13 +98,13 @@ def save(results, model, c, extendable, state):
     """Add the planned notes, one episode at a time; each episode is recorded as done once saved, so an error
     part-way never leads to the same episode being mined again (duplicates)."""
     col = mw.col
-    deck_id = col.decks.id(c["deck"])
+    deck_id = col.decks.id(c["cards"]["deck"])
     added = extended = 0
     for item, new, appends in results:
         for n in new:
             note = col.new_note(model)
-            pieces = {**n["word_fields"], **cards.scene_fields(add_media(n["scene"]), c["audio_format"])}
-            for field, value in cards.new_note_values(pieces, c["fields"]).items():
+            pieces = {**n["word_fields"], **cards.scene_fields(add_media(n["scene"]), c["cards"]["audio_format"])}
+            for field, value in cards.new_note_values(pieces, c["cards"]["fields"]).items():
                 if field in note:
                     note[field] = value
             note.tags = n["tags"]
@@ -111,8 +113,8 @@ def save(results, model, c, extendable, state):
         for a in appends:
             if a["word"] in extendable:
                 note = col.get_note(extendable[a["word"]])
-                if cards.has_room(note, a["scene"]["sentence"], c["fields"], c["max_sentences"]):
-                    cards.append_scene(note, cards.scene_fields(add_media(a["scene"]), c["audio_format"]), c["fields"])
+                if cards.has_room(note, a["scene"]["sentence"], c["cards"]["fields"], c["cards"]["max_sentences"]):
+                    cards.append_scene(note, cards.scene_fields(add_media(a["scene"]), c["cards"]["audio_format"]), c["cards"]["fields"])
                     col.update_note(note)
                     extended += 1
         state["done"] = (state["done"] + [item["Id"]])[-2000:]
@@ -157,16 +159,16 @@ def run(episodes=None, announce=False):
     running = True
 
     def work():
-        jf = Jellyfin(c["jellyfin_url"], c["jellyfin_api_key"])
+        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
         items = episodes
         if not manual:
-            user_id = jf.user_id(c["jellyfin_user"])
-            ignored = jf.ignored_series(user_id, c["ignore_libraries"])
+            user_id = jf.user_id(c["jellyfin"]["user"])
+            ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
             items = [i for i in jf.recently_watched(user_id, since)
                      if i["Id"] not in state["done"] and i.get("SeriesId") not in ignored]
-        caught_up = manual or len(items) <= c["max_episodes_per_run"]
+        caught_up = manual or len(items) <= c["auto_mine"]["max_episodes_per_run"]
         dict_, results = Dictionary(), []
-        for item in (items if manual else items[:c["max_episodes_per_run"]]):
+        for item in (items if manual else items[:c["auto_mine"]["max_episodes_per_run"]]):
             try:
                 new, appends = mining.mine_episode(jf, item, c, known, set(extendable), dict_, workdir, log.append)
             except Exception as e:  # one broken episode shouldn't lose the others; it's retried next time
@@ -194,14 +196,15 @@ def run(episodes=None, announce=False):
             mw.col.set_config(STATE, state)
         if failed and not manual:
             report_error(RuntimeError("couldn't mine " + ", ".join(failed) + " (will retry)"), manual)
-        if results:
-            shows = ", ".join(dict.fromkeys(label(item) for item, _, _ in results))
+        shows = ", ".join(dict.fromkeys(label(item) for item, new, appends in results if new or appends))
+        if shows:
             summary = f"Jellyfin Miner: {added} new card(s), {extended} extra sentence(s) from {shows}"
             showInfo(summary + "\n\n" + "\n".join(log)) if manual else tooltip(summary, period=6000)
             if mw.state == "deckBrowser":
                 mw.deckBrowser.refresh()
-        elif manual and failed:
-            showWarning("Jellyfin Miner couldn't mine the selected episodes:\n\n" + "\n".join(log))
+        elif manual:
+            showWarning(("Jellyfin Miner couldn't mine the selected episodes:" if failed else
+                         "Jellyfin Miner found nothing to add:") + "\n\n" + "\n".join(log))
         elif announce:
             tooltip("Jellyfin Miner: no newly watched episodes")
 
@@ -260,8 +263,8 @@ def pick_episodes():
     if not configured(c):
         return showWarning("Set the Jellyfin address, API key and user first: Tools → Add-ons → Jellyfin Miner → Config.")
     try:
-        jf = Jellyfin(c["jellyfin_url"], c["jellyfin_api_key"])
-        picker = EpisodePicker(jf, jf.user_id(c["jellyfin_user"]), c["ignore_libraries"])
+        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
+        picker = EpisodePicker(jf, jf.user_id(c["jellyfin"]["user"]), c["jellyfin"]["ignored_libraries"])
     except Exception as e:
         return showWarning(f"Couldn't reach Jellyfin: {e}")
     if picker.exec() and picker.selected():
@@ -278,11 +281,11 @@ def on_profile_open():
             menu.addAction(item)
         mw.form.menuTools.addMenu(menu)
     c = config()
-    if c["auto_mine"] and configured(c):
+    if c["auto_mine"]["enabled"] and configured(c):
         QTimer.singleShot(15_000, run)
         timer = QTimer(mw)
         timer.timeout.connect(run)
-        timer.start(int(max(5, c["check_every_minutes"]) * 60_000))
+        timer.start(int(max(5, c["auto_mine"]["check_every_minutes"]) * 60_000))
 
 
 def run_now():
