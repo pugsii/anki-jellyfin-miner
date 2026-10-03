@@ -24,6 +24,11 @@ else:  # run directly for the self-check
 PATH = Path(__file__).parent / "data" / "dictionary.sqlite"
 USER_DIR = Path(__file__).parent / "user_files" / "dictionaries"
 KANJI = "漢字"
+HAS_KANJI = re.compile(r"[一-鿿々〆ヶ]")
+
+
+def hira(s):
+    return "".join(chr(ord(c) - 0x60) if "ァ" <= c <= "ヶ" else c for c in s)
 
 
 def user_dictionaries(bundled, folder=USER_DIR):
@@ -40,6 +45,7 @@ def user_dictionaries(bundled, folder=USER_DIR):
             return db
         db.close()
     wanted = {f for (f,) in bundled.execute("select distinct form from entry")}
+    wanted |= {hira(r) for (rs,) in bundled.execute("select readings from entry") for r in json.loads(rs)} | {hira(f) for f in wanted}
     tmp = path.with_suffix(".tmp")
     tmp.unlink(missing_ok=True)
     db = sqlite3.connect(tmp)
@@ -73,13 +79,19 @@ class Dictionary:
     def definitions(self, word, reading):
         """Every dictionary's entries for a word, in the format Yomitan gives Anki (Kotoba shows one tab per
         dictionary), then its kanji; or "". Entries with the word's reading are preferred; Wiktionary often has none."""
+        # A word written in kana may be filed under another kana spelling (ドキドキ under どきどき)
+        keys = list(dict.fromkeys([word] + ([hira(word), hira(reading)] if not HAS_KANJI.search(word) else [])))
         by_dict = {}
         for db in self.sources:
-            for name, r, packed in db.execute("select dict, reading, html from definition where form = ? order by rowid", (word,)):
-                by_dict.setdefault(name, []).append((r, packed))
+            found = {}
+            for name, form, r, packed in db.execute(f"select dict, form, reading, html from definition where form in ({','.join('?' * len(keys))}) "
+                                                    "order by rowid", keys):
+                found.setdefault(name, {}).setdefault(form, []).append((r, packed))
+            for name, forms in found.items():  # per dictionary, the closest spelling it has
+                by_dict[name] = forms[next(k for k in keys if k in forms)]
         html = ""
         for name, rows in by_dict.items():
-            rows = [x for x in rows if x[0] == reading] or [x for x in rows if x[0] == word] or rows
+            rows = [x for x in rows if x[0] in (reading, hira(reading))] or [x for x in rows if x[0] in (word, hira(word))] or rows
             unpack = lambda b: (lambda d: d.decompress(b) + d.flush())(zlib.decompressobj(zdict=self.zdicts[name]))
             html += "".join(unpack(b).decode() for _, b in rows)
         kanji = "".join(row[0] for c in dict.fromkeys(word)
@@ -127,8 +139,10 @@ if __name__ == "__main__":  # self-check against the bundled data
         folder.mkdir()
         with zipfile.ZipFile(folder / "mine.zip", "w") as z:
             z.writestr("index.json", json.dumps({"title": "My 国語"}))
-            z.writestr("term_bank_1.json", json.dumps([["面接", "めんせつ", "", "", 0, ["会って人物を見ること。"], 1, ""]], ensure_ascii=False))
+            z.writestr("term_bank_1.json", json.dumps([["面接", "めんせつ", "", "", 0, ["会って人物を見ること。"], 1, ""],
+                                                       ["どきどき", "", "", "", 0, ["胸が高鳴るさま。"], 2, ""]], ensure_ascii=False))
         assert 'data-dictionary="My 国語"' in Dictionary(user_dir=folder).definitions("面接", "めんせつ")
+        assert "胸が高鳴る" in Dictionary(user_dir=folder).definitions("ドキドキ", "どきどき")  # filed under hiragana
         assert 'data-dictionary="My 国語"' in Dictionary(user_dir=folder).definitions("面接", "めんせつ")  # from the cache
         (folder / "mine.zip").unlink()
         assert "My 国語" not in Dictionary(user_dir=folder).definitions("面接", "めんせつ")
