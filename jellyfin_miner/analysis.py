@@ -11,6 +11,9 @@ KANJI = re.compile(r"[一-鿿々〆ヶ]")
 # Parts of speech (IPADIC) that carry meaning; particles, names, numbers and pronouns are skipped
 CONTENT = {("名詞", "一般"), ("名詞", "サ変接続"), ("名詞", "形容動詞語幹"), ("名詞", "副詞可能"),
            ("動詞", "自立"), ("形容詞", "自立"), ("副詞", "一般"), ("副詞", "助詞類接続")}
+# Common words that take さん/様 without being names (お母さん, 神様, 先生)
+NOT_NAMES = set("母 父 兄 姉 弟 妹 奥 娘 息子 爺 婆 祖父 祖母 叔父 叔母 伯父 伯母 先生 先輩 後輩 社長 部長 課長 店長 隊長 団長 "
+                "会長 船長 艦長 王 王子 姫 神 女神 魔王 勇者 客 医者 坊 嫁 旦那 皆 お前 奴".split())
 _tokenizer = None
 
 
@@ -72,9 +75,25 @@ def with_readings(known, dictionary):
     return out
 
 
-def candidates(cues, known, dictionary, max_rank):
-    """Unknown content words in the episode: {word: {"rank", "count", "lines": [cue index], "reading"}}."""
+def names_used(cues, dictionary):
+    """Words the episode uses as people's names: known as names (JMnedict) and either followed by an honorific
+    (さん, 様, ちゃん: IPADIC's 接尾,人名) or tagged as a name by the analyser somewhere (アクア様 → アクア)."""
+    out = set()
+    for _, _, text in cues:
+        toks = tokens(text)
+        for t, nxt in zip(toks, toks[1:] + [None]):
+            pos = t.part_of_speech.split(",")
+            if (pos[1] == "固有名詞" and pos[2] == "人名") or (nxt and nxt.part_of_speech.startswith("名詞,接尾,人名")):
+                out.add(t.base_form if t.base_form != "*" else t.surface)
+    return {w for w in out if w not in NOT_NAMES and dictionary.is_name(w)}
+
+
+def candidates(cues, known, dictionary, max_rank, skip_names=True):
+    """Unknown content words in the episode: {word: {"rank", "count", "lines": [cue index], "reading"}}.
+    With skip_names, words the episode uses as people's names aren't candidates."""
     found = {}
+    if skip_names:
+        known = known | names_used(cues, dictionary)
     lines_unknown = Counter()
     for i, (_, _, text) in enumerate(cues):
         seen = set()
@@ -139,4 +158,8 @@ if __name__ == "__main__":  # self-check (uses the bundled dictionary)
     words = candidates(cues, known={"今日", "明日", "特別", "見事"}, dictionary=d, max_rank=24000)
     assert "面接" in words and words["面接"]["count"] == 2 and "今日" not in words, words.keys()
     assert pick(words, 1) == ["面接"] and best_line(cues, words["面接"]) == 1  # the line with fewer unknowns
+    named = [(0, 1, "ミントちゃん、助けて！"), (1, 2, "ミントが来た。"), (2, 3, "お母さんは元気だ。")]  # ミント: mint, or a name
+    assert "ミント" in candidates(named, set(), d, 24000, skip_names=False)
+    assert "ミント" not in candidates(named, set(), d, 24000) and names_used(named, d) == {"ミント"}
+    assert "ミント" in candidates([(0, 1, "ミントの葉っぱを入れた。")], set(), d, 24000)  # not used as a name here
     print("selftest ok", sorted(words))

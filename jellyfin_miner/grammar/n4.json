@@ -1,0 +1,787 @@
+[
+ {
+  "id": "n4-te-shimau",
+  "pattern": "〜てしまう",
+  "level": "N4",
+  "meaning": "do completely; or by accident / with regret",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)しま(う|った|って|います|いました|わ|い(?!す))",
+  "match": [
+   "宿題を忘れてしまった。",
+   "全部読んでしまいました。"
+  ],
+  "no_match": [
+   "店が閉まった。",
+   "島がある。"
+  ]
+ },
+ {
+  "id": "n4-te-oku",
+  "pattern": "〜ておく",
+  "level": "N4",
+  "meaning": "do ~ in advance / leave it that way",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)お(く|き(?!ゃ)|いた|いて|こう|け(?!ば))",
+  "match": [
+   "ビールを冷やしておく。",
+   "窓を開けておいて。"
+  ],
+  "no_match": [
+   "手紙が届いた。",
+   "とてもおいしい。"
+  ]
+ },
+ {
+  "id": "n4-te-aru",
+  "pattern": "〜てある",
+  "level": "N4",
+  "meaning": "has been done (by someone, and stays that way)",
+  "regex": "(?:て|(?<=ん)で)あ(る|った|ります|りました)",
+  "match": [
+   "ドアに名前が書いてある。",
+   "料理はもう並べてあります。"
+  ],
+  "no_match": [
+   "彼は学生である。",
+   "雨であった。"
+  ]
+ },
+ {
+  "id": "n4-te-miru",
+  "pattern": "〜てみる",
+  "level": "N4",
+  "meaning": "try doing ~ (and see)",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)み(る|た|て|ます|ました|よう|たい|ない|ろ)",
+  "match": [
+   "一度食べてみたい。",
+   "ちょっと着てみて。"
+  ],
+  "no_match": [
+   "ゴミを捨てた。",
+   "海を見た。"
+  ]
+ },
+ {
+  "id": "n4-te-iku-kuru",
+  "pattern": "〜ていく / 〜てくる",
+  "level": "N4",
+  "meaning": "~ goes on from now / has come about up to now",
+  "regex": "(?:て|(?<=[んい])で)(行|い)(く|った|って|きます|かない)|(?:て|(?<=[んい])で)(来|き|く)(る|た|て|ます|ない)",
+  "match": [
+   "寒くなってきた。",
+   "これからも頑張っていく。",
+   "お土産を買ってくる。"
+  ],
+  "no_match": [
+   "宿題ができた。",
+   "それは手でいい。"
+  ]
+ },
+ {
+  "id": "n4-tara",
+  "pattern": "〜たら",
+  "level": "N4",
+  "meaning": "if / when ~ (and then)",
+  "regex": "(?<!や)(?<!ば)(た|だ)ら(?!しい|け|い|ず)",
+  "match": [
+   "雨が降ったら行かない。",
+   "家に着いたら電話して。"
+  ],
+  "no_match": [
+   "傷だらけだ。",
+   "やたらに高い。"
+  ]
+ },
+ {
+  "id": "n4-ba",
+  "pattern": "〜ば",
+  "level": "N4",
+  "meaning": "if ~ (conditional)",
+  "regex": "(?<!ういえ)(?<!う言え)(?<=[えけせてねめれげべ])ば(?!か|あ|っ|ん)",
+  "match": [
+   "安ければ買う。",
+   "行けば分かる。",
+   "早く寝れば治るよ。"
+  ],
+  "no_match": [
+   "そばに来て。",
+   "ばかりだ。",
+   "そういえば、昨日ね。",
+   "そう言えば、そうだ。"
+  ]
+ },
+ {
+  "id": "n4-nara",
+  "pattern": "〜なら",
+  "level": "N4",
+  "meaning": "if it's ~; if you're talking about ~",
+  "regex": "(?<!よ)(?<!さよ)なら(?!ない|ず|なく|べ|う|っ|い|な|び|し|さ)",
+  "match": [
+   "日本へ行くなら、京都がいい。",
+   "君ならできる。"
+  ],
+  "no_match": [
+   "さよならだ。",
+   "並んでいる。",
+   "行かなければならない。"
+  ]
+ },
+ {
+  "id": "n4-you-ni-naru",
+  "pattern": "〜ようになる",
+  "level": "N4",
+  "meaning": "come to ~; reach the point of ~",
+  "regex": "(る|ない|れる)(よう|様)に(なる|なっ|なり)",
+  "match": [
+   "泳げるようになった。",
+   "最近、よく寝られるようになりました。"
+  ],
+  "no_match": [
+   "雨のように降る。"
+  ]
+ },
+ {
+  "id": "n4-you-ni-suru",
+  "pattern": "〜ようにする",
+  "level": "N4",
+  "meaning": "make an effort to ~; make sure to ~",
+  "regex": "(る|ない)(よう|様)に(する|して|した|しています|します)",
+  "match": [
+   "毎日運動するようにしている。",
+   "遅れないようにします。"
+  ],
+  "no_match": [
+   "好きなようにして。"
+  ]
+ },
+ {
+  "id": "n4-you-ni",
+  "pattern": "〜ように",
+  "level": "N4",
+  "meaning": "so that ~; in order for ~",
+  "regex": "(る|ない|える)(よう|様)に(?!(なる|なっ|なり|する|して|した|しま|言|い[わっう]))[、ね]?",
+  "match": [
+   "聞こえるように大きい声で話す。",
+   "風邪をひかないように気をつけて。"
+  ],
+  "no_match": [
+   "花のように美しい。"
+  ]
+ },
+ {
+  "id": "n4-you-ni-iu",
+  "pattern": "〜ように言う",
+  "level": "N4",
+  "meaning": "tell someone to ~",
+  "regex": "(る|ない)(よう|様)に(言|い)(う|った|って|われ)",
+  "match": [
+   "先生に早く来るように言われた。",
+   "部屋を片付けるように言った。"
+  ],
+  "no_match": [
+   "彼が言った。"
+  ]
+ },
+ {
+  "id": "n4-mitai",
+  "pattern": "〜みたい",
+  "level": "N4",
+  "meaning": "seems like ~; like ~ (casual)",
+  "regex": "(?<![をがも])(?<!に)みたい(だ|です|な|に|。|！|$|ね|よ|じゃ)",
+  "match": [
+   "雨が降るみたいだ。",
+   "子供みたいなことを言うな。"
+  ],
+  "no_match": [
+   "映画をみたい。"
+  ]
+ },
+ {
+  "id": "n4-you-da",
+  "pattern": "〜ようだ",
+  "level": "N4",
+  "meaning": "it seems / looks like ~ (judging from what I see)",
+  "regex": "(る|た|い|な|の)(よう|様)(だ|です|で(?!す)|。)",
+  "match": [
+   "誰もいないようだ。",
+   "彼は疲れているようです。"
+  ],
+  "no_match": [
+   "どのようにしますか。"
+  ]
+ },
+ {
+  "id": "n4-rashii",
+  "pattern": "〜らしい",
+  "level": "N4",
+  "meaning": "apparently ~; typical of ~",
+  "regex": "(?<![晴ずたあめさ])(?<!可愛)らし(い|く|かった|さ)",
+  "match": [
+   "明日は雨らしい。",
+   "男らしい人だ。"
+  ],
+  "no_match": [
+   "素晴らしい天気だ。",
+   "新しい靴を買った。"
+  ]
+ },
+ {
+  "id": "n4-sou-looks",
+  "pattern": "〜そうだ (様子)",
+  "level": "N4",
+  "meaning": "looks like ~; seems about to ~",
+  "regex": "(?<!ごち)(?<!ご馳)(?<=[しりきちにみびえけせてねめれげべ一-鿿])そう(だ|です|な|に|。|！|$|じゃ)",
+  "match": [
+   "このケーキ、美味しそう！",
+   "雨が降りそうだ。",
+   "元気そうですね。"
+  ],
+  "no_match": [
+   "そうだね。",
+   "そうですか。"
+  ]
+ },
+ {
+  "id": "n4-sou-hearsay",
+  "pattern": "〜そうだ (伝聞)",
+  "level": "N4",
+  "meaning": "I hear that ~; they say ~",
+  "regex": "(?<=[るただいなく])そう(だ|です)(?!ね|な)",
+  "match": [
+   "明日は雪が降るそうだ。",
+   "彼は結婚したそうです。"
+  ],
+  "no_match": [
+   "そうだ、忘れてた。"
+  ]
+ },
+ {
+  "id": "n4-hazu",
+  "pattern": "〜はず",
+  "level": "N4",
+  "meaning": "should be ~; expected to ~",
+  "regex": "(はず|筈)(だ|です|が|じゃ|は|。|！|$|の|なのに)",
+  "match": [
+   "彼はもう着いたはずだ。",
+   "今日は休みのはずです。"
+  ],
+  "no_match": [
+   "恥ずかしい。"
+  ]
+ },
+ {
+  "id": "n4-ka-dou-ka",
+  "pattern": "〜かどうか",
+  "level": "N4",
+  "meaning": "whether or not ~",
+  "regex": "か(どう|ど)か",
+  "match": [
+   "行くかどうか分からない。",
+   "本当かどうか確かめる。"
+  ],
+  "no_match": [
+   "どうか助けて。"
+  ]
+ },
+ {
+  "id": "n4-tame-ni",
+  "pattern": "〜ために",
+  "level": "N4",
+  "meaning": "in order to ~; because of ~",
+  "regex": "([るうくすつぬむぶぐたい]|の)(ため|為)に",
+  "match": [
+   "日本に行くために貯金している。",
+   "事故のために遅れた。"
+  ],
+  "no_match": [
+   "試しにやってみる。"
+  ]
+ },
+ {
+  "id": "n4-noni",
+  "pattern": "〜のに",
+  "level": "N4",
+  "meaning": "even though ~ (with frustration / surprise)",
+  "regex": "(?<=[るたいだなっ])のに(?!は|必要|使|便利|いい|気|十分|適|役|手間|時間|苦労|かかる|向)",
+  "match": [
+   "約束したのに来なかった。",
+   "まだ早いのにもう眠い。"
+  ],
+  "no_match": [
+   "これは料理するのに使う。"
+  ]
+ },
+ {
+  "id": "n4-shi",
+  "pattern": "〜し、〜し",
+  "level": "N4",
+  "meaning": "~ and ~ (and also), listing reasons",
+  "regex": "(い|だ|る|た)し、[^。]{1,15}?(い|だ|る|た)し",
+  "match": [
+   "安いし、美味しいし、最高だ。",
+   "雨だし、寒いし、帰ろう。"
+  ],
+  "no_match": [
+   "少し、休む。"
+  ]
+ },
+ {
+  "id": "n4-yasui-nikui",
+  "pattern": "〜やすい / 〜にくい",
+  "level": "N4",
+  "meaning": "easy / hard to ~",
+  "regex": "[いきしちにひみりぎじびえけせてねへめれげべ](やす|にく)(い|く|かった|そう)",
+  "match": [
+   "この本は読みやすい。",
+   "この字は書きにくい。"
+  ],
+  "no_match": [
+   "安い店だ。",
+   "おやすみなさい。"
+  ]
+ },
+ {
+  "id": "n4-hajimeru-owaru",
+  "pattern": "〜はじめる / 〜おわる / 〜つづける",
+  "level": "N4",
+  "meaning": "start / finish / keep on ~ing",
+  "regex": "[いきしちにひみりぎじびえけせてねへめれげべ](始|はじ)め(る|た|て|ます)|[いきしちにひみりぎじびえけせてねへめれげべ](終|お)わ(る|った|って|ります)|[いきしちにひみりぎじびえけせてねへめれげべ](続|つづ)け(る|た|て|ます)",
+  "match": [
+   "雨が降り始めた。",
+   "本を読み終わった。",
+   "走り続ける。"
+  ],
+  "no_match": [
+   "試合を始める。",
+   "仕事が終わった。"
+  ]
+ },
+ {
+  "id": "n4-te-ageru-kureru-morau",
+  "pattern": "〜てあげる / くれる / もらう",
+  "level": "N4",
+  "meaning": "do ~ for someone / someone does ~ for me",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(あげ|上げ|くれ|呉れ|もら|貰)(る|た|て|ます|ない|よう|ろ|まし|え|い|っ)",
+  "match": [
+   "妹に本を読んであげた。",
+   "友達が手伝ってくれた。",
+   "先生に教えてもらいました。"
+  ],
+  "no_match": [
+   "手をあげた。",
+   "プレゼントをくれた。"
+  ]
+ },
+ {
+  "id": "n4-te-itadaku",
+  "pattern": "〜ていただく / 〜てくださる",
+  "level": "N4",
+  "meaning": "(polite) have someone kindly do ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(いただ|頂)(く|き|け|いた)|(?:て|(?<=ん)で|(?<=い)で)(くださ|下さ)(る|った|って|います)",
+  "match": [
+   "先生に説明していただきました。",
+   "わざわざ来てくださって、ありがとう。"
+  ],
+  "no_match": [
+   "お菓子をいただく。",
+   "ちょっと待ってください。"
+  ]
+ },
+ {
+  "id": "n4-saseru",
+  "pattern": "〜させる",
+  "level": "N4",
+  "meaning": "make / let someone ~ (causative)",
+  "regex": "(?:さ|ら|か|ま|わ|た|が|ば|な)せ(る|た|て|ます|ない|られ)(?!ん)",
+  "match": [
+   "子供に野菜を食べさせる。",
+   "待たせてごめん。"
+  ],
+  "no_match": [
+   "写真を見せる。"
+  ]
+ },
+ {
+  "id": "n4-sasete-kudasai",
+  "pattern": "〜させてください",
+  "level": "N4",
+  "meaning": "please let me ~",
+  "regex": "(?:さ|ら|か|ま|わ|た|が|ば|な)せて(下|くだ)さい",
+  "match": [
+   "私にやらせてください。",
+   "少し考えさせて下さい。"
+  ],
+  "no_match": [
+   "見せてください。"
+  ]
+ },
+ {
+  "id": "n4-passive",
+  "pattern": "〜れる / 〜られる",
+  "level": "N4",
+  "meaning": "passive (is ~ed), or potential (can ~)",
+  "regex": "(?<![生産])(?<!う)(?:さ|ら|か|ま|わ|た|が|ば|な)れ(る|た|て|ます|ない)",
+  "match": [
+   "先生に褒められた。",
+   "財布を盗まれた。",
+   "誰にも知られたくない。"
+  ],
+  "no_match": [
+   "赤ちゃんが生まれた。",
+   "これは何？"
+  ]
+ },
+ {
+  "id": "n4-you-to-omou",
+  "pattern": "〜(よ)うと思う",
+  "level": "N4",
+  "meaning": "I'm thinking of ~ing",
+  "regex": "(?:よ|お|こ|そ|と|の|も|ぼ|ご)う(?<!だろう)(?<!でしょう)と(思|おも)",
+  "match": [
+   "明日は早く起きようと思う。",
+   "新しい服を買おうと思っています。"
+  ],
+  "no_match": [
+   "雨だろうと思う。"
+  ]
+ },
+ {
+  "id": "n4-koto-ni-suru",
+  "pattern": "〜ことにする / 〜ことになる",
+  "level": "N4",
+  "meaning": "decide to ~ / it's been decided that ~",
+  "regex": "([るうくすつぬむぶぐ]|ない)(こと|事)に(する|した|します|しました|なる|なった|なりました|なって)",
+  "match": [
+   "毎朝走ることにした。",
+   "来月、引っ越すことになりました。"
+  ],
+  "no_match": [
+   "大事なことに気づいた。"
+  ]
+ },
+ {
+  "id": "n4-koto-ga-dekiru",
+  "pattern": "〜ことができる",
+  "level": "N4",
+  "meaning": "be able to ~; can ~",
+  "regex": "[るうくすつぬむぶぐ](こと|事)が?(でき|出来)(る|ます|た|ない|なかった|ません)",
+  "match": [
+   "彼はピアノを弾くことができる。",
+   "ここで泳ぐことができません。"
+  ],
+  "no_match": [
+   "宿題ができた。"
+  ]
+ },
+ {
+  "id": "n4-tsumori",
+  "pattern": "〜つもり",
+  "level": "N4",
+  "meaning": "intend to ~; plan to ~",
+  "regex": "(?<=[るうくすつむぶぐいた])(つもり)(?!で)",
+  "match": [
+   "明日行くつもりだ。",
+   "やめるつもりはない。"
+  ],
+  "no_match": [
+   "雪が積もった。"
+  ]
+ },
+ {
+  "id": "n4-naide",
+  "pattern": "〜ないで",
+  "level": "N4",
+  "meaning": "without doing ~; instead of ~ing",
+  "regex": "ないで(?!(下|くだ)さい|ほしい|く|欲しい|。|！|$)",
+  "match": [
+   "朝ご飯を食べないで学校へ行った。",
+   "傘を持たないで出かけた。"
+  ],
+  "no_match": [
+   "触らないでください。"
+  ]
+ },
+ {
+  "id": "n4-nakute",
+  "pattern": "〜なくて",
+  "level": "N4",
+  "meaning": "because (it's) not ~; not ~, and",
+  "regex": "なくて(?!は|も|いい|ごめん)",
+  "match": [
+   "お金がなくて困った。",
+   "彼が来なくて、心配した。"
+  ],
+  "no_match": [
+   "行かなくてもいい。"
+  ]
+ },
+ {
+  "id": "n4-temo",
+  "pattern": "〜ても",
+  "level": "N4",
+  "meaning": "even if ~; even though ~",
+  "regex": "(?<!と)(?:て|(?<=[んい])で)も(?!(いい|良い|よい|構わ|かまわ|ら|う))",
+  "match": [
+   "雨が降っても行く。",
+   "いくら読んでも分からない。"
+  ],
+  "no_match": [
+   "とても嬉しい。",
+   "それでもいい。"
+  ]
+ },
+ {
+  "id": "n4-mama",
+  "pattern": "〜まま",
+  "level": "N4",
+  "meaning": "as it is; leaving it ~ (unchanged)",
+  "regex": "(た|だ|の|い|な)まま(?!ごと|母)",
+  "match": [
+   "靴を履いたまま入らないで。",
+   "テレビをつけたまま寝た。"
+  ],
+  "no_match": [
+   "ままごとをする。"
+  ]
+ },
+ {
+  "id": "n4-aida",
+  "pattern": "〜あいだ(に)",
+  "level": "N4",
+  "meaning": "while / during ~ (and something happens)",
+  "regex": "(る|ている|てる|い|た)(間|あいだ)(に(?!は)|は|、|中|ずっと)",
+  "match": [
+   "寝ている間に雨が降った。",
+   "彼が話している間、静かにしていた。"
+  ],
+  "no_match": [
+   "間に合った。",
+   "兄弟の間には絆がある。"
+  ]
+ },
+ {
+  "id": "n4-ta-bakari",
+  "pattern": "〜たばかり",
+  "level": "N4",
+  "meaning": "have just ~ed",
+  "regex": "(た|だ)ばかり",
+  "match": [
+   "日本に来たばかりです。",
+   "今起きたばかりだ。"
+  ],
+  "no_match": [
+   "遊んでばかりいる。"
+  ]
+ },
+ {
+  "id": "n4-tokoro",
+  "pattern": "〜ところだ",
+  "level": "N4",
+  "meaning": "be just about to / in the middle of / just did ~",
+  "regex": "(る|た|だ|ている|てる)(ところ|所)(だ|です|だった|でした|に|へ|で|。)",
+  "match": [
+   "今から出かけるところだ。",
+   "ちょうど食べたところです。"
+  ],
+  "no_match": [
+   "静かなところが好き。"
+  ]
+ },
+ {
+  "id": "n4-to-iu",
+  "pattern": "〜という",
+  "level": "N4",
+  "meaning": "called ~; named ~; (the fact) that ~",
+  "regex": "という(?!か|の|こと|わけ)",
+  "match": [
+   "田中という人が来た。",
+   "これは何という花ですか。"
+  ],
+  "no_match": [
+   "っていうか、もう帰る。"
+  ]
+ },
+ {
+  "id": "n4-to-omou",
+  "pattern": "〜と思う",
+  "level": "N4",
+  "meaning": "I think ~",
+  "regex": "(?<!う)と(思|おも)(う|います|った|って|いました)",
+  "match": [
+   "明日は晴れると思う。",
+   "彼は来ないと思います。"
+  ],
+  "no_match": [
+   "思い出した。"
+  ]
+ },
+ {
+  "id": "n4-kamoshirenai",
+  "pattern": "〜かもしれない",
+  "level": "N4",
+  "meaning": "might ~; maybe ~",
+  "regex": "かも(しれ|知れ)(ない|ません|ねえ|ん|なかった)",
+  "match": [
+   "明日は雨かもしれない。",
+   "間に合わないかもしれません。"
+  ],
+  "no_match": [
+   "鴨が泳ぐ。"
+  ]
+ },
+ {
+  "id": "n4-te-hoshii",
+  "pattern": "〜てほしい",
+  "level": "N4",
+  "meaning": "want someone to ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(欲|ほ)し(い|く|かった)",
+  "match": [
+   "もっと話を聞いてほしい。",
+   "早く帰ってきてほしかった。"
+  ],
+  "no_match": [
+   "車がほしい。"
+  ]
+ },
+ {
+  "id": "n4-tara-dou",
+  "pattern": "〜たらどう",
+  "level": "N4",
+  "meaning": "why don't you ~? (a suggestion)",
+  "regex": "(た|だ)ら(どう|いかが)",
+  "match": [
+   "少し休んだらどう？",
+   "先生に聞いてみたらいかがですか。"
+  ],
+  "no_match": [
+   "どうしたの？"
+  ]
+ },
+ {
+  "id": "n4-keigo-verbs",
+  "pattern": "尊敬語・謙譲語",
+  "level": "N4",
+  "meaning": "honorific / humble verb (polite speech)",
+  "regex": "いらっしゃ|おっしゃ|召し上が|めしあが|ご覧|ごらん|参り|まいり|申し(?!訳|わけ)|もうし(?!わけ)|伺|うかが|存じ|ぞんじ|拝見|いたしま",
+  "match": [
+   "先生がいらっしゃいました。",
+   "お名前は何とおっしゃいますか。",
+   "明日伺います。"
+  ],
+  "no_match": [
+   "申し訳ありません。",
+   "ありがとう。"
+  ]
+ },
+ {
+  "id": "n4-n-desu-ga",
+  "pattern": "〜んですが",
+  "level": "N4",
+  "meaning": "~, but... (softly starting a request)",
+  "regex": "(ん|の)ですが",
+  "match": [
+   "ちょっと聞きたいんですが。",
+   "道に迷ったんですが、駅はどこですか。"
+  ],
+  "no_match": [
+   "本です。"
+  ]
+ },
+ {
+  "id": "n4-ba-yokatta",
+  "pattern": "〜ばよかった",
+  "level": "N4",
+  "meaning": "I should have ~ (regret)",
+  "regex": "ば(よ|良)かった",
+  "match": [
+   "もっと早く来ればよかった。",
+   "言わなければ良かった。"
+  ],
+  "no_match": [
+   "よかったね。"
+  ]
+ },
+ {
+  "id": "n4-ni-tsuite",
+  "pattern": "〜について",
+  "level": "N4",
+  "meaning": "about ~; concerning ~",
+  "regex": "に(つい|就い)て",
+  "match": [
+   "日本の文化について話す。",
+   "その件について聞きたい。"
+  ],
+  "no_match": [
+   "駅に着いた。"
+  ]
+ },
+ {
+  "id": "n4-baai",
+  "pattern": "〜場合",
+  "level": "N4",
+  "meaning": "in the case of ~; if ~",
+  "regex": "(場合|ばあい)(は|に|、|には|も)",
+  "match": [
+   "雨の場合は中止です。",
+   "分からない場合には聞いてください。"
+  ],
+  "no_match": [
+   "場所はどこ？"
+  ]
+ },
+ {
+  "id": "n4-nasai",
+  "pattern": "〜なさい",
+  "level": "N4",
+  "meaning": "do ~ (a firm, parent-like instruction)",
+  "regex": "(?<!おやす)(?<!お休)([いきしちにひみりぎじびえけせてねへめれげべ]|[一-鿿])なさい",
+  "match": [
+   "早く寝なさい。",
+   "ちゃんと聞きなさい！"
+  ],
+  "no_match": [
+   "おやすみなさい。",
+   "ごめんなさい。"
+  ]
+ },
+ {
+  "id": "n4-naito-ikenai",
+  "pattern": "〜ないといけない",
+  "level": "N4",
+  "meaning": "have to ~; must ~",
+  "regex": "ないと(いけ|だめ|ダメ|駄目)",
+  "match": [
+   "もう帰らないといけない。",
+   "薬を飲まないとだめだよ。"
+  ],
+  "no_match": [
+   "知らないと思う。"
+  ]
+ },
+ {
+  "id": "n4-ka-shira",
+  "pattern": "〜か (embedded question)",
+  "level": "N4",
+  "meaning": "(I don't know / tell me) whether / what ~",
+  "regex": "(る|た|い|だ)か(分か|わか|知|教え|聞|覚え)",
+  "match": [
+   "どこに行ったか分からない。",
+   "何が欲しいか教えて。"
+  ],
+  "no_match": [
+   "分からない。"
+  ]
+ },
+ {
+  "id": "n4-de-ii",
+  "pattern": "〜でいい",
+  "level": "N4",
+  "meaning": "~ is fine; ~ will do",
+  "regex": "(?<=[一-鿿ァ-ヺー])でいい(?!か)",
+  "match": [
+   "水でいいです。",
+   "明日でいいよ。"
+  ],
+  "no_match": [
+   "それでいいか？"
+  ]
+ }
+]

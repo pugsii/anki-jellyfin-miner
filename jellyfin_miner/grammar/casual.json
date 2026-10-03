@@ -1,0 +1,692 @@
+[
+ {
+  "id": "casual-chau",
+  "pattern": "〜ちゃう／じゃう",
+  "level": "N4",
+  "meaning": "casual 〜てしまう: do completely, or by accident / regrettably",
+  "regex": "(?:ちゃ|(?<=[んい])じゃ)(う|った|って|います|いました|いそう|えば|お[うっ]|いな)",
+  "match": [
+   "宿題、忘れちゃった。",
+   "もう死んじゃう！",
+   "全部食べちゃおう。"
+  ],
+  "no_match": [
+   "お茶を飲む。",
+   "それじゃ、またね。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-chimau",
+  "pattern": "〜ちまう／じまう",
+  "level": "N3",
+  "meaning": "rough casual 〜てしまう (finished, or it went wrong)",
+  "regex": "(ちま|じま)(う|った|って|え|いな)",
+  "match": [
+   "やっちまった。",
+   "負けちまうぞ。"
+  ],
+  "no_match": [
+   "おしまいだ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-teru",
+  "pattern": "〜てる",
+  "level": "N4",
+  "meaning": "casual 〜ている: ongoing action or resulting state",
+  "regex": "(?:(?<![捨建育当立慌企隔果すあだたへわ])て|(?<!なん)(?<=[んい])で)(る|た(?![まいくけめび])|ます|ました|ない|なかった|ん[だじで]|て|たら|ても)",
+  "match": [
+   "何してるの？",
+   "知ってた？",
+   "まだ読んでない。"
+  ],
+  "no_match": [
+   "ゴミを捨てる。",
+   "なんでないの？",
+   "家を建てた。",
+   "してたまるか！"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-toku",
+  "pattern": "〜とく",
+  "level": "N4",
+  "meaning": "casual 〜ておく: do in advance, or leave as is",
+  "regex": "(?:(?<![ょやずもきそさぱはふぐじ])っと|[いしきちみべけせめれえげねじび見寝来出居]と|んど)(く(?![らるれにわ])|いた|いて|きます|きました|こう|け(?![るたて])|かない)",
+  "match": [
+   "ビール冷やしとくね。",
+   "ほっといてくれ。",
+   "読んどいて。"
+  ],
+  "no_match": [
+   "ちょっとくらいいいだろ。",
+   "とくに何もない。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-nakya",
+  "pattern": "〜なきゃ／なくちゃ",
+  "level": "N4",
+  "meaning": "must ~ (casual なければ／なくては)",
+  "regex": "なきゃ|なくちゃ|なけりゃ",
+  "match": [
+   "もう行かなきゃ。",
+   "勉強しなくちゃ。"
+  ],
+  "no_match": [
+   "泣かないで。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-chaikenai",
+  "pattern": "〜ちゃいけない／じゃだめ",
+  "level": "N4",
+  "meaning": "must not ~ (casual てはいけない)",
+  "regex": "(?:ちゃ|(?<=[んい])じゃ)(いけ|いか|だめ|ダメ|駄目|あかん|なら)",
+  "match": [
+   "ここで寝ちゃだめ！",
+   "死んじゃいけない。"
+  ],
+  "no_match": [
+   "これじゃダメだ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-jan",
+  "pattern": "〜じゃん",
+  "level": "N4",
+  "meaning": "casual 'isn't it?, you see' — asserts or seeks agreement",
+  "regex": "じゃん(?!け|じゃん)",
+  "match": [
+   "いいじゃん！",
+   "言ったじゃん。"
+  ],
+  "no_match": [
+   "じゃんけんしよう。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ssu",
+  "pattern": "〜っす",
+  "level": "N3",
+  "meaning": "casual, slightly respectful です (junior to senior)",
+  "regex": "っす(?![るれぐ])|ッス",
+  "match": [
+   "そうっす。",
+   "マジっすか？"
+  ],
+  "no_match": [
+   "そうです。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-nee",
+  "pattern": "〜ねえ (〜ない)",
+  "level": "N3",
+  "meaning": "rough way of saying ない (知らねえ = 知らない)",
+  "regex": "(?:[らかわたさまがばなしこけえべれめせて見来出寝居知んくゃ]|(?<=[もはがかに])い)(?<!だって)(?<![うのんだ]か)ね(え|ぇ|ー)",
+  "match": [
+   "知らねえよ。",
+   "誰もいねえ。",
+   "わかんねー。"
+  ],
+  "no_match": [
+   "そうだねえ。",
+   "ねえ、聞いて。",
+   "いいねえ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-n-da",
+  "pattern": "〜んだ／〜のだ",
+  "level": "N4",
+  "meaning": "explains or emphasizes; gives the reason behind something",
+  "regex": "(?:[るくぐつうたい]|(?<=[ぁ-んァ-ヶ一-龯ー])な)ん(だ(?!か)|です|でしょ|じゃ)|(?<!も)の(だ|です)(?=[よねか。！!？?…」]|$|が|けど|から)",
+  "match": [
+   "どうしたんだ？",
+   "好きなんです。",
+   "行くのだ。"
+  ],
+  "no_match": [
+   "本を読んだ。",
+   "なんだかね。",
+   "なんだ、お前か。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kke",
+  "pattern": "〜っけ",
+  "level": "N4",
+  "meaning": "asking to confirm something you've forgotten ('was it ~?')",
+  "regex": "(だ|た|でした|ました)っけ",
+  "match": [
+   "名前、何だっけ？",
+   "そんなこと言ったっけ。"
+  ],
+  "no_match": [
+   "あっけない。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kana",
+  "pattern": "〜かな",
+  "level": "N4",
+  "meaning": "I wonder ~; soft question to oneself",
+  "regex": "(?<!ば)(?<!静)(?<!まさ)かな(?=[ぁあー]?[。？！?!…、」〜]|$|あ)",
+  "match": [
+   "明日、晴れるかな。",
+   "どうしようかなあ。"
+  ],
+  "no_match": [
+   "静かな町だ。",
+   "かなり高い。",
+   "行かない。",
+   "まさかな。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kashira",
+  "pattern": "〜かしら",
+  "level": "N4",
+  "meaning": "I wonder ~ (feminine かな)",
+  "regex": "かしら",
+  "match": [
+   "誰かしら。",
+   "大丈夫かしら？"
+  ],
+  "no_match": [
+   "誰か来た。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-yone",
+  "pattern": "〜よね",
+  "level": "N4",
+  "meaning": "seeks agreement: '~, right?'",
+  "regex": "よね",
+  "match": [
+   "これ、美味しいよね。",
+   "君も行くよね？"
+  ],
+  "no_match": [
+   "ねえ、よく見て。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-wa",
+  "pattern": "〜わ",
+  "level": "N4",
+  "meaning": "soft emphasis at sentence end (feminine; Kansai men use it too)",
+  "regex": "(?:[るくぐすつぬむたいだ]|(?<=[ぁ-ん一-龯]う))わ(?=[よね]?[。！!？?…」〜ー]|$)",
+  "match": [
+   "もう帰るわ。",
+   "それ、いいわね。",
+   "知らないわよ！"
+  ],
+  "no_match": [
+   "うわ！",
+   "かわいい。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-zo-ze",
+  "pattern": "〜ぞ／〜ぜ",
+  "level": "N4",
+  "meaning": "rough, emphatic sentence ending (mostly male speech)",
+  "regex": "(?<!どう)(?<=[るくぐすつぬぶむうたいだ])(ぞ|ぜ)(?=[っ。！!？?…」〜ー]|$)",
+  "match": [
+   "行くぞ！",
+   "やろうぜ。"
+  ],
+  "no_match": [
+   "どうぞ。",
+   "なぜ？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-tteba",
+  "pattern": "〜ってば",
+  "level": "N3",
+  "meaning": "impatient emphasis: 'I told you, ~!'",
+  "regex": "ってば",
+  "match": [
+   "だから違うってば！",
+   "早くしろってば。"
+  ],
+  "no_match": [
+   "持って行け。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-tte",
+  "pattern": "〜って (引用・話題)",
+  "level": "N4",
+  "meaning": "casual と／という／は: quoting, or 'about ~' as topic",
+  "regex": "(?:(?<![おつまめひ])く|[るすつぬむぐ]|ない|れ|何|(?<=[んの])だ|です)って",
+  "match": [
+   "それって本当？",
+   "明日来るって。",
+   "何って、見ればわかるだろ。"
+  ],
+  "no_match": [
+   "ちょっと待って。",
+   "本を作って。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-mon",
+  "pattern": "〜もん",
+  "level": "N4",
+  "meaning": "because ~ (childish or emphatic excuse)",
+  "regex": "((?<=[だいるたん])もん|(?<=んだ)もの)(?=[ねな]?[。！!？?…」〜ー]|$)",
+  "match": [
+   "だって、眠いんだもん。",
+   "知らないもん！"
+  ],
+  "no_match": [
+   "大事なもの。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-janai-q",
+  "pattern": "〜じゃない？",
+  "level": "N4",
+  "meaning": "'isn't it ~?' — asks for agreement or confirmation",
+  "regex": "じゃない(?=[？?]|か|です?か)",
+  "match": [
+   "これ、いいじゃない？",
+   "君のせいじゃないか！"
+  ],
+  "no_match": [
+   "僕じゃない。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-teka",
+  "pattern": "てか／っていうか",
+  "level": "N3",
+  "meaning": "'or rather', 'I mean' — rephrases or changes topic",
+  "regex": "っていうか|って言うか|ってゆうか|ってゆーか|つーか|というか|と言うか|(?:^|[「、。！？!?])(てか|ってか)",
+  "match": [
+   "てか、何してんの？",
+   "っていうか、遅いよ。"
+  ],
+  "no_match": [
+   "言ってから寝る。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-yagaru",
+  "pattern": "〜やがる",
+  "level": "N3",
+  "meaning": "rude: does ~ (speaker is annoyed with the doer)",
+  "regex": "やが(る|っ|れ|ら)",
+  "match": [
+   "ふざけやがって！",
+   "逃げやがった。"
+  ],
+  "no_match": [
+   "やがて春が来る。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-tatte",
+  "pattern": "〜たって／だって (逆接)",
+  "level": "N3",
+  "meaning": "even if ~ (casual ても)",
+  "regex": "(?:[っいしきちにびみりけげせてねべめれえ見来寝出く]たって|(?<!な)(?<=[んい])だって)(?=いい|良い|無駄|むだ|ムダ|仕方|しかた|しょうが|、|ダメ|だめ|駄目|構|かま|同じ|遅|無理|意味)",
+  "match": [
+   "今さら謝ったって遅いよ。",
+   "泣いたって無駄だ。",
+   "そんなに急いだって、間に合わない。"
+  ],
+  "no_match": [
+   "もう帰ったって。",
+   "なんだって？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-nanka",
+  "pattern": "〜なんか",
+  "level": "N3",
+  "meaning": "things like ~ (often dismissive or humble)",
+  "regex": "(?<=[ぁ-んァ-ヶ一-龯ー])(?<![にでとをはがもへ])なんか(?![らし])",
+  "match": [
+   "俺なんかには無理だ。",
+   "お前なんか嫌いだ！"
+  ],
+  "no_match": [
+   "なんか変だな。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-nante",
+  "pattern": "〜なんて",
+  "level": "N3",
+  "meaning": "the likes of ~ (surprise, dismissal or disbelief)",
+  "regex": "(?<=[ぁ-んァ-ヶ一-龯ー])(?<![にでとをはがもへ])なんて(?!言|い[うっわ]|ゆ|こと)",
+  "match": [
+   "勉強なんてしたくない。",
+   "君が来るなんて思わなかった。"
+  ],
+  "no_match": [
+   "なんて言ったの？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ppoi",
+  "pattern": "〜っぽい",
+  "level": "N3",
+  "meaning": "-ish, seems like, looks like ~",
+  "regex": "っぽ(い|く|かっ)",
+  "match": [
+   "子供っぽいね。",
+   "雨っぽくない？"
+  ],
+  "no_match": [
+   "空っぽだ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-mitaina",
+  "pattern": "〜みたいな (filler)",
+  "level": "N3",
+  "meaning": "'like, kind of' — vague quoting or trailing filler",
+  "regex": "(?<![読飲休住込進頼楽盗望産済踏悩噛挑睨])みたいな(?=[。、！？!?…」〜ー]|感じ)",
+  "match": [
+   "「マジ？」みたいな。",
+   "ドーンみたいな感じ。"
+  ],
+  "no_match": [
+   "本が読みたいな。",
+   "夢みたいな話だ。",
+   "夢みたいな"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-n-negative",
+  "pattern": "〜ん (〜ない)",
+  "level": "N3",
+  "meaning": "rough or western-dialect ない (分からん = 分からない)",
+  "regex": "(?:(?<!ご)ら|か|わ|ま|が|れ|(?<!じゃん)け|べ|(?<!ま)せ)ん(?=[。！!？?…」、ねよぞぜわ]|$)",
+  "match": [
+   "そんなの知らん。",
+   "全然分からんよ。",
+   "行かんぞ。"
+  ],
+  "no_match": [
+   "ごめん。",
+   "田中さん。",
+   "なんで？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-hen",
+  "pattern": "〜へん",
+  "level": "N3",
+  "meaning": "Kansai ない: not ~ (分からへん)",
+  "regex": "(?<!たい)(?<=[らかわさたまがばなれせけめべいきしちにみりえ見来寝出])へん(?=[。！!？?…」、ねよなでわ]|$)",
+  "match": [
+   "分からへん。",
+   "そんなん知らへんわ。"
+  ],
+  "no_match": [
+   "大変だ。",
+   "たいへん！",
+   "このへんに住む。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ya",
+  "pattern": "〜や (Kansai)",
+  "level": "N3",
+  "meaning": "Kansai だ: 'is'",
+  "regex": "(?<=[一-龯ァ-ヶうまん])(や(?=[で。！!？?…」ねなわん]|けど)|やろ(?!う))",
+  "match": [
+   "それ、嘘や。",
+   "ほんまやで。",
+   "そうやろ？"
+  ],
+  "no_match": [
+   "本や雑誌。",
+   "一緒にやろう。",
+   "いや、違う。",
+   "この本には死者の蘇生や"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-sa",
+  "pattern": "〜さ",
+  "level": "N3",
+  "meaning": "casual assertive ending or filler ('you know')",
+  "regex": "(?<=[だるいたうくら])さ(?=[ぁあー]?[。！!…、」〜]|$)",
+  "match": [
+   "だからさ、聞いてよ。",
+   "まあ、いいさ。"
+  ],
+  "no_match": [
+   "高さは三メートル。",
+   "楽しさ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-no-question",
+  "pattern": "〜の？",
+  "level": "N4",
+  "meaning": "casual question asking for an explanation",
+  "regex": "(?<=[るたいうくすつぬむぶぐんだな])の(?=[？?])",
+  "match": [
+   "どうしたの？",
+   "もう帰るの？",
+   "本当なの？"
+  ],
+  "no_match": [
+   "どうした？",
+   "あの？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kai-dai",
+  "pattern": "〜かい／〜だい",
+  "level": "N3",
+  "meaning": "friendly or old-fashioned question ending (often male)",
+  "regex": "(?<![ちたあふ])かい(?=[？?])|だい(?=[？?])",
+  "match": [
+   "元気かい？",
+   "どうしたんだい？"
+  ],
+  "no_match": [
+   "世界は広い。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-daro",
+  "pattern": "〜だろ／〜でしょ",
+  "level": "N4",
+  "meaning": "'right?', 'see?' — casual でしょう seeking agreement",
+  "regex": "(だろ|でしょ|(?<!い)っしょ)(?![うー])",
+  "match": [
+   "言っただろ？",
+   "いいでしょ！",
+   "そうっしょ。"
+  ],
+  "no_match": [
+   "一緒に行こう。",
+   "そうでしょう。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-tteno",
+  "pattern": "〜っての",
+  "level": "N3",
+  "meaning": "casual というの (topic or emphatic question)",
+  "regex": "っての(は|が|も|[？?！!、])",
+  "match": [
+   "好きっての、本当？",
+   "何なんだっての！"
+  ],
+  "no_match": [
+   "持っていく。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ttesa",
+  "pattern": "〜ってさ",
+  "level": "N3",
+  "meaning": "hearsay: 'they say ~', 'apparently ~'",
+  "regex": "(?:(?<=[だるくすつむぐ])|(?<=ない))ってさ(?=[ぁあー]?[。！!…」]|$)",
+  "match": [
+   "明日は休みだってさ。"
+  ],
+  "no_match": [
+   "待ってさ、話を聞いて。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-te-kure",
+  "pattern": "〜てくれ",
+  "level": "N4",
+  "meaning": "do ~ (for me) — blunt request",
+  "regex": "(て|で)くれ(?![るたてなまばれ])",
+  "match": [
+   "助けてくれ！",
+   "ちょっと待ってくれよ。"
+  ],
+  "no_match": [
+   "助けてくれた。",
+   "来てくれる？"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ee-adj",
+  "pattern": "すげえ／うるせえ",
+  "level": "N3",
+  "meaning": "rough slurred adjective (すごい → すげえ, うるさい → うるせえ)",
+  "regex": "(すげ|うるせ|やべ|でけ|ちげ|うぜ|きめ|ひで|いて|つえ|こえ|くせ|うめ|はえ|あち|さみ|ねみ|だせ)(え|ぇ|ー)(?![るたてま])",
+  "match": [
+   "すげえ！",
+   "うるせーな。",
+   "やべえぞ。"
+  ],
+  "no_match": [
+   "山を越える。",
+   "すごい。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kayo",
+  "pattern": "〜かよ",
+  "level": "N3",
+  "meaning": "rough rhetorical question: 'seriously, ~?!'",
+  "regex": "かよ(?=[っ]?[。！!？?…」〜ー]|$)",
+  "match": [
+   "後出しかよ！",
+   "マジかよ。"
+  ],
+  "no_match": [
+   "学校に通う。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-ttsu",
+  "pattern": "〜っつー",
+  "level": "N3",
+  "meaning": "rough という／と言った",
+  "regex": "っつ(ー|う|った|って|ーか)",
+  "match": [
+   "何回言わせるっつーの！",
+   "知らねえっつってんだろ。"
+  ],
+  "no_match": [
+   "一つください。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-teku",
+  "pattern": "〜てく",
+  "level": "N4",
+  "meaning": "casual 〜ていく: go and ~, or keep ~ing",
+  "regex": "(?:(?<=[っいしみべけせめれえ見来寝出])て|(?<=[んい])で)(く(?=[。！!？?、…」よね]|$)|った|け(?=[。！!？?、…」よ])|こう|かな[いきくけ])",
+  "match": [
+   "食べてく？",
+   "出てけ！",
+   "持ってった。"
+  ],
+  "no_match": [
+   "来てくれ。",
+   "出てくる。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-kamo",
+  "pattern": "〜かも",
+  "level": "N4",
+  "meaning": "maybe ~ (short for かもしれない)",
+  "regex": "かも(?=[ねなよ]?[。！!？?…」〜ー、]|$)",
+  "match": [
+   "雨が降るかも。",
+   "そうかもね。"
+  ],
+  "no_match": [
+   "かもめが飛ぶ。",
+   "何もかも嫌だ。"
+  ],
+  "casual": true
+ },
+ {
+  "id": "casual-bakka",
+  "pattern": "〜ばっか",
+  "level": "N3",
+  "meaning": "nothing but ~, always ~ (casual ばかり)",
+  "regex": "ばっか(り)?(?!ら)",
+  "match": [
+   "ゲームばっかしてる。",
+   "文句ばっかり言うな。"
+  ],
+  "no_match": [
+   "ばかだな。"
+  ],
+  "casual": true
+ }
+]

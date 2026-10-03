@@ -5,13 +5,16 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 - the line the word was said in, with furigana and the word in bold
 - an English translation (from the episode's English subtitles, or optionally an AI model)
 - an audio clip of the line and a screenshot of the scene
+- the grammar the sentence uses: JLPT N5–N1 patterns and casual speech (〜ちゃう, 〜じゃん), with a one-line meaning
 - reading, pitch accent, meaning, and full dictionary entries: Jitendex and English Wiktionary (English), Japanese Wiktionary (国語), KANJIDIC (each kanji), plus any Yomitan dictionaries you add
 
 Words you already have can also get the new scene added as an extra example sentence.
 
+Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** scores the shows in your library by how much of their dialogue you already know, and lists the words to learn first.
+
 ## How it picks words
 
-It reads the episode's Japanese subtitles, turns every line into dictionary forms, and drops particles, names, numbers and anything already in your decks (spelling variants and kana spellings count as known too). Of what's left, it prefers common words, as ranked by JMdict's frequency bands, and words the episode repeats. For each word it chooses the clearest line: the one with the fewest other unknown words.
+It reads the episode's Japanese subtitles, turns every line into dictionary forms, and drops particles, names, numbers names (a word used with 〜さん or 〜ちゃん in the episode), and anything already in your decks (spelling variants and kana spellings count as known too). Of what's left, it prefers common words, as ranked by JMdict's frequency bands, and words the episode repeats. For each word it chooses the clearest line: the one with the fewest other unknown words.
 
 Only episodes you actually played count, not ones marked as watched (it checks Jellyfin's activity log).
 
@@ -53,11 +56,12 @@ curl -O http://ftp.edrdg.org/pub/Nihongo/kanjidic2.xml.gz
 curl -LO https://github.com/stephenmk/stephenmk.github.io/releases/latest/download/jitendex-yomitan.zip
 curl -Lo kty-ja-ja.zip https://pub-c3d38cca4dc2403b88934c56748f5144.r2.dev/releases/latest/kty-ja-ja.zip
 curl -Lo kty-ja-en.zip https://pub-c3d38cca4dc2403b88934c56748f5144.r2.dev/releases/latest/kty-ja-en.zip
-python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz jitendex-yomitan.zip "Jitendex.org" \
+curl -O http://ftp.edrdg.org/pub/Nihongo/JMnedict.xml.gz
+python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz JMnedict.xml.gz jitendex-yomitan.zip "Jitendex.org" \
     kty-ja-ja.zip "Wiktionary 国語" kty-ja-en.zip "Wiktionary EN"
 ```
 
-The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py`.
+The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py && python3 grammar.py && python3 scores.py`, and `python3 tools/check_grammar.py` checks the grammar patterns.
 
 ## Credits and licences
 
@@ -65,5 +69,6 @@ The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles
 - [Kanjium](https://github.com/mifunetoshiro/kanjium) pitch accent data, CC BY-SA 4.0
 - [Jitendex](https://jitendex.org) © Stephen Kraus, CC BY-SA 4.0 (English definitions; built on JMdict with Tatoeba example sentences)
 - [Japanese](https://ja.wiktionary.org) and [English](https://en.wiktionary.org) Wiktionary via [Kaikki](https://kaikki.org) and [kaikki-to-yomitan](https://github.com/yomidevs/kaikki-to-yomitan), CC BY-SA 4.0
+- [JMnedict](https://www.edrdg.org/enamdict/enamdict_doc.html) © the Electronic Dictionary Research and Development Group, CC BY-SA 4.0 (names filter)
 - [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project) © the Electronic Dictionary Research and Development Group, CC BY-SA 4.0
 - [Janome](https://github.com/mocobeta/janome) (Apache 2.0) with the mecab-ipadic dictionary (NAIST licence)

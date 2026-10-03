@@ -1,0 +1,888 @@
+[
+ {
+  "id": "n3-wake-da",
+  "pattern": "〜わけだ",
+  "level": "N3",
+  "meaning": "that's why ~; no wonder ~; so it means ~",
+  "regex": "(?<=[るただいな])(訳|わけ)(だ|です|か)(?!ら)",
+  "match": [
+   "道理で寒いわけだ。",
+   "だから彼は来なかったわけですね。"
+  ],
+  "no_match": [
+   "そういうわけで、帰ります。"
+  ]
+ },
+ {
+  "id": "n3-wake-ga-nai",
+  "pattern": "〜わけがない",
+  "level": "N3",
+  "meaning": "there's no way ~; it can't be that ~",
+  "regex": "(訳|わけ)が(ない|ありません|ねえ|ねぇ|なかった)",
+  "match": [
+   "あいつが負けるわけがない。",
+   "そんなこと、知るわけがないでしょう。"
+  ],
+  "no_match": [
+   "理由が分からない。"
+  ]
+ },
+ {
+  "id": "n3-wake-dewa-nai",
+  "pattern": "〜わけではない",
+  "level": "N3",
+  "meaning": "it's not (necessarily) that ~",
+  "regex": "(訳|わけ)(では|じゃ)(ない|なかった|ありません|ねえ)",
+  "match": [
+   "嫌いなわけじゃない。",
+   "諦めたわけではありません。"
+  ],
+  "no_match": [
+   "そういうわけで、休みます。"
+  ]
+ },
+ {
+  "id": "n3-wake-ni-wa-ikanai",
+  "pattern": "〜わけにはいかない",
+  "level": "N3",
+  "meaning": "can't (in good conscience) ~",
+  "regex": "(訳|わけ)には(いか|行か)(ない|なかった|ねえ|ず|ん)",
+  "match": [
+   "ここで諦めるわけにはいかない。",
+   "約束だから、休むわけにはいかない。"
+  ],
+  "no_match": [
+   "訳が分からない。"
+  ]
+ },
+ {
+  "id": "n3-hazu-ga-nai",
+  "pattern": "〜はずがない",
+  "level": "N3",
+  "meaning": "can't possibly be ~",
+  "regex": "(はず|筈)が(ない|ありません|ねえ)",
+  "match": [
+   "彼がそんなことを言うはずがない。",
+   "そんなはずがありません。"
+  ],
+  "no_match": [
+   "彼はもう来るはずだ。"
+  ]
+ },
+ {
+  "id": "n3-you-to-suru",
+  "pattern": "〜(よ)うとする",
+  "level": "N3",
+  "meaning": "try to ~; be about to ~",
+  "regex": "(?:よ|お|こ|そ|と|の|も|ぼ|ご|ろ)う(?<!だろう)(?<!でしょう)と(する|して|した|しない|しても|しなかった)",
+  "match": [
+   "家を出ようとしたとき、電話が鳴った。",
+   "彼は何も話そうとしない。"
+  ],
+  "no_match": [
+   "雨だろうとしても行く。"
+  ]
+ },
+ {
+  "id": "n3-uchi-ni",
+  "pattern": "〜うちに",
+  "level": "N3",
+  "meaning": "while ~ (do it before it changes)",
+  "regex": "([るい]|ない|ている|てる|の)(うち|内)に",
+  "match": [
+   "若いうちに旅行したい。",
+   "暗くならないうちに帰ろう。"
+  ],
+  "no_match": [
+   "うちに帰る。"
+  ]
+ },
+ {
+  "id": "n3-te-bakari",
+  "pattern": "〜てばかり",
+  "level": "N3",
+  "meaning": "do nothing but ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)ばかり(いる|い|だ|です|じゃ|で)",
+  "match": [
+   "弟は遊んでばかりいる。",
+   "文句を言ってばかりだ。"
+  ],
+  "no_match": [
+   "今来たばかりだ。"
+  ]
+ },
+ {
+  "id": "n3-sae",
+  "pattern": "〜さえ",
+  "level": "N3",
+  "meaning": "even ~; (if) only ~",
+  "regex": "(?<![まわ])さえ(?!ず|ぎ|る|た|て)",
+  "match": [
+   "子供でさえ知っている。",
+   "名前さえ書けば合格だ。"
+  ],
+  "no_match": [
+   "鳥がさえずる。",
+   "話をさえぎる。"
+  ]
+ },
+ {
+  "id": "n3-to-shite",
+  "pattern": "〜として",
+  "level": "N3",
+  "meaning": "as ~ (in the role / capacity of)",
+  "regex": "(?<![うよ落])として(?!も|い|た|る)",
+  "match": [
+   "医者として働いている。",
+   "趣味として絵を描く。"
+  ],
+  "no_match": [
+   "落としてしまった。",
+   "行こうとしていた。"
+  ]
+ },
+ {
+  "id": "n3-ni-totte",
+  "pattern": "〜にとって",
+  "level": "N3",
+  "meaning": "for ~; from the standpoint of ~",
+  "regex": "にとって",
+  "match": [
+   "私にとって大切な人だ。",
+   "子供にとっては難しい。"
+  ],
+  "no_match": [
+   "手に取って見る。"
+  ]
+ },
+ {
+  "id": "n3-ni-yotte",
+  "pattern": "〜によって",
+  "level": "N3",
+  "meaning": "by ~; depending on ~; due to ~",
+  "regex": "に(よって|よる(?!と)|より(?!も)|因って)",
+  "match": [
+   "人によって考え方が違う。",
+   "地震によって家が壊れた。"
+  ],
+  "no_match": [
+   "夜に寄った。"
+  ]
+ },
+ {
+  "id": "n3-ni-yoru-to",
+  "pattern": "〜によると",
+  "level": "N3",
+  "meaning": "according to ~",
+  "regex": "に(よると|よれば|因ると)",
+  "match": [
+   "天気予報によると、明日は雨だ。",
+   "噂によれば、彼は辞めるらしい。"
+  ],
+  "no_match": [
+   "よると、"
+  ]
+ },
+ {
+  "id": "n3-ni-kurabete",
+  "pattern": "〜にくらべて",
+  "level": "N3",
+  "meaning": "compared with ~",
+  "regex": "に(比|くら)べ(て|ると|たら|れば)",
+  "match": [
+   "去年に比べて今年は暑い。",
+   "兄に比べると弟は静かだ。"
+  ],
+  "no_match": [
+   "背を比べる。"
+  ]
+ },
+ {
+  "id": "n3-ni-kanshite",
+  "pattern": "〜にかんして",
+  "level": "N3",
+  "meaning": "about ~; regarding ~",
+  "regex": "に(関|かん)(して|する|しては|しても)",
+  "match": [
+   "その件に関して質問がある。",
+   "歴史に関する本を読む。"
+  ],
+  "no_match": [
+   "関係がない。"
+  ]
+ },
+ {
+  "id": "n3-ni-taishite",
+  "pattern": "〜にたいして",
+  "level": "N3",
+  "meaning": "toward ~; against ~; in contrast to ~",
+  "regex": "に(対|たい)(して|する|し、)",
+  "match": [
+   "先生に対して失礼だ。",
+   "質問に対する答え。"
+  ],
+  "no_match": [
+   "絶対にしない。"
+  ]
+ },
+ {
+  "id": "n3-ni-chigainai",
+  "pattern": "〜にちがいない",
+  "level": "N3",
+  "meaning": "must be ~; I'm sure ~",
+  "regex": "に(違|ちが)い(ない|ありません|なかった|ねえ)",
+  "match": [
+   "あいつが犯人に違いない。",
+   "きっと疲れているに違いありません。"
+  ],
+  "no_match": [
+   "答えが違います。"
+  ]
+ },
+ {
+  "id": "n3-ni-kimatte-iru",
+  "pattern": "〜にきまっている",
+  "level": "N3",
+  "meaning": "it's bound to be ~; obviously ~",
+  "regex": "に(決|き)まって(いる|る|います|た)",
+  "match": [
+   "そんなの嘘に決まっている。",
+   "あいつが勝つに決まってるよ。"
+  ],
+  "no_match": [
+   "予定が決まった。"
+  ]
+ },
+ {
+  "id": "n3-to-iu-koto-da",
+  "pattern": "〜ということだ",
+  "level": "N3",
+  "meaning": "I hear that ~; that means ~",
+  "regex": "という(こと|事)(だ|です|は|に|。)",
+  "match": [
+   "明日は休みだということだ。",
+   "つまり、もう遅いということですね。"
+  ],
+  "no_match": [
+   "そういうことで。"
+  ]
+ },
+ {
+  "id": "n3-to-iu-no-wa",
+  "pattern": "〜というのは",
+  "level": "N3",
+  "meaning": "what ~ means is; ~ is (defining)",
+  "regex": "というのは",
+  "match": [
+   "友達というのは大切なものだ。",
+   "「積ん読」というのは、本を買って読まないことだ。"
+  ],
+  "no_match": [
+   "と言った。"
+  ]
+ },
+ {
+  "id": "n3-dake-de-naku",
+  "pattern": "〜だけでなく",
+  "level": "N3",
+  "meaning": "not only ~ (but also)",
+  "regex": "だけ(で|じゃ)なく",
+  "match": [
+   "彼は英語だけでなく中国語も話せる。",
+   "勉強だけじゃなく、運動もする。"
+  ],
+  "no_match": [
+   "一つだけです。"
+  ]
+ },
+ {
+  "id": "n3-kuse-ni",
+  "pattern": "〜くせに",
+  "level": "N3",
+  "meaning": "even though ~ (critical, annoyed)",
+  "regex": "くせに",
+  "match": [
+   "知らないくせに偉そうに言うな。",
+   "子供のくせに生意気だ。"
+  ],
+  "no_match": [
+   "変な癖がある。"
+  ]
+ },
+ {
+  "id": "n3-kawari-ni",
+  "pattern": "〜かわりに",
+  "level": "N3",
+  "meaning": "instead of ~; in exchange for ~",
+  "regex": "(代|かわ|替)わ?りに",
+  "match": [
+   "母の代わりに私が行く。",
+   "手伝うかわりに、ご飯をおごって。"
+  ],
+  "no_match": [
+   "変わりはない。"
+  ]
+ },
+ {
+  "id": "n3-tabi-ni",
+  "pattern": "〜たびに",
+  "level": "N3",
+  "meaning": "every time ~",
+  "regex": "([るうくすつぬむぶぐ]|の)(たび|度)に",
+  "match": [
+   "この歌を聞くたびに泣いてしまう。",
+   "旅行のたびにお土産を買う。"
+  ],
+  "no_match": [
+   "旅に出る。"
+  ]
+ },
+ {
+  "id": "n3-ni-tsurete",
+  "pattern": "〜につれて",
+  "level": "N3",
+  "meaning": "as ~ (one change goes with another)",
+  "regex": "につれ(て|、)?",
+  "match": [
+   "時間がたつにつれて、寂しくなった。",
+   "年をとるにつれ、体が弱くなる。"
+  ],
+  "no_match": [
+   "犬を連れて行く。"
+  ]
+ },
+ {
+  "id": "n3-ni-shitagatte",
+  "pattern": "〜にしたがって",
+  "level": "N3",
+  "meaning": "as ~; in accordance with ~",
+  "regex": "に(従|したが)(って|い)",
+  "match": [
+   "ルールに従ってください。",
+   "上に行くにしたがって寒くなる。"
+  ],
+  "no_match": [
+   "したがって、中止です。"
+  ]
+ },
+ {
+  "id": "n3-okage-de",
+  "pattern": "〜おかげで",
+  "level": "N3",
+  "meaning": "thanks to ~",
+  "regex": "(おかげ|お陰)(で|だ|です|さま|様)",
+  "match": [
+   "先生のおかげで合格できた。",
+   "君のお陰だよ。"
+  ],
+  "no_match": [
+   "影が長い。"
+  ]
+ },
+ {
+  "id": "n3-sei-de",
+  "pattern": "〜せいで",
+  "level": "N3",
+  "meaning": "because of ~ (blaming)",
+  "regex": "(る|た|い|の|な)せい(で|だ|です|に)",
+  "match": [
+   "雨のせいで試合が中止になった。",
+   "お前のせいだ！"
+  ],
+  "no_match": [
+   "先生です。",
+   "性格が悪い。"
+  ]
+ },
+ {
+  "id": "n3-dekiru-dake",
+  "pattern": "できるだけ",
+  "level": "N3",
+  "meaning": "as much as possible",
+  "regex": "(できる|出来る)だけ",
+  "match": [
+   "できるだけ早く来て。",
+   "出来るだけ頑張ります。"
+  ],
+  "no_match": [
+   "勉強ができる。"
+  ]
+ },
+ {
+  "id": "n3-hodo-nai",
+  "pattern": "〜ほど〜ない",
+  "level": "N3",
+  "meaning": "not as ~ as ~",
+  "regex": "ほど[^。]{0,10}?(ない|ません|なかった|じゃない)",
+  "match": [
+   "今年は去年ほど寒くない。",
+   "思ったほど難しくなかった。"
+  ],
+  "no_match": [
+   "三日ほど休む。"
+  ]
+ },
+ {
+  "id": "n3-ba-hodo",
+  "pattern": "〜ば〜ほど",
+  "level": "N3",
+  "meaning": "the more ~, the more ~",
+  "regex": "ば[^。]{0,8}?ほど",
+  "match": [
+   "練習すればするほど上手になる。",
+   "考えれば考えるほど分からない。"
+  ],
+  "no_match": [
+   "ほどほどにしろ。"
+  ]
+ },
+ {
+  "id": "n3-tokoro-datta",
+  "pattern": "〜ところだった",
+  "level": "N3",
+  "meaning": "almost ~; was about to ~ (but didn't)",
+  "regex": "([るうくすつぬむぶぐ]|ない)(ところ|所)(だった|でした)",
+  "match": [
+   "もう少しで遅れるところだった。",
+   "危うく死ぬところでした。"
+  ],
+  "no_match": [
+   "ここは静かなところだった。"
+  ]
+ },
+ {
+  "id": "n3-ni-shite-wa",
+  "pattern": "〜にしては",
+  "level": "N3",
+  "meaning": "for ~ (it's surprising given ~)",
+  "regex": "にしては",
+  "match": [
+   "子供にしては上手だ。",
+   "初めてにしてはよくできた。"
+  ],
+  "no_match": [
+   "それにしても暑い。"
+  ]
+ },
+ {
+  "id": "n3-zu-ni",
+  "pattern": "〜ずに",
+  "level": "N3",
+  "meaning": "without ~ing",
+  "regex": "(?<=[わかさたなまらがばせべけめれてねえへげ一-鿿])ずに(?!は|済|す)",
+  "match": [
+   "朝ご飯を食べずに出かけた。",
+   "何も言わずに帰った。"
+  ],
+  "no_match": [
+   "まずは食べよう。"
+  ]
+ },
+ {
+  "id": "n3-beki",
+  "pattern": "〜べき",
+  "level": "N3",
+  "meaning": "should ~; ought to ~",
+  "regex": "べき(だ|です|では|じゃ|。|こと|なの|か|だった)",
+  "match": [
+   "もっと早く言うべきだった。",
+   "約束は守るべきです。"
+  ],
+  "no_match": [
+   "比べる。"
+  ]
+ },
+ {
+  "id": "n3-saserareru",
+  "pattern": "〜させられる",
+  "level": "N3",
+  "meaning": "be made to ~ (against one's will)",
+  "regex": "(?:さ|ら|か|ま|わ|た|が|ば|な)せられ",
+  "match": [
+   "子供の頃、野菜を食べさせられた。",
+   "一時間も待たせられた。"
+  ],
+  "no_match": [
+   "見せられない。"
+  ]
+ },
+ {
+  "id": "n3-garu",
+  "pattern": "〜がる",
+  "level": "N3",
+  "meaning": "(someone else) shows signs of feeling ~",
+  "regex": "(欲し|ほし|怖|こわ|恥ずかし|はずかし|寂し|さびし|痛|いた|寒|さむ|暑|あつ|嫌|いや|面白|おもしろ|不思議|羨まし|うらやまし|嬉し|うれし|悲し|かなし|残念)が(る|って|った|ります|らない|らず|られ)",
+  "match": [
+   "子供が怖がっている。",
+   "彼女は寂しがりますよ。"
+  ],
+  "no_match": [
+   "坂を上がる。"
+  ]
+ },
+ {
+  "id": "n3-te-shouganai",
+  "pattern": "〜てしょうがない",
+  "level": "N3",
+  "meaning": "unbearably ~; can't help ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(しょうが|しようが|仕様が|仕方が|しかた)(ない|ありません|ねえ)",
+  "match": [
+   "眠くてしょうがない。",
+   "気になって仕方がない。"
+  ],
+  "no_match": [
+   "仕方がない。"
+  ]
+ },
+ {
+  "id": "n3-te-tamaranai",
+  "pattern": "〜てたまらない",
+  "level": "N3",
+  "meaning": "extremely ~; can't stand how ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(たま|堪)ら(ない|なかった|ん)",
+  "match": [
+   "暑くてたまらない。",
+   "会いたくてたまらなかった。"
+  ],
+  "no_match": [
+   "水がたまらない。"
+  ]
+ },
+ {
+  "id": "n3-koto-wa-nai",
+  "pattern": "〜ことはない",
+  "level": "N3",
+  "meaning": "there's no need to ~",
+  "regex": "[るうくすつぬむぶぐ](こと|事)は(ない|ありません|ねえ)",
+  "match": [
+   "心配することはない。",
+   "わざわざ来ることはありません。"
+  ],
+  "no_match": [
+   "見たことはある。"
+  ]
+ },
+ {
+  "id": "n3-wa-mochiron",
+  "pattern": "〜はもちろん",
+  "level": "N3",
+  "meaning": "~ goes without saying, (and also ~)",
+  "regex": "は(もちろん|勿論)",
+  "match": [
+   "彼は英語はもちろん、フランス語も話せる。",
+   "週末は勿論、平日も混む。"
+  ],
+  "no_match": [
+   "もちろん行く。"
+  ]
+ },
+ {
+  "id": "n3-ba-ii",
+  "pattern": "〜ばいい",
+  "level": "N3",
+  "meaning": "you just have to ~; should ~",
+  "regex": "ば(いい|良い|よい)(?!か)",
+  "match": [
+   "分からなければ聞けばいい。",
+   "どうすれば良い？"
+  ],
+  "no_match": [
+   "気分がいい。"
+  ]
+ },
+ {
+  "id": "n3-shika-nai",
+  "pattern": "〜しかない",
+  "level": "N3",
+  "meaning": "there's no choice but to ~",
+  "regex": "[るうくすつぬむぶぐ]しか(ない|ありません|ねえ|なかった)",
+  "match": [
+   "もう諦めるしかない。",
+   "やるしかないでしょう。"
+  ],
+  "no_match": [
+   "百円しかない。"
+  ]
+ },
+ {
+  "id": "n3-kiru",
+  "pattern": "〜きる",
+  "level": "N3",
+  "meaning": "do ~ completely, all the way",
+  "regex": "[いきしちにひみりぎじびえけせてねへめれげべ](切|き)(る|った|って|っ|れ(?!い)|ります)",
+  "match": [
+   "マラソンを走りきった。",
+   "もう使い切っちゃった。"
+  ],
+  "no_match": [
+   "肉を切る。",
+   "服を着る。"
+  ]
+ },
+ {
+  "id": "n3-te-irai",
+  "pattern": "〜ていらい",
+  "level": "N3",
+  "meaning": "ever since ~",
+  "regex": "(?:て|(?<=ん)で|(?<=い)で)(以来|いらい)",
+  "match": [
+   "日本に来て以来、ずっと忙しい。",
+   "卒業して以来、会っていない。"
+  ],
+  "no_match": [
+   "依頼を受けた。"
+  ]
+ },
+ {
+  "id": "n3-to-wa-kagiranai",
+  "pattern": "〜とはかぎらない",
+  "level": "N3",
+  "meaning": "not necessarily ~",
+  "regex": "とは(限|かぎ)ら(ない|ず|ねえ)",
+  "match": [
+   "高いものがいいとは限らない。",
+   "金持ちが幸せだとは限らない。"
+  ],
+  "no_match": [
+   "限られた時間。"
+  ]
+ },
+ {
+  "id": "n3-kara-to-itte",
+  "pattern": "〜からといって",
+  "level": "N3",
+  "meaning": "just because ~ (doesn't mean ~)",
+  "regex": "から(といって|と言って|って)(?!も)",
+  "match": [
+   "安いからといって、買うわけじゃない。",
+   "好きだからって、毎日は無理だ。"
+  ],
+  "no_match": [
+   "向こうから言ってきた。"
+  ]
+ },
+ {
+  "id": "n3-wari-ni",
+  "pattern": "〜わりに",
+  "level": "N3",
+  "meaning": "considering ~; for ~ (unexpectedly)",
+  "regex": "(割|わり)に(は)?(?!合)",
+  "match": [
+   "値段のわりにおいしい。",
+   "年の割には若く見える。"
+  ],
+  "no_match": [
+   "割に合わない。"
+  ]
+ },
+ {
+  "id": "n3-ni-oite",
+  "pattern": "〜において",
+  "level": "N3",
+  "meaning": "in ~; at ~ (formal)",
+  "regex": "に(おい|於い)て",
+  "match": [
+   "会議は東京において行われる。",
+   "現代において重要な問題だ。"
+  ],
+  "no_match": [
+   "においがする。"
+  ]
+ },
+ {
+  "id": "n3-mono-dakara",
+  "pattern": "〜ものだから",
+  "level": "N3",
+  "meaning": "because ~ (as an excuse)",
+  "regex": "(もの|もん)(だ|です)から",
+  "match": [
+   "道が混んでいたものだから、遅れた。",
+   "知らなかったもんだから。"
+  ],
+  "no_match": [
+   "これは私のものだ。"
+  ]
+ },
+ {
+  "id": "n3-hanmen",
+  "pattern": "〜反面",
+  "level": "N3",
+  "meaning": "on the other hand ~ (the flip side)",
+  "regex": "(反面|はんめん)",
+  "match": [
+   "便利な反面、危険もある。",
+   "楽しい反面、疲れる。"
+  ],
+  "no_match": [
+   "半分ください。"
+  ]
+ },
+ {
+  "id": "n3-sai-ni",
+  "pattern": "〜際(に)",
+  "level": "N3",
+  "meaning": "when ~; on the occasion of ~",
+  "regex": "(?<![実国交])(際|さい)(に|は|には|、)",
+  "match": [
+   "お帰りの際に声をかけてください。",
+   "入館の際は受付へ。"
+  ],
+  "no_match": [
+   "実際にやってみた。"
+  ]
+ },
+ {
+  "id": "n3-saichuu",
+  "pattern": "〜最中",
+  "level": "N3",
+  "meaning": "right in the middle of ~",
+  "regex": "(最中|さいちゅう)(に|だ|です|で)",
+  "match": [
+   "食事の最中に電話が鳴った。",
+   "今は会議の最中です。"
+  ],
+  "no_match": [
+   "最高だ。"
+  ]
+ },
+ {
+  "id": "n3-toori",
+  "pattern": "〜とおり",
+  "level": "N3",
+  "meaning": "just as ~; in the way ~",
+  "regex": "([るた]|の|[一-鿿])(通り|とおり|どおり)(に|だ|です|。)",
+  "match": [
+   "言ったとおりにして。",
+   "予想通りだ。"
+  ],
+  "no_match": [
+   "大通りを歩く。"
+  ]
+ },
+ {
+  "id": "n3-tatotan",
+  "pattern": "〜たとたん",
+  "level": "N3",
+  "meaning": "the moment ~; as soon as ~",
+  "regex": "(た|だ)(途端|とたん)",
+  "match": [
+   "家を出たとたん、雨が降り出した。",
+   "座った途端に寝てしまった。"
+  ],
+  "no_match": [
+   "途中で帰る。"
+  ]
+ },
+ {
+  "id": "n3-tsuide-ni",
+  "pattern": "〜ついでに",
+  "level": "N3",
+  "meaning": "while (doing ~ anyway)",
+  "regex": "(ついで|序)に",
+  "match": [
+   "買い物のついでに郵便局へ寄った。",
+   "出かけるついでにゴミを出して。"
+  ],
+  "no_match": [
+   "次いで、彼が話した。"
+  ]
+ },
+ {
+  "id": "n3-oki-ni",
+  "pattern": "〜おきに",
+  "level": "N3",
+  "meaning": "every other ~; at intervals of ~",
+  "regex": "(おき|置き)に",
+  "match": [
+   "一日おきに運動する。",
+   "五分置きにバスが来る。"
+  ],
+  "no_match": [
+   "起きにくい。"
+  ]
+ },
+ {
+  "id": "n3-you-na-ki-ga-suru",
+  "pattern": "〜ような気がする",
+  "level": "N3",
+  "meaning": "I have a feeling that ~",
+  "regex": "(よう|様)な気が(する|した|します|しました)",
+  "match": [
+   "どこかで会ったような気がする。",
+   "雨が降るような気がします。"
+  ],
+  "no_match": [
+   "気がついた。"
+  ]
+ },
+ {
+  "id": "n3-sasete-morau",
+  "pattern": "〜させてもらう",
+  "level": "N3",
+  "meaning": "(humbly) be allowed to ~",
+  "regex": "(?:さ|ら|か|ま|わ|た|が|ば|な)せて(もら|いただ|頂)",
+  "match": [
+   "今日は早く帰らせてもらいます。",
+   "ちょっと使わせていただきます。"
+  ],
+  "no_match": [
+   "見せてもらった。"
+  ]
+ },
+ {
+  "id": "n3-to-shitara",
+  "pattern": "〜としたら",
+  "level": "N3",
+  "meaning": "supposing ~; if ~ were the case",
+  "regex": "(?<![うよ])と(したら|すれば|すると)",
+  "match": [
+   "宝くじが当たったとしたら、何をする？",
+   "もし本当だとすれば大変だ。"
+  ],
+  "no_match": [
+   "行こうとしたら、止められた。"
+  ]
+ },
+ {
+  "id": "n3-koto-ni-natte-iru",
+  "pattern": "〜ことになっている",
+  "level": "N3",
+  "meaning": "it's the rule / arranged that ~",
+  "regex": "(こと|事)になって(いる|る|います|ます|いた)",
+  "match": [
+   "ここではタバコを吸ってはいけないことになっている。",
+   "明日は会うことになってます。"
+  ],
+  "no_match": [
+   "ことになった。"
+  ]
+ },
+ {
+  "id": "n3-koto-ni-shite-iru",
+  "pattern": "〜ことにしている",
+  "level": "N3",
+  "meaning": "make it a rule (habit) to ~",
+  "regex": "(こと|事)にして(いる|る|います|ます)",
+  "match": [
+   "毎朝走ることにしている。",
+   "夜は食べないことにしてます。"
+  ],
+  "no_match": [
+   "ことにした。"
+  ]
+ },
+ {
+  "id": "n3-mono-ka",
+  "pattern": "〜ものか",
+  "level": "N3",
+  "meaning": "no way I'll ~! (strong refusal)",
+  "regex": "(る|く|す|か)(もの|もん)か(?!ら)",
+  "match": [
+   "あんな店、二度と行くものか！",
+   "負けるもんか！"
+  ],
+  "no_match": [
+   "何ものかが来た。"
+  ]
+ }
+]

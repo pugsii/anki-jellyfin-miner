@@ -1,7 +1,7 @@
 """Turn a mined word and its scene into note fields, following the configured field mapping.
 
 The mapping (config "fields") says which note field gets each piece; pieces mapped to "" are skipped:
-word, gloss, sentence, translation, sentence_audio, picture, source, definitions, pitch, frequency.
+word, gloss, sentence, translation, sentence_audio, picture, source, grammar, definitions, pitch, frequency.
 """
 import re
 
@@ -21,13 +21,13 @@ def word_fields(word, info, dict_):
 
 
 def scene_fields(scene, audio_format):
-    """The sentence-level pieces: sentence, translation, sentence_audio, picture, source."""
+    """The sentence-level pieces: sentence, translation, sentence_audio, picture, source, grammar."""
     audio = scene.get("audio") or ""
     if audio:
         audio = f'<audio src="{audio}"></audio>' if audio_format == "html" else f"[sound:{audio}]"
     picture = f'<img src="{scene["picture"]}">' if scene.get("picture") else ""
     return {"sentence": scene["sentence"], "translation": scene.get("translation", ""),
-            "sentence_audio": audio, "picture": picture, "source": scene["source"]}
+            "sentence_audio": audio, "picture": picture, "source": scene["source"], "grammar": scene.get("grammar", "")}
 
 
 def new_note_values(pieces, mapping):
@@ -51,9 +51,9 @@ def append_scene(note, scene_pieces, mapping):
     Entries line up by position, empty ones included, as the card template reads them. Check has_room first."""
     current = note[mapping["sentence"]]
     count = len(current.split("<hr>")) if current.strip() else 0
-    for piece in ("sentence", "translation", "sentence_audio", "picture", "source"):
+    for piece in ("sentence", "translation", "sentence_audio", "picture", "source", "grammar"):
         field = mapping.get(piece)
-        if not field:
+        if not field or field not in note:  # e.g. a note type made before the field existed
             continue
         entries = [e for e in note[field].split("<hr>")] if note[field].strip() else []
         if piece == "picture" and len(entries) == 1 and count > 1:
@@ -63,10 +63,13 @@ def append_scene(note, scene_pieces, mapping):
 
 
 if __name__ == "__main__":  # self-check
-    mapping = {"sentence": "S", "translation": "T", "sentence_audio": "A", "picture": "P", "source": ""}
-    note = {"S": "<hr>二つ目", "T": "<hr>second", "A": "<hr>", "P": "illustration"}  # an empty first entry
+    mapping = {"sentence": "S", "translation": "T", "sentence_audio": "A", "picture": "P", "source": "", "grammar": "G"}
+    note = {"S": "<hr>二つ目", "T": "<hr>second", "A": "<hr>", "P": "illustration", "G": ""}  # an empty first entry
     assert has_room(note, "三つ目", mapping, 3) and not has_room(note, "二つ目", mapping, 3)
-    append_scene(note, {"sentence": "三つ目", "translation": "third", "sentence_audio": "a3", "picture": "p3"}, mapping)
-    assert note == {"S": "<hr>二つ目<hr>三つ目", "T": "<hr>second<hr>third", "A": "<hr><hr>a3", "P": "illustration"}, note
+    append_scene(note, {"sentence": "三つ目", "translation": "third", "sentence_audio": "a3", "picture": "p3", "grammar": "g3"}, mapping)
+    assert note == {"S": "<hr>二つ目<hr>三つ目", "T": "<hr>second<hr>third", "A": "<hr><hr>a3", "P": "illustration",
+                    "G": "<hr><hr>g3"}, note
+    append_scene(note, {"sentence": "四つ目", "grammar": "g4"}, {"sentence": "S", "grammar": "Missing"})  # field not on the note
+    assert note["S"].endswith("<hr>四つ目") and "Missing" not in note
     assert not has_room(note, "四つ目", {"sentence": "S"}, 2)
     print("selftest ok")

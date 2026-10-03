@@ -1,7 +1,7 @@
 """The mining pipeline for one episode. No Anki imports, so it runs (and is tested) outside Anki too."""
 import os
 
-from . import analysis, cards, media, subtitles, translate
+from . import analysis, cards, grammar, media, subtitles, translate
 from .jellyfin import ENGLISH, JAPANESE, japanese_audio, label
 
 
@@ -46,11 +46,13 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
             log(f"screenshot failed at {start:.0f}s ({e})")
             picture = None
         minutes, seconds = divmod(int(start), 60)
+        g = cfg["grammar"]
+        notes = grammar.notes_html(grammar.find(text, g["easiest_level"], g["max_per_sentence"])) if g["enabled"] else ""
         return {"sentence": analysis.sentence(analysis.tokens(text), target), "translation": english_line,
-                "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}"}
+                "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}", "grammar": notes}
 
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
-    words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"])
+    words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"], cfg["words"]["skip_names"])
     new = [{"word": w, "word_fields": cards.word_fields(w, words[w], dict_),
             "scene": scene(analysis.best_line(cues, words[w]), w), "tags": tags}
            for w in analysis.pick(words, cfg["words"]["per_episode"])]

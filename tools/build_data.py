@@ -1,10 +1,11 @@
 """Build the compact dictionary data shipped with the add-on (not shipped itself).
 
-    python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz [yomitan.zip "Tab name" ...]
+    python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz JMnedict.xml.gz [yomitan.zip "Tab name" ...]
 
 Sources: JMdict (EDRDG, CC-BY-SA 4.0) http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
          Kanjium pitch accents (CC-BY-SA 4.0) https://github.com/mifunetoshiro/kanjium
          KANJIDIC2 (EDRDG, CC-BY-SA 4.0) http://ftp.edrdg.org/pub/Nihongo/kanjidic2.xml.gz
+         JMnedict (EDRDG, CC-BY-SA 4.0) http://ftp.edrdg.org/pub/Nihongo/JMnedict.xml.gz
          Then any Yomitan dictionaries, each followed by the name its tab gets on cards, e.g.
          Jitendex (CC-BY-SA 4.0) https://github.com/stephenmk/stephenmk.github.io/releases/latest/download/jitendex-yomitan.zip
          Japanese and English Wiktionary via kaikki-to-yomitan (CC-BY-SA 4.0), e.g.
@@ -77,6 +78,18 @@ def build_pitch(path):
     return out
 
 
+def build_names(path, wanted):
+    """Words that are also people's names (JMnedict), among the words the miner can pick."""
+    person = re.compile(r"given name|surname|full name|unclassified")
+    out = set()
+    for _, e in ET.iterparse(gzip.open(path), events=("end",)):
+        if e.tag == "entry":
+            if any(person.search(t.text or "") for t in e.iter("name_type")):
+                out.update(f for f in [k.text for k in e.iter("keb")] + [r.text for r in e.iter("reb")] if f in wanted)
+            e.clear()
+    return out
+
+
 def build_kanjidic(path):
     """{kanji: html}: meanings, on and kun readings, strokes and frequency, as the Kanji tab shows them."""
     out = {}
@@ -104,14 +117,16 @@ if __name__ == "__main__":
     db = sqlite3.connect(path)
     db.executescript("create table entry (form text, readings text, rank int, senses text);"
                      "create table pitch (word text, reading text, accent text);"
-                     "create table kanji (char text primary key, html text);")
+                     "create table kanji (char text primary key, html text);"
+                     "create table name (form text primary key);")
     db.executescript(yomitan.SCHEMA)
     jmdict = build_jmdict(sys.argv[1])
     db.executemany("insert into entry values (?, ?, ?, ?)",
                    ((form, json.dumps(r, ensure_ascii=False), rank_, json.dumps(s, ensure_ascii=False))
                     for form, entries in jmdict.items() for r, rank_, s in entries))
     db.executemany("insert into kanji values (?, ?)", build_kanjidic(sys.argv[3]).items())
-    for zip_path, name in zip(sys.argv[4::2], sys.argv[5::2]):
+    db.executemany("insert into name values (?)", ((f,) for f in build_names(sys.argv[4], set(jmdict))))
+    for zip_path, name in zip(sys.argv[5::2], sys.argv[6::2]):
         rows = yomitan.entries(zip_path, name, set(jmdict))
         yomitan.store(db, name, rows)
         print(name, len(rows), "entries")

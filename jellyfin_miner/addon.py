@@ -5,17 +5,17 @@ import shutil
 import tempfile
 
 from aqt import gui_hooks, mw
-from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QLabel, QListWidget,
-                    QListWidgetItem, QMenu, Qt, QTimer, QVBoxLayout)
+from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QHeaderView, QLabel,
+                    QListWidget, QListWidgetItem, QMenu, Qt, QTableWidget, QTableWidgetItem, QTimer, QVBoxLayout)
 from aqt.utils import showInfo, showWarning, tooltip
 
-from . import cards, mining
+from . import analysis, cards, mining, scores
 from .dictionary import Dictionary
 from .jellyfin import JAPANESE, Jellyfin, label
 
 ADDON = __name__.split(".")[0]  # the add-on's folder name, which Anki keys its config by
 STATE = "jellyfin_miner"  # collection config: {"since": ISO time, "done": [episode ids]}
-NOTE_TYPE_FIELDS = ["Word", "Meaning", "Sentence", "Translation", "Audio", "Picture", "Source", "Definitions"]
+NOTE_TYPE_FIELDS = ["Word", "Meaning", "Sentence", "Translation", "Audio", "Picture", "Source", "Grammar", "Definitions"]
 running = False
 timer = None
 menu = None
@@ -79,6 +79,7 @@ def note_type(c):
     template["qfmt"] = '<div class="word">{{kanji:Word}}</div>'
     template["afmt"] = ('{{FrontSide}}<hr id="answer"><div>{{furigana:Word}}</div><div>{{Meaning}}</div>'
                         '<p>{{furigana:Sentence}}</p><p class="small">{{Translation}}</p>{{Audio}}<div>{{Picture}}</div>'
+                        '<div class="small">{{Grammar}}</div>'
                         '<p class="small">{{Source}}</p>{{#Definitions}}<details><summary>Dictionary</summary>'
                         '{{Definitions}}</details>{{/Definitions}}')
     models.add_template(model, template)
@@ -271,11 +272,86 @@ def pick_episodes():
         run(picker.selected())
 
 
+class ScoreTable(QDialog):
+    """Tools → Jellyfin Miner → Can I watch this yet?: shows by how much of their dialogue you know."""
+
+    def __init__(self, rows):
+        super().__init__(mw)
+        self.setWindowTitle("Can I watch this yet?")
+        self.resize(760, 560)
+        note = QLabel("How much of each show's dialogue you already know, from up to 3 episodes you haven't seen "
+                      "(katakana loanwords and names aside). 90–95% is the sweet spot for learning from a show; "
+                      "75–90% is watchable with effort, and every word you learn raises the score.")
+        note.setWordWrap(True)
+        table = QTableWidget(len(rows), 3)
+        table.setHorizontalHeaderLabels(["Show", "Known", "Learn these first"])
+        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        table.verticalHeader().hide()
+        for r, (name, share, learn) in enumerate(rows):
+            table.setItem(r, 0, QTableWidgetItem(name))
+            known = QTableWidgetItem("no Japanese subtitles" if share is None else f"{share:.0%}")
+            known.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            table.setItem(r, 1, known)
+            table.setItem(r, 2, QTableWidgetItem("、".join(learn)))
+        header = table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        buttons.rejected.connect(self.reject)
+        layout = QVBoxLayout(self)
+        for widget in (note, table, buttons):
+            layout.addWidget(widget)
+
+
+def watch_scores():
+    """Score every show in the background (subtitle downloads are cached), then show the table."""
+    global running
+    c = config()
+    if not configured(c):
+        return showWarning("Set the Jellyfin address, API key and user first: Tools → Add-ons → Jellyfin Miner → Config.")
+    if running:
+        return tooltip("Jellyfin Miner is busy; try again in a minute")
+    known, _ = known_words(c)
+    running = True
+    tooltip("Jellyfin Miner: checking your shows… (the first time takes a few minutes)")
+
+    def work():
+        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
+        user_id = jf.user_id(c["jellyfin"]["user"])
+        ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
+        shows = [s for s in jf.series(user_id) if s["Id"] not in ignored]
+        dict_, cache, rows = Dictionary(), scores.load_cache(), []
+        known_all = analysis.with_readings(known, dict_)
+        for n, show in enumerate(shows, 1):
+            mw.taskman.run_on_main(lambda n=n, name=show["Name"]: tooltip(f"Checking {n}/{len(shows)}: {name}", period=4000))
+            try:
+                counts = scores.series_counts(jf, show, user_id, dict_, cache)
+            except Exception:  # one show failing shouldn't lose the rest
+                counts = None
+            share, learn = scores.score(counts, known_all, dict_) if counts else (None, [])
+            rows.append((show["Name"], share, learn))
+        scores.save_cache(cache)
+        return rows
+
+    def done(future):
+        global running
+        running = False
+        try:
+            rows = future.result()
+        except Exception as e:
+            return showWarning(f"Couldn't check your shows: {e}")
+        rows = sorted((r for r in rows if r[1] is not None), key=lambda r: -r[1]) + [r for r in rows if r[1] is None]
+        ScoreTable(rows).exec()
+
+    mw.taskman.run_in_background(work, done)
+
+
 def on_profile_open():
     global timer, menu
     if menu is None:  # profiles can be reopened; add the menu once
         menu = QMenu("Jellyfin Miner", mw)
-        for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes)):
+        for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes),
+                             ("Can I watch this yet?", watch_scores)):
             item = QAction(text, mw)
             item.triggered.connect(action)
             menu.addAction(item)

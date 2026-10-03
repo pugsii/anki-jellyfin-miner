@@ -1,0 +1,1986 @@
+[
+ {
+  "id": "n1-atteno",
+  "pattern": "〜あっての",
+  "level": "N1",
+  "meaning": "only possible because of ~; ~ is what makes it",
+  "regex": "あっての",
+  "match": [
+   "お客様あっての商売だ。",
+   "君あっての僕なんだよ。"
+  ],
+  "no_match": [
+   "お金があって、のんびり暮らす。"
+  ]
+ },
+ {
+  "id": "n1-ikan",
+  "pattern": "〜いかん",
+  "level": "N1",
+  "meaning": "depending on ~; ~ decides it",
+  "regex": "の(?:いかん|如何)(?:で|に|を|だ|によ)",
+  "match": [
+   "結果のいかんによっては、計画を見直す。",
+   "理由の如何を問わず、遅刻は許さない。"
+  ],
+  "no_match": [
+   "いかん、遅刻だ！",
+   "それはいかんな。"
+  ]
+ },
+ {
+  "id": "n1-ikan-kakawarazu",
+  "pattern": "〜いかんにかかわらず",
+  "level": "N1",
+  "meaning": "regardless of ~",
+  "regex": "(?:いかん|如何)に(?:かかわら|関わら|拘ら|よら)ず",
+  "match": [
+   "理由いかんにかかわらず、返金はできません。"
+  ],
+  "no_match": [
+   "理由にかかわらず、返金はできません。"
+  ]
+ },
+ {
+  "id": "n1-you-ga",
+  "pattern": "〜(よ)うが / 〜(よ)うと",
+  "level": "N1",
+  "meaning": "no matter how / even if ~",
+  "regex": "(?:よ|お|こ|そ|と|も|ろ|ご|ぼ)う(?<!でしょう)(?<!だろう)(?<!ましょう)(?:が|とも?)[、,]",
+  "match": [
+   "誰に何と言われようが、僕は行く。",
+   "雨が降ろうと、試合は続ける。"
+  ],
+  "no_match": [
+   "そうだろうが、俺は知らん。",
+   "行こうよ、早く。"
+  ]
+ },
+ {
+  "id": "n1-you-ga-mai-ga",
+  "pattern": "〜(よ)うが〜まいが",
+  "level": "N1",
+  "meaning": "whether or not ~, it doesn't matter",
+  "regex": "(?:よ|お|こ|そ|と|の|も|ろ|ご|ぼ)う(?:が|と)[^。]{0,12}まい(?:が|と)",
+  "match": [
+   "来ようが来るまいが、関係ない。",
+   "信じようと信じまいと、事実は事実だ。"
+  ],
+  "no_match": [
+   "来ようが、君は行くまい。"
+  ]
+ },
+ {
+  "id": "n1-you-mono-nara",
+  "pattern": "〜(よ)うものなら",
+  "level": "N1",
+  "meaning": "if one were to ~ (something bad would follow)",
+  "regex": "(?:よ|お|こ|そ|と|の|も|ろ|ご|ぼ)うものなら",
+  "match": [
+   "遅刻しようものなら、先生に怒られる。",
+   "あいつに逆らおうものなら、ただじゃ済まないぞ。"
+  ],
+  "no_match": [
+   "できるものなら、やってみろ。"
+  ]
+ },
+ {
+  "id": "n1-you-nimo-nai",
+  "pattern": "〜(よ)うにも〜ない",
+  "level": "N1",
+  "meaning": "even if one wants to ~, one can't",
+  "regex": "(?:よ|お|こ|そ|と|の|も|ろ|ご|ぼ)うにも[^。]{0,10}(?:ない|ません|ねえ|ず)",
+  "match": [
+   "逃げようにも、足が動かない。",
+   "連絡しようにも電話番号が分からない。"
+  ],
+  "no_match": [
+   "行こうにも、まだ時間がある。"
+  ]
+ },
+ {
+  "id": "n1-kagiri-da",
+  "pattern": "〜限りだ",
+  "level": "N1",
+  "meaning": "feel extremely ~ (emotion)",
+  "regex": "(?:しい|い)(?:限り|かぎり)(?:だ|です|である)",
+  "match": [
+   "優勝できて、嬉しい限りだ。",
+   "一人で留守番なんて、心細い限りです。"
+  ],
+  "no_match": [
+   "できる限り、頑張ります。"
+  ]
+ },
+ {
+  "id": "n1-ga-hayai-ka",
+  "pattern": "〜が早いか",
+  "level": "N1",
+  "meaning": "the moment ~ (something else happened)",
+  "regex": "が(?:早|はや)いか(?!ら)",
+  "match": [
+   "ベルが鳴るが早いか、彼は教室を飛び出した。"
+  ],
+  "no_match": [
+   "朝が早いから、もう寝る。"
+  ]
+ },
+ {
+  "id": "n1-gatera",
+  "pattern": "〜がてら",
+  "level": "N1",
+  "meaning": "while doing ~, also (combine two things)",
+  "regex": "がてら",
+  "match": [
+   "散歩がてら、パンを買ってきた。",
+   "駅まで送りがてら話そう。"
+  ],
+  "no_match": [
+   "散歩をしながらパンを買った。"
+  ]
+ },
+ {
+  "id": "n1-katagata",
+  "pattern": "〜かたがた",
+  "level": "N1",
+  "meaning": "with the dual purpose of ~ (formal)",
+  "regex": "(?:お礼|御礼|ご挨拶|挨拶|お見舞い|報告|ご報告|お祝い|お詫び)かたがた",
+  "match": [
+   "お礼かたがた、ご挨拶に伺いました。"
+  ],
+  "no_match": [
+   "ここにいる方々がご挨拶します。"
+  ]
+ },
+ {
+  "id": "n1-katawara",
+  "pattern": "〜かたわら",
+  "level": "N1",
+  "meaning": "while also doing ~ (alongside a main activity)",
+  "regex": "(?:仕事|本業|学業|勉強|研究|育児|家事|会社勤め)の(?:かたわら|傍ら)|[るうくすつむぶぐ](?:かたわら|傍ら)[、,]",
+  "match": [
+   "彼は会社で働くかたわら、小説を書いている。",
+   "仕事の傍ら、絵を描いている。"
+  ],
+  "no_match": [
+   "猫が彼女の傍らに座っている。"
+  ]
+ },
+ {
+  "id": "n1-ga-saigo",
+  "pattern": "〜が最後 / 〜たら最後",
+  "level": "N1",
+  "meaning": "once ~ happens, it's all over",
+  "regex": "(?:が|たら|だら)(?:最後|さいご)(?!の|に|ま|だ|で|は)",
+  "match": [
+   "あいつに見つかったら最後、逃げられない。",
+   "一度眠ったが最後、朝まで起きない。"
+  ],
+  "no_match": [
+   "これが最後のチャンスだ。",
+   "君が最後に来た。"
+  ]
+ },
+ {
+  "id": "n1-kara-aru",
+  "pattern": "〜からある / 〜からする",
+  "level": "N1",
+  "meaning": "a whopping ~ or more (size, weight, price)",
+  "regex": "(?:キロ|トン|メートル|万円|円|kg|ページ|センチ|億)から(?:ある|する|の)",
+  "match": [
+   "百キロからある岩を一人で持ち上げた。",
+   "十万円からする時計を買った。"
+  ],
+  "no_match": [
+   "五キロから始めよう。"
+  ]
+ },
+ {
+  "id": "n1-kirai-ga-aru",
+  "pattern": "〜きらいがある",
+  "level": "N1",
+  "meaning": "has a (bad) tendency to ~",
+  "regex": "(?<!好き)(?:きらい|嫌い)が(?:ある|あります|あった)",
+  "match": [
+   "彼は物事を大げさに言うきらいがある。"
+  ],
+  "no_match": [
+   "子供は好き嫌いがある。"
+  ]
+ },
+ {
+  "id": "n1-kiwamaru",
+  "pattern": "〜極まる / 〜極まりない",
+  "level": "N1",
+  "meaning": "extremely ~ (usually negative)",
+  "regex": "(?:極|きわ)ま(?:りない|りありません|りねえ|る(?!と)|った|れり)",
+  "match": [
+   "失礼極まりない態度だ。",
+   "危険極まる行為はやめろ。"
+  ],
+  "no_match": [
+   "話が決まった。"
+  ]
+ },
+ {
+  "id": "n1-gotoki",
+  "pattern": "〜ごとき / 〜ごとく / 〜ごとし",
+  "level": "N1",
+  "meaning": "like ~; such as ~ (often belittling)",
+  "regex": "(?<!こと)(?:ごと|如)(?:く|き|し)(?![ゃゅょ])",
+  "match": [
+   "お前ごときに負けるものか。",
+   "嵐の如く去っていった。"
+  ],
+  "no_match": [
+   "ことごとく失敗した。",
+   "三日ごとに掃除する。"
+  ]
+ },
+ {
+  "id": "n1-koto-tote",
+  "pattern": "〜こととて",
+  "level": "N1",
+  "meaning": "because ~ (apologetic excuse)",
+  "regex": "こととて",
+  "match": [
+   "慣れぬこととて、失礼しました。"
+  ],
+  "no_match": [
+   "そのことと、これは別だ。"
+  ]
+ },
+ {
+  "id": "n1-koto-nashi-ni",
+  "pattern": "〜ことなしに",
+  "level": "N1",
+  "meaning": "without doing ~",
+  "regex": "ことなしに",
+  "match": [
+   "努力することなしに、成功はない。"
+  ],
+  "no_match": [
+   "何事もなしに一日が過ぎた。"
+  ]
+ },
+ {
+  "id": "n1-shimatsu-da",
+  "pattern": "〜始末だ",
+  "level": "N1",
+  "meaning": "end up with ~ (a bad result)",
+  "regex": "[るたいすくつむぶぐう](?:始末|しまつ)(?:だ|です|で|である)",
+  "match": [
+   "遊んでばかりで、ついには退学する始末だ。",
+   "泣き出す始末で、どうしようもなかった。"
+  ],
+  "no_match": [
+   "ゴミの始末をする。"
+  ]
+ },
+ {
+  "id": "n1-zukume",
+  "pattern": "〜ずくめ",
+  "level": "N1",
+  "meaning": "full of ~; nothing but ~",
+  "regex": "(?:ずく|尽く)め",
+  "match": [
+   "今年はいいことずくめだった。",
+   "黒ずくめの男が現れた。"
+  ],
+  "no_match": [
+   "いいことがたくさんあった。"
+  ]
+ },
+ {
+  "id": "n1-zu-ni-wa-okanai",
+  "pattern": "〜ずにはおかない",
+  "level": "N1",
+  "meaning": "will definitely ~; can't help but cause ~",
+  "regex": "(?:ずに|ないで)は(?:おか|置か)(?:ない|ぬ|なかった|れない)|ずにはいない",
+  "match": [
+   "この映画は観客を感動させずにはおかない。",
+   "あいつの嘘を暴かずにはおかないぞ。"
+  ],
+  "no_match": [
+   "荷物を置かずに帰った。"
+  ]
+ },
+ {
+  "id": "n1-zu-ni-wa-sumanai",
+  "pattern": "〜ずにはすまない",
+  "level": "N1",
+  "meaning": "must ~; won't be let off without ~",
+  "regex": "(?:ずに|ないで)は(?:すま|済ま)(?:ない|ぬ|されない)",
+  "match": [
+   "迷惑をかけた以上、謝らずにはすまない。"
+  ],
+  "no_match": [
+   "謝らずに済んだ。"
+  ]
+ },
+ {
+  "id": "n1-de-wa-sumanai",
+  "pattern": "〜ではすまない",
+  "level": "N1",
+  "meaning": "won't end with just ~; ~ isn't enough",
+  "regex": "(?:では|じゃ)(?:すま|済ま)(?:ない|されない|されません|ねえ|ねぇ|ん)",
+  "match": [
+   "今度ばかりは、謝るだけではすまないぞ。",
+   "冗談じゃ済まねえぞ。"
+  ],
+  "no_match": [
+   "これで済むなら安いものだ。"
+  ]
+ },
+ {
+  "id": "n1-sura",
+  "pattern": "〜すら",
+  "level": "N1",
+  "meaning": "even ~ (stressing an extreme case)",
+  "regex": "(?<!すら)(?<![すこ])すら(?!す|な(?:い|かっ))",
+  "match": [
+   "そんなこと、子供ですら知っている。",
+   "名前すら覚えていない。"
+  ],
+  "no_match": [
+   "すらすらと答えた。",
+   "床をこすらないで。"
+  ]
+ },
+ {
+  "id": "n1-sobakara",
+  "pattern": "〜そばから",
+  "level": "N1",
+  "meaning": "no sooner ~ than (again and again)",
+  "regex": "[るた](?:そば|側)から",
+  "match": [
+   "片付けるそばから、子供が散らかす。",
+   "聞いたそばから忘れてしまう。"
+  ],
+  "no_match": [
+   "駅のそばから電話した。"
+  ]
+ },
+ {
+  "id": "n1-tada-nomi",
+  "pattern": "ただ〜のみ",
+  "level": "N1",
+  "meaning": "only ~; nothing but ~",
+  "regex": "ただ[^。]{1,15}のみ(?!ならず)",
+  "match": [
+   "ただ祈るのみだ。",
+   "ただ前に進むのみ。"
+  ],
+  "no_match": [
+   "ただ飲みたいだけだ。"
+  ]
+ },
+ {
+  "id": "n1-nomi-narazu",
+  "pattern": "〜のみならず",
+  "level": "N1",
+  "meaning": "not only ~ (but also)",
+  "regex": "のみならず",
+  "match": [
+   "彼は日本のみならず、海外でも有名だ。"
+  ],
+  "no_match": [
+   "私のみ知っている。"
+  ]
+ },
+ {
+  "id": "n1-hitori-nomi",
+  "pattern": "ひとり〜のみならず",
+  "level": "N1",
+  "meaning": "not just ~ alone (a wider issue)",
+  "regex": "ひとり[^。]{1,10}(?:のみならず|だけでなく|だけではな)",
+  "match": [
+   "これはひとり日本のみならず、世界の問題だ。"
+  ],
+  "no_match": [
+   "ひとりで来たのは君だけだ。"
+  ]
+ },
+ {
+  "id": "n1-dani",
+  "pattern": "〜だに",
+  "level": "N1",
+  "meaning": "even just ~ (thinking/hearing it)",
+  "regex": "(?:想像|夢|微動|考える|聞く|思う|一顧|口にする)(?:する|に)?だに",
+  "match": [
+   "想像するだにおそろしい。",
+   "そんなこと夢にだに思わなかった。"
+  ],
+  "no_match": [
+   "想像だけで楽しい。"
+  ]
+ },
+ {
+  "id": "n1-taritomo",
+  "pattern": "〜たりとも",
+  "level": "N1",
+  "meaning": "not even one ~",
+  "regex": "たりとも",
+  "match": [
+   "一円たりとも無駄にはできない。",
+   "一瞬たりとも気を抜くな。"
+  ],
+  "no_match": [
+   "行ったり来たりした。"
+  ]
+ },
+ {
+  "id": "n1-taru",
+  "pattern": "〜たる",
+  "level": "N1",
+  "meaning": "as one who is ~ (should act fittingly)",
+  "regex": "[一-鿿](?:たる|たる以上)(?:者|もの|べき|身|人|以上)",
+  "match": [
+   "教師たる者、生徒の手本であるべきだ。",
+   "王たるもの、民を守らねばならぬ。"
+  ],
+  "no_match": [
+   "日の当たるところに置く。"
+  ]
+ },
+ {
+  "id": "n1-tsu-tsu",
+  "pattern": "〜つ〜つ",
+  "level": "N1",
+  "meaning": "back and forth; alternately ~ and ~",
+  "regex": "(?:持ちつ持たれつ|抜きつ抜かれつ|行きつ戻りつ|追いつ追われつ|浮きつ沈みつ|差しつ差されつ|押しつ押されつ|くんずほぐれつ)",
+  "match": [
+   "持ちつ持たれつでいこうぜ。",
+   "行きつ戻りつしながら考えた。"
+  ],
+  "no_match": [
+   "行きながら考えた。"
+  ]
+ },
+ {
+  "id": "n1-de-are",
+  "pattern": "〜であれ",
+  "level": "N1",
+  "meaning": "whatever/whoever ~; even if it's ~",
+  "regex": "であれ(?!ば)",
+  "match": [
+   "理由が何であれ、暴力はいけない。",
+   "子供であれ大人であれ、ルールは守れ。"
+  ],
+  "no_match": [
+   "学生であれば、割引があります。"
+  ]
+ },
+ {
+  "id": "n1-de-arou-to",
+  "pattern": "〜であろうと",
+  "level": "N1",
+  "meaning": "even if it is ~; whatever ~ may be",
+  "regex": "であろう(?:と|が)",
+  "match": [
+   "相手が誰であろうと、手加減はしない。"
+  ],
+  "no_match": [
+   "それは事実であろう。"
+  ]
+ },
+ {
+  "id": "n1-te-kara-to-iu-mono",
+  "pattern": "〜てからというもの",
+  "level": "N1",
+  "meaning": "ever since ~ (a lasting change)",
+  "regex": "[てで]からというもの",
+  "match": [
+   "彼女に出会ってからというもの、毎日が楽しい。"
+  ],
+  "no_match": [
+   "帰ってから、ご飯を食べる。"
+  ]
+ },
+ {
+  "id": "n1-de-nakute-nan-darou",
+  "pattern": "〜でなくてなんだろう",
+  "level": "N1",
+  "meaning": "if this isn't ~, what is? (it truly is ~)",
+  "regex": "でなくて(?:なん|何)(?:だろう|であろう|でしょう)",
+  "match": [
+   "これが愛でなくてなんだろう。"
+  ],
+  "no_match": [
+   "それは愛でなくて、ただの同情だ。"
+  ]
+ },
+ {
+  "id": "n1-dewa-arumaishi",
+  "pattern": "〜ではあるまいし",
+  "level": "N1",
+  "meaning": "it's not as if ~ (so don't act like it)",
+  "regex": "(?:では|じゃ)あるまいし",
+  "match": [
+   "子供じゃあるまいし、一人で行けるだろう。"
+  ],
+  "no_match": [
+   "子供ではないし、一人で行ける。"
+  ]
+ },
+ {
+  "id": "n1-te-yamanai",
+  "pattern": "〜てやまない",
+  "level": "N1",
+  "meaning": "never stop ~ing; ~ deeply",
+  "regex": "[てで](?:やま|止ま|已ま)(?:ない|ず|ぬ)",
+  "match": [
+   "彼の成功を祈ってやまない。",
+   "平和を願ってやまない。"
+  ],
+  "no_match": [
+   "雨がなかなか止まない。"
+  ]
+ },
+ {
+  "id": "n1-te-yamanai-2",
+  "pattern": "〜てやみません",
+  "level": "N1",
+  "meaning": "(polite) wish/hope ~ wholeheartedly",
+  "regex": "[てで]やみません",
+  "match": [
+   "ご活躍を祈ってやみません。"
+  ],
+  "no_match": [
+   "雨がやみません。"
+  ]
+ },
+ {
+  "id": "n1-to-aimatte",
+  "pattern": "〜と相まって",
+  "level": "N1",
+  "meaning": "combined with ~; together with ~",
+  "regex": "と(?:相|あい)(?:まって|俟って|まり)",
+  "match": [
+   "好天と相まって、大勢の客が来た。"
+  ],
+  "no_match": [
+   "相手と待って、一緒に行った。"
+  ]
+ },
+ {
+  "id": "n1-to-atte",
+  "pattern": "〜とあって",
+  "level": "N1",
+  "meaning": "because it's (the special occasion) ~",
+  "regex": "(?:休み|連休|週末|初日|最終日|年末|祭り|人気|有名人|話題|日曜|土曜|祝日|お正月|正月|夏休み|大型連休)とあって",
+  "match": [
+   "連休とあって、どこも混んでいる。"
+  ],
+  "no_match": [
+   "友達とあって、話をした。"
+  ]
+ },
+ {
+  "id": "n1-to-areba",
+  "pattern": "〜とあれば",
+  "level": "N1",
+  "meaning": "if it's (for) ~, then (I'd do anything)",
+  "regex": "とあれば",
+  "match": [
+   "君の頼みとあれば、断れないな。",
+   "仕事とあれば、どこへでも行く。"
+  ],
+  "no_match": [
+   "何かあれば電話して。"
+  ]
+ },
+ {
+  "id": "n1-to-ii-to-ii",
+  "pattern": "〜といい〜といい",
+  "level": "N1",
+  "meaning": "both ~ and ~ (in every respect)",
+  "regex": "といい[、,]?[^。]{1,15}といい",
+  "match": [
+   "顔といい性格といい、完璧だ。"
+  ],
+  "no_match": [
+   "それといいことがあった。"
+  ]
+ },
+ {
+  "id": "n1-to-itta-tokoro",
+  "pattern": "〜といったところだ",
+  "level": "N1",
+  "meaning": "about ~; at most ~",
+  "regex": "とい(?:った|う)ところ(?:だ|です|か)(?!ら)",
+  "match": [
+   "参加者は五十人といったところだ。",
+   "まあ、そんなところといったところか。"
+  ],
+  "no_match": [
+   "東京というところは賑やかだ。"
+  ]
+ },
+ {
+  "id": "n1-to-iedomo",
+  "pattern": "〜といえども",
+  "level": "N1",
+  "meaning": "even though ~; even if it's ~",
+  "regex": "と(?:言|い)えども",
+  "match": [
+   "子供といえども、許されない。",
+   "王様と言えども、法には従う。"
+  ],
+  "no_match": [
+   "そうと言えば、昨日ね。"
+  ]
+ },
+ {
+  "id": "n1-to-ittara-nai",
+  "pattern": "〜といったらない",
+  "level": "N1",
+  "meaning": "extremely ~; ~ beyond words",
+  "regex": "(?:といったら|と言ったら|ったら)(?:ない|ありゃしない|ありはしない|ありません)",
+  "match": [
+   "あの時の恥ずかしさといったらない。",
+   "うるさいったらありゃしない。"
+  ],
+  "no_match": [
+   "彼と言ったら、山田くんだ。"
+  ]
+ },
+ {
+  "id": "n1-to-omoikiya",
+  "pattern": "〜と思いきや",
+  "level": "N1",
+  "meaning": "I thought ~, but unexpectedly",
+  "regex": "と(?:思|おも)いきや",
+  "match": [
+   "晴れると思いきや、雨が降ってきた。"
+  ],
+  "no_match": [
+   "思い切って告白した。"
+  ]
+ },
+ {
+  "id": "n1-to-kitara",
+  "pattern": "〜ときたら",
+  "level": "N1",
+  "meaning": "speaking of ~ (exasperated)",
+  "regex": "(?<!っ)ときたら",
+  "match": [
+   "うちの息子ときたら、勉強もしないで遊んでばかり。"
+  ],
+  "no_match": [
+   "帰ってきたら手を洗いなさい。"
+  ]
+ },
+ {
+  "id": "n1-to-shita-tokoro-de",
+  "pattern": "〜としたところで / 〜にしたところで",
+  "level": "N1",
+  "meaning": "even for ~; even if (it's) ~",
+  "regex": "[とに]したところで",
+  "match": [
+   "私にしたところで、何もできない。",
+   "今から急いだとしたところで、間に合わない。"
+  ],
+  "no_match": [
+   "食事をしたところで電話が鳴った。"
+  ]
+ },
+ {
+  "id": "n1-to-bakari-ni",
+  "pattern": "〜とばかりに",
+  "level": "N1",
+  "meaning": "as if to say ~",
+  "regex": "とばかりに",
+  "match": [
+   "チャンスとばかりに攻め込んだ。"
+  ],
+  "no_match": [
+   "彼とばかり話している。"
+  ]
+ },
+ {
+  "id": "n1-to-mo-naku",
+  "pattern": "〜ともなく / 〜ともなしに",
+  "level": "N1",
+  "meaning": "without meaning to ~; somehow",
+  "regex": "(?:[るうく]|誰|どこ|何処|いつ|どこから)ともな(?:く|しに)",
+  "match": [
+   "見るともなく窓の外を見ていた。",
+   "どこからともなく音楽が聞こえる。"
+  ],
+  "no_match": [
+   "何ともないよ。"
+  ]
+ },
+ {
+  "id": "n1-to-mo-naru-to",
+  "pattern": "〜ともなると / 〜ともなれば",
+  "level": "N1",
+  "meaning": "once it becomes ~; when it comes to ~",
+  "regex": "とも(?:なると|なれば|なりゃ)",
+  "match": [
+   "大学生ともなると、自分で考えなければならない。",
+   "社長ともなれば、忙しいだろう。"
+  ],
+  "no_match": [
+   "友達となると話は別だ。"
+  ]
+ },
+ {
+  "id": "n1-tomo-arou",
+  "pattern": "〜ともあろう",
+  "level": "N1",
+  "meaning": "for someone (of standing) like ~",
+  "regex": "ともあろう(?:者|もの|人|お方|方)",
+  "match": [
+   "教師ともあろう者が、そんなことを言うなんて。"
+  ],
+  "no_match": [
+   "そうであろう者もいる。"
+  ]
+ },
+ {
+  "id": "n1-to-wa-ie",
+  "pattern": "〜とはいえ",
+  "level": "N1",
+  "meaning": "although ~; that said",
+  "regex": "とは(?:いえ|言え)",
+  "match": [
+   "春とはいえ、まだ寒い。",
+   "幾ら親戚とはいえ、私は先輩よ。"
+  ],
+  "no_match": [
+   "それとは言わずに、帰った。"
+  ]
+ },
+ {
+  "id": "n1-nai-made-mo",
+  "pattern": "〜ないまでも",
+  "level": "N1",
+  "meaning": "even if not (quite) ~, at least",
+  "regex": "ないまでも",
+  "match": [
+   "毎日とは言わないまでも、週に一度は電話して。"
+  ],
+  "no_match": [
+   "来ないまで待つ。"
+  ]
+ },
+ {
+  "id": "n1-nai-mono-demo-nai",
+  "pattern": "〜ないものでもない",
+  "level": "N1",
+  "meaning": "it's not impossible that ~; might ~",
+  "regex": "ないもの(?:でも|ではない|でもな)",
+  "match": [
+   "条件次第では、引き受けないものでもない。"
+  ],
+  "no_match": [
+   "そんなもの、いらないものだ。"
+  ]
+ },
+ {
+  "id": "n1-nagara-ni",
+  "pattern": "〜ながらに / 〜ながらの",
+  "level": "N1",
+  "meaning": "while still ~; as it has been since ~",
+  "regex": "(?:涙|生まれ|昔|居|いな)ながら(?:に|の)",
+  "match": [
+   "彼女は涙ながらに語った。",
+   "昔ながらの町並みが残る。"
+  ],
+  "no_match": [
+   "歩きながら話そう。"
+  ]
+ },
+ {
+  "id": "n1-sanagara",
+  "pattern": "〜さながら",
+  "level": "N1",
+  "meaning": "just like ~",
+  "regex": "さながら",
+  "match": [
+   "まるで映画さながらの光景だった。"
+  ],
+  "no_match": [
+   "しかしながら、無理だ。"
+  ]
+ },
+ {
+  "id": "n1-nakushite-wa",
+  "pattern": "〜なくして(は)",
+  "level": "N1",
+  "meaning": "without ~ (it can't happen)",
+  "regex": "(?<![をがもくいて気])なくして(?:は)?[^。]{0,15}(?:ない|ません|ず|得ない|えない)",
+  "match": [
+   "努力なくして成功はありえない。",
+   "君の協力なくしては、勝てない。"
+  ],
+  "no_match": [
+   "鍵をなくしてしまった。",
+   "やる気なくしてない？"
+  ]
+ },
+ {
+  "id": "n1-nashi-ni-wa",
+  "pattern": "〜なしには",
+  "level": "N1",
+  "meaning": "without ~ (impossible)",
+  "regex": "(?<!気)なしには",
+  "match": [
+   "涙なしには見られない映画だ。"
+  ],
+  "no_match": [
+   "話なしに帰った。"
+  ]
+ },
+ {
+  "id": "n1-narade-wa",
+  "pattern": "〜ならでは",
+  "level": "N1",
+  "meaning": "unique to ~; only ~ can",
+  "regex": "ならでは",
+  "match": [
+   "京都ならではの味だ。"
+  ],
+  "no_match": [
+   "京都ならば行きたい。"
+  ]
+ },
+ {
+  "id": "n1-nara-iza-shirazu",
+  "pattern": "〜ならいざしらず / 〜はいざしらず",
+  "level": "N1",
+  "meaning": "~ is one thing, but (here it's different)",
+  "regex": "(?:は|なら)いざ(?:知|し)らず",
+  "match": [
+   "子供ならいざしらず、大人がそんなことをするとは。"
+  ],
+  "no_match": [
+   "いざという時に知らない。"
+  ]
+ },
+ {
+  "id": "n1-mada-shimo",
+  "pattern": "〜ならまだしも",
+  "level": "N1",
+  "meaning": "~ would be one thing, but",
+  "regex": "(?:なら|は|ならば)まだしも",
+  "match": [
+   "一度ならまだしも、三度も遅刻するとは。"
+  ],
+  "no_match": [
+   "まだしっかりしていない。"
+  ]
+ },
+ {
+  "id": "n1-nari",
+  "pattern": "〜なり",
+  "level": "N1",
+  "meaning": "as soon as ~; the moment ~",
+  "regex": "(?<![にく])(?<=[るた])なり[、,]",
+  "match": [
+   "彼は家に帰るなり、寝てしまった。",
+   "顔を見るなり、泣き出した。"
+  ],
+  "no_match": [
+   "大人になり、仕事を始めた。",
+   "暗くなり、星が見えた。"
+  ]
+ },
+ {
+  "id": "n1-nari-nari",
+  "pattern": "〜なり〜なり",
+  "level": "N1",
+  "meaning": "either ~ or ~ (pick something)",
+  "regex": "(?<![にく])なり[^、。]{1,15}?(?<![にく])なり(?:して|しろ|すれ|しなさい|[、,]|好き|勝手)",
+  "match": [
+   "電話するなりメールするなりして連絡しなさい。",
+   "寝るなり食べるなり好きにしろ。"
+  ],
+  "no_match": [
+   "大人になり、強くなり、偉くなった。"
+  ]
+ },
+ {
+  "id": "n1-nari-ni",
+  "pattern": "〜なりに / 〜なりの",
+  "level": "N1",
+  "meaning": "in one's own way; as befits ~",
+  "regex": "(?:私|俺|僕|自分|子供|彼|彼女|あなた|あいつ|君|お前|素人|わたし|あたし|おれ|ぼく|初心者|学生)なり(?:に|の)",
+  "match": [
+   "私なりに頑張ったつもりだ。",
+   "子供には子供なりの考えがある。"
+  ],
+  "no_match": [
+   "私になりたい。"
+  ]
+ },
+ {
+  "id": "n1-nari-tomo",
+  "pattern": "〜なりとも",
+  "level": "N1",
+  "meaning": "even just a little ~",
+  "regex": "なりとも",
+  "match": [
+   "少しなりとも力になりたい。"
+  ],
+  "no_match": [
+   "友達になりました。"
+  ]
+ },
+ {
+  "id": "n1-ni-atai",
+  "pattern": "〜に値する",
+  "level": "N1",
+  "meaning": "worth ~; deserving of ~",
+  "regex": "に(?:値|あたい)(?:する|しない|します|しません|した)",
+  "match": [
+   "彼の勇気は称賛に値する。",
+   "読むに値しない本だ。"
+  ],
+  "no_match": [
+   "値段が高すぎる。"
+  ]
+ },
+ {
+  "id": "n1-ni-atte",
+  "pattern": "〜にあって",
+  "level": "N1",
+  "meaning": "in (the situation/time) ~",
+  "regex": "(?:状況|時代|中|立場|逆境|状態|最中|環境|時期|社会|世|場|地位)にあって",
+  "match": [
+   "厳しい状況にあって、彼は冷静だった。"
+  ],
+  "no_match": [
+   "駅で友達にあって話した。"
+  ]
+ },
+ {
+  "id": "n1-ni-itaru",
+  "pattern": "〜に至る",
+  "level": "N1",
+  "meaning": "to reach ~; to come to ~",
+  "regex": "に至(?:る|り|った|らず|らない|らなかった)(?!まで)",
+  "match": [
+   "事件は解決に至らなかった。",
+   "結論に至るのは難しい。"
+  ],
+  "no_match": [
+   "家にいたって何も変わらない。"
+  ]
+ },
+ {
+  "id": "n1-ni-itatte",
+  "pattern": "〜に至って",
+  "level": "N1",
+  "meaning": "only when it reached ~; at the point of ~",
+  "regex": "に至って(?!は)",
+  "match": [
+   "事態がここに至って、ようやく気づいた。"
+  ],
+  "no_match": [
+   "今になって、ようやく気づいた。"
+  ]
+ },
+ {
+  "id": "n1-ni-itatte-wa",
+  "pattern": "〜に至っては",
+  "level": "N1",
+  "meaning": "as for ~ (the most extreme case)",
+  "regex": "に至っては",
+  "match": [
+   "弟に至っては、名前も覚えていない。"
+  ],
+  "no_match": [
+   "弟については、知らない。"
+  ]
+ },
+ {
+  "id": "n1-ni-itaru-made",
+  "pattern": "〜に至るまで",
+  "level": "N1",
+  "meaning": "even down to ~; all the way to ~",
+  "regex": "に至るまで",
+  "match": [
+   "服から靴に至るまで、全部ブランド品だ。"
+  ],
+  "no_match": [
+   "駅に着くまで待って。"
+  ]
+ },
+ {
+  "id": "n1-ni-kakawaru",
+  "pattern": "〜にかかわる",
+  "level": "N1",
+  "meaning": "affecting ~; a matter of ~",
+  "regex": "(?:命|名誉|沽券|生死|存亡|将来|人命|信用|プライド)に(?:関|かか|係)わる",
+  "match": [
+   "命にかかわる問題だ。",
+   "それは俺の沽券に関わる。"
+  ],
+  "no_match": [
+   "彼とは関わりたくない。"
+  ]
+ },
+ {
+  "id": "n1-ni-kataku-nai",
+  "pattern": "〜にかたくない",
+  "level": "N1",
+  "meaning": "easy to ~ (imagine/understand)",
+  "regex": "に(?:難|かた)くない",
+  "match": [
+   "彼女の悲しみは想像に難くない。"
+  ],
+  "no_match": [
+   "それは難しくない。"
+  ]
+ },
+ {
+  "id": "n1-ni-sokushite",
+  "pattern": "〜に即して",
+  "level": "N1",
+  "meaning": "in accordance with ~; based on ~",
+  "regex": "に即(?:して|した|し)",
+  "match": [
+   "事実に即して話してください。"
+  ],
+  "no_match": [
+   "すぐに即答した。"
+  ]
+ },
+ {
+  "id": "n1-ni-nottotte",
+  "pattern": "〜にのっとって",
+  "level": "N1",
+  "meaning": "in line with ~ (rules, tradition)",
+  "regex": "に(?:則|のっと)(?:って|り|った)",
+  "match": [
+   "伝統に則って式を行う。"
+  ],
+  "no_match": [
+   "船に乗って行った。"
+  ]
+ },
+ {
+  "id": "n1-ni-taenai",
+  "pattern": "〜にたえない / 〜にたえる",
+  "level": "N1",
+  "meaning": "unbearable to ~ / worth ~ing",
+  "regex": "(?:見る|聞く|読む|鑑賞|感謝の念|感謝|遺憾|慙愧|批評|任)に(?:堪|耐|た)え(?:ない|ません|る|うる|得る|られ)",
+  "match": [
+   "見るに堪えない映画だった。",
+   "感謝にたえません。"
+  ],
+  "no_match": [
+   "痛みに耐えた。"
+  ]
+ },
+ {
+  "id": "n1-ni-taru",
+  "pattern": "〜に足る",
+  "level": "N1",
+  "meaning": "worthy of ~; enough to ~",
+  "regex": "に(?:足|た)(?:る|りる|りない|らない|らぬ|りぬ)(?![^ぁ-ん]*?(?:よう))",
+  "match": [
+   "彼は信頼するに足る人物だ。",
+   "取るに足らない問題だ。"
+  ],
+  "no_match": [
+   "お金が足りない。"
+  ]
+ },
+ {
+  "id": "n1-ni-todomarazu",
+  "pattern": "〜にとどまらず",
+  "level": "N1",
+  "meaning": "not limited to ~; goes beyond ~",
+  "regex": "に(?:とど|止|留)まら(?:ず|ない)",
+  "match": [
+   "被害は町にとどまらず、県全体に広がった。"
+  ],
+  "no_match": [
+   "その場にとどまった。"
+  ]
+ },
+ {
+  "id": "n1-ni-hikikae",
+  "pattern": "〜にひきかえ",
+  "level": "N1",
+  "meaning": "in contrast to ~",
+  "regex": "に(?:ひきかえ|引き換え|引きかえ|引換え)(?!て|る)",
+  "match": [
+   "兄にひきかえ、弟は勉強好きだ。"
+  ],
+  "no_match": [
+   "チケットを景品と引き換えた。"
+  ]
+ },
+ {
+  "id": "n1-ni-mo-mashite",
+  "pattern": "〜にもまして",
+  "level": "N1",
+  "meaning": "even more than ~",
+  "regex": "にも(?:増|ま)して",
+  "match": [
+   "以前にもまして、きれいになった。"
+  ],
+  "no_match": [
+   "にも関わらず来た。"
+  ]
+ },
+ {
+  "id": "n1-ni-shite",
+  "pattern": "〜にして",
+  "level": "N1",
+  "meaning": "only at/in ~; in just ~",
+  "regex": "(?:一瞬|一夜|一日|一度|一朝|一代|[0-9０-９一二三四五六七八九十百]+(?:歳|才|年|日|度目|回目))にして(?!は|も|や|お|い|く)",
+  "match": [
+   "一瞬にして街が消えた。",
+   "四十歳にして初めて結婚した。"
+  ],
+  "no_match": [
+   "子供にしては上手だ。"
+  ]
+ },
+ {
+  "id": "n1-ni-kakotsukete",
+  "pattern": "〜にかこつけて",
+  "level": "N1",
+  "meaning": "using ~ as an excuse",
+  "regex": "に(?:かこつけ|託け)(?:て|た)",
+  "match": [
+   "出張にかこつけて、観光を楽しんだ。"
+  ],
+  "no_match": [
+   "服に気をつけて。"
+  ]
+ },
+ {
+  "id": "n1-ni-sakigakete",
+  "pattern": "〜に先駆けて",
+  "level": "N1",
+  "meaning": "ahead of ~; before others",
+  "regex": "に(?:先駆|さきが)け(?:て|る|た)",
+  "match": [
+   "全国に先駆けて、新制度を導入した。"
+  ],
+  "no_match": [
+   "先に駆けていった。"
+  ]
+ },
+ {
+  "id": "n1-ni-kamakete",
+  "pattern": "〜にかまけて",
+  "level": "N1",
+  "meaning": "too busy with ~ (neglecting other things)",
+  "regex": "にかまけ(?:て|た)",
+  "match": [
+   "仕事にかまけて、家族を放っておいた。"
+  ],
+  "no_match": [
+   "何にかまっているの。"
+  ]
+ },
+ {
+  "id": "n1-ni-terashite",
+  "pattern": "〜に照らして",
+  "level": "N1",
+  "meaning": "in light of ~; judged against ~",
+  "regex": "に照らし(?:て|た|合わせ)",
+  "match": [
+   "法律に照らして判断する。"
+  ],
+  "no_match": [
+   "光が顔を照らした。"
+  ]
+ },
+ {
+  "id": "n1-ni-wa-oyobanai",
+  "pattern": "〜には及ばない",
+  "level": "N1",
+  "meaning": "no need to ~",
+  "regex": "(?:[るうくぐすつむぶ]|配|礼|及)には(?:及|およ)(?:ばない|ばず|ばん|ばねえ|ばぬ|びません)",
+  "match": [
+   "心配には及ばない。",
+   "わざわざ来るには及びません。"
+  ],
+  "no_match": [
+   "足元にも及ばない。"
+  ]
+ },
+ {
+  "id": "n1-ni-wa-ataranai",
+  "pattern": "〜には当たらない",
+  "level": "N1",
+  "meaning": "there's no reason to ~",
+  "regex": "[るうくぐすつむぶ]には(?:当|あ)たら(?:ない|ず)",
+  "match": [
+   "驚くには当たらない。"
+  ],
+  "no_match": [
+   "ボールには当たらなかった。"
+  ]
+ },
+ {
+  "id": "n1-ni-mo-hodo-ga-aru",
+  "pattern": "〜にもほどがある",
+  "level": "N1",
+  "meaning": "~ is going way too far",
+  "regex": "にも(?:ほど|程)が(?:ある|あります|あんだろ|あるだろ)",
+  "match": [
+   "冗談にもほどがある！"
+  ],
+  "no_match": [
+   "にもほどほどにしろ。"
+  ]
+ },
+ {
+  "id": "n1-no-itari",
+  "pattern": "〜の至り",
+  "level": "N1",
+  "meaning": "the utmost ~ (formal)",
+  "regex": "の(?:至|いた)り",
+  "match": [
+   "光栄の至りです。",
+   "若気の至りだった。"
+  ],
+  "no_match": [
+   "至るところにある。"
+  ]
+ },
+ {
+  "id": "n1-no-kiwami",
+  "pattern": "〜の極み",
+  "level": "N1",
+  "meaning": "the height of ~",
+  "regex": "の(?:極|きわ)み",
+  "match": [
+   "贅沢の極みだ。"
+  ],
+  "no_match": [
+   "極めて重要だ。"
+  ]
+ },
+ {
+  "id": "n1-wa-oroka",
+  "pattern": "〜はおろか",
+  "level": "N1",
+  "meaning": "let alone ~; not to mention ~",
+  "regex": "はおろか",
+  "match": [
+   "漢字はおろか、ひらがなも読めない。"
+  ],
+  "no_match": [
+   "それは愚かなことだ。"
+  ]
+ },
+ {
+  "id": "n1-ba-koso",
+  "pattern": "〜ばこそ",
+  "level": "N1",
+  "meaning": "precisely because ~",
+  "regex": "ばこそ",
+  "match": [
+   "君を思えばこそ、厳しく言うんだ。"
+  ],
+  "no_match": [
+   "こそこそするな。"
+  ]
+ },
+ {
+  "id": "n1-ba-sore-made",
+  "pattern": "〜ばそれまでだ",
+  "level": "N1",
+  "meaning": "if ~, that's the end of it",
+  "regex": "ば(?:それ|其れ)まで(?:だ|です|よ|さ|の)",
+  "match": [
+   "死んでしまえばそれまでだ。"
+  ],
+  "no_match": [
+   "それまで待って。"
+  ]
+ },
+ {
+  "id": "n1-bekarazu",
+  "pattern": "〜べからず / 〜べからざる",
+  "level": "N1",
+  "meaning": "must not ~ (strong prohibition)",
+  "regex": "べから(?:ず|ざる)",
+  "match": [
+   "芝生に入るべからず。",
+   "許すべからざる行為だ。"
+  ],
+  "no_match": [
+   "行くべきだ。"
+  ]
+ },
+ {
+  "id": "n1-beku",
+  "pattern": "〜べく",
+  "level": "N1",
+  "meaning": "in order to ~",
+  "regex": "(?<!な)[るすく]べく(?!も|し)",
+  "match": [
+   "夢を叶えるべく、毎日努力している。"
+  ],
+  "no_match": [
+   "なるべく早く来て。",
+   "なるべくしてなった。"
+  ]
+ },
+ {
+  "id": "n1-beku-shite",
+  "pattern": "〜べくして",
+  "level": "N1",
+  "meaning": "as was bound to happen",
+  "regex": "べくして",
+  "match": [
+   "事故は起こるべくして起こった。"
+  ],
+  "no_match": [
+   "起こるべきだった。"
+  ]
+ },
+ {
+  "id": "n1-beku-mo-nai",
+  "pattern": "〜べくもない",
+  "level": "N1",
+  "meaning": "there's no way ~",
+  "regex": "べくもな",
+  "match": [
+   "プロには勝つべくもない。"
+  ],
+  "no_match": [
+   "勝つべく頑張る。"
+  ]
+ },
+ {
+  "id": "n1-beshi",
+  "pattern": "〜べし",
+  "level": "N1",
+  "meaning": "should ~ (classical, strong)",
+  "regex": "べし(?![ゃ])",
+  "match": [
+   "若者よ、大志を抱くべし。"
+  ],
+  "no_match": [
+   "行くべきだ。"
+  ]
+ },
+ {
+  "id": "n1-majiki",
+  "pattern": "〜まじき",
+  "level": "N1",
+  "meaning": "unbecoming of ~; must not ~",
+  "regex": "まじき",
+  "match": [
+   "教師にあるまじき行為だ。"
+  ],
+  "no_match": [
+   "まじで？"
+  ]
+ },
+ {
+  "id": "n1-made-mo-nai",
+  "pattern": "〜までもない",
+  "level": "N1",
+  "meaning": "no need to ~ (it goes without saying)",
+  "regex": "までもな(?:い|く|かった|かろう)",
+  "match": [
+   "言うまでもなく、彼が犯人だ。",
+   "わざわざ行くまでもない。"
+  ],
+  "no_match": [
+   "明日までもう待てない。"
+  ]
+ },
+ {
+  "id": "n1-made-da",
+  "pattern": "〜までだ / 〜までのことだ",
+  "level": "N1",
+  "meaning": "just ~ (nothing more); will simply ~",
+  "regex": "(?<!あ)(?:し|っ|い|き|ん|け|べ|め|せ|れ|ぎ)[たで]まで(?:だ|です|のこと|さ)|までのこと(?:だ|です|さ)",
+  "match": [
+   "当然のことをしたまでです。",
+   "ダメなら、やめるまでのことだ。"
+  ],
+  "no_match": [
+   "明日までだよ。",
+   "あしたまでだ。"
+  ]
+ },
+ {
+  "id": "n1-mamire",
+  "pattern": "〜まみれ",
+  "level": "N1",
+  "meaning": "covered in ~",
+  "regex": "(?:まみれ|塗れ)",
+  "match": [
+   "泥まみれになって遊んだ。",
+   "血まみれの剣。"
+  ],
+  "no_match": [
+   "窓を磨いた。"
+  ]
+ },
+ {
+  "id": "n1-meku",
+  "pattern": "〜めく",
+  "level": "N1",
+  "meaning": "show signs of ~; seem like ~",
+  "regex": "(?:春|謎|皮肉|冗談|秋|色|夏|冬|芝居|言い訳|説教|脅迫|謎|時)(?:めく|めい(?:た|て))",
+  "match": [
+   "日差しが春めいてきた。",
+   "謎めいた笑みを浮かべた。"
+  ],
+  "no_match": [
+   "春が来た。"
+  ]
+ },
+ {
+  "id": "n1-mo-saru-koto-nagara",
+  "pattern": "〜もさることながら",
+  "level": "N1",
+  "meaning": "~ goes without saying, but also",
+  "regex": "もさる(?:こと|事)ながら",
+  "match": [
+   "味もさることながら、見た目も美しい。"
+  ],
+  "no_match": [
+   "猿もいる。"
+  ]
+ },
+ {
+  "id": "n1-mono-o",
+  "pattern": "〜ものを",
+  "level": "N1",
+  "meaning": "if only ~ (regret/reproach)",
+  "regex": "(?:ば|たら)(?:よかった|いい|良かった|良い|いいだけの)ものを",
+  "match": [
+   "言ってくれればよかったものを。"
+  ],
+  "no_match": [
+   "よかったものを買った。"
+  ]
+ },
+ {
+  "id": "n1-ya-ina-ya",
+  "pattern": "〜や否や",
+  "level": "N1",
+  "meaning": "as soon as ~",
+  "regex": "や(?:否|いな)や",
+  "match": [
+   "彼は家に着くや否や寝てしまった。"
+  ],
+  "no_match": [
+   "いやいや、違うよ。"
+  ]
+ },
+ {
+  "id": "n1-yue",
+  "pattern": "〜ゆえ(に)",
+  "level": "N1",
+  "meaning": "because of ~ (formal)",
+  "regex": "(?<![事縁旧物世何])(?:故|ゆえ)(?:に|の)|(?:が|る)(?:故|ゆえ)(?![郷障意人国事])",
+  "match": [
+   "若さゆえの過ちだ。",
+   "彼を愛するが故に、別れを選んだ。"
+  ],
+  "no_match": [
+   "事故に遭った。",
+   "何故に来た？",
+   "車が故障した。"
+  ]
+ },
+ {
+  "id": "n1-o-oite",
+  "pattern": "〜をおいて",
+  "level": "N1",
+  "meaning": "other than ~ (no one else)",
+  "regex": "を(?:おいて|措いて)(?:他|ほか|誰)",
+  "match": [
+   "彼をおいて他に適任者はいない。"
+  ],
+  "no_match": [
+   "荷物をおいていった。"
+  ]
+ },
+ {
+  "id": "n1-o-kagiri-ni",
+  "pattern": "〜を限りに",
+  "level": "N1",
+  "meaning": "as of ~ (ending); at the top of (one's voice)",
+  "regex": "を(?:限|かぎ)りに",
+  "match": [
+   "今日を限りに、タバコをやめる。",
+   "声を限りに叫んだ。"
+  ],
+  "no_match": [
+   "限りある命だ。"
+  ]
+ },
+ {
+  "id": "n1-o-kawakiri-ni",
+  "pattern": "〜を皮切りに",
+  "level": "N1",
+  "meaning": "starting with ~",
+  "regex": "を(?:皮切|かわき)り(?:に|と|として)",
+  "match": [
+   "東京を皮切りに、全国ツアーが始まる。"
+  ],
+  "no_match": [
+   "皮を切る。"
+  ]
+ },
+ {
+  "id": "n1-o-kinjienai",
+  "pattern": "〜を禁じ得ない",
+  "level": "N1",
+  "meaning": "can't help feeling ~",
+  "regex": "を禁じ(?:得|え)(?:ない|ず|ません)",
+  "match": [
+   "同情を禁じ得ない。"
+  ],
+  "no_match": [
+   "喫煙を禁じた。"
+  ]
+ },
+ {
+  "id": "n1-o-motte",
+  "pattern": "〜をもって",
+  "level": "N1",
+  "meaning": "by means of ~; as of ~ (formal)",
+  "regex": "を(?:以て|以って)|(?:本日|今日|今回|これ|以上|全力|死|命|身|誠意|自信|責任|書面|実力|今月|今年|今年度|本日付)をもって",
+  "match": [
+   "本日をもって閉店いたします。",
+   "死を以て償え。"
+  ],
+  "no_match": [
+   "傘をもって出かけた。"
+  ]
+ },
+ {
+  "id": "n1-o-motte-sureba",
+  "pattern": "〜をもってすれば / 〜をもってしても",
+  "level": "N1",
+  "meaning": "with (the power of) ~ / even with ~",
+  "regex": "を(?:もって|以て|以って)(?:すれば|しても|しても)",
+  "match": [
+   "彼の実力をもってすれば、優勝も夢ではない。"
+  ],
+  "no_match": [
+   "お茶をもってきて。"
+  ]
+ },
+ {
+  "id": "n1-o-mono-tomo-sezu",
+  "pattern": "〜をものともせず",
+  "level": "N1",
+  "meaning": "in defiance of ~; undaunted by ~",
+  "regex": "を(?:もの|物)ともせ(?:ず|ずに)",
+  "match": [
+   "嵐をものともせず、船は進んだ。"
+  ],
+  "no_match": [
+   "物を持たずに出かけた。"
+  ]
+ },
+ {
+  "id": "n1-o-yogi-naku",
+  "pattern": "〜を余儀なく",
+  "level": "N1",
+  "meaning": "be forced to ~ (no choice)",
+  "regex": "を余儀なく",
+  "match": [
+   "大雨で試合は中止を余儀なくされた。"
+  ],
+  "no_match": [
+   "余計なことを言うな。"
+  ]
+ },
+ {
+  "id": "n1-o-yoso-ni",
+  "pattern": "〜をよそに",
+  "level": "N1",
+  "meaning": "ignoring ~; despite ~",
+  "regex": "を(?:よそ|余所)に",
+  "match": [
+   "親の心配をよそに、彼は旅に出た。"
+  ],
+  "no_match": [
+   "よその家に行く。"
+  ]
+ },
+ {
+  "id": "n1-o-ii-koto-ni",
+  "pattern": "〜をいいことに",
+  "level": "N1",
+  "meaning": "taking advantage of ~",
+  "regex": "を(?:いい|良い)ことに",
+  "match": [
+   "親の留守をいいことに、遊び回った。"
+  ],
+  "no_match": [
+   "いいことにした。"
+  ]
+ },
+ {
+  "id": "n1-o-oshite",
+  "pattern": "〜をおして",
+  "level": "N1",
+  "meaning": "despite (illness etc.); pushing through ~",
+  "regex": "(?:病|病気|反対|危険|無理|痛み|怪我)を(?:押|お)して",
+  "match": [
+   "病をおして会議に出席した。"
+  ],
+  "no_match": [
+   "ボタンを押して下さい。"
+  ]
+ },
+ {
+  "id": "n1-o-itowazu",
+  "pattern": "〜をいとわず",
+  "level": "N1",
+  "meaning": "not minding ~; willing to ~",
+  "regex": "を(?:いと|厭)わ(?:ず|ない)",
+  "match": [
+   "苦労をいとわず働いた。"
+  ],
+  "no_match": [
+   "それを問わず行く。"
+  ]
+ },
+ {
+  "id": "n1-n-ga-tame",
+  "pattern": "〜んがため",
+  "level": "N1",
+  "meaning": "in order to ~ (strong will)",
+  "regex": "んがため",
+  "match": [
+   "勝たんがために、何でもする。"
+  ],
+  "no_match": [
+   "何がためだ。"
+  ]
+ },
+ {
+  "id": "n1-n-bakari",
+  "pattern": "〜んばかり",
+  "level": "N1",
+  "meaning": "as if about to ~; practically ~",
+  "regex": "んばかり",
+  "match": [
+   "泣かんばかりの顔だった。",
+   "「愛してる」と言わんばかりにウィンクした。"
+  ],
+  "no_match": [
+   "来たばかりだ。"
+  ]
+ },
+ {
+  "id": "n1-n-to-suru",
+  "pattern": "〜んとする",
+  "level": "N1",
+  "meaning": "about to ~; trying to ~ (literary)",
+  "regex": "(?:[わかたまらが]|せ)んと(?:する|した|している)",
+  "match": [
+   "彼が言わんとすることは分かる。",
+   "今まさに日が沈まんとしている。"
+  ],
+  "no_match": [
+   "ちゃんとする。",
+   "おばさんとした約束だ。"
+  ]
+ },
+ {
+  "id": "n1-ga-seki-no-yama",
+  "pattern": "〜が関の山",
+  "level": "N1",
+  "meaning": "the best one can do is ~",
+  "regex": "が(?:関の山|せきのやま)",
+  "match": [
+   "俺の給料じゃ、安い車が関の山だ。"
+  ],
+  "no_match": [
+   "山に関する本。"
+  ]
+ },
+ {
+  "id": "n1-no-nan-notte",
+  "pattern": "〜のなんのって",
+  "level": "N1",
+  "meaning": "incredibly ~ (can't describe it)",
+  "regex": "のなんの(?:って)?",
+  "match": [
+   "その店のラーメンがうまいのなんのって。"
+  ],
+  "no_match": [
+   "なんのことだ。"
+  ]
+ },
+ {
+  "id": "n1-gamashii",
+  "pattern": "〜がましい",
+  "level": "N1",
+  "meaning": "smacking of ~; ~-ish (negative)",
+  "regex": "がまし(?:い|く|さ)",
+  "match": [
+   "恩着せがましいことを言うな。",
+   "未練がましい男だ。"
+  ],
+  "no_match": [
+   "我慢しなさい。"
+  ]
+ },
+ {
+  "id": "n1-jimiru",
+  "pattern": "〜じみる",
+  "level": "N1",
+  "meaning": "having the air of ~ (unpleasant)",
+  "regex": "(?<!し)じみ(?:た|て|る)",
+  "match": [
+   "子供じみたまねはやめろ。",
+   "年寄りじみたことを言う。"
+  ],
+  "no_match": [
+   "しみじみと語った。"
+  ]
+ },
+ {
+  "id": "n1-buru",
+  "pattern": "〜ぶる",
+  "level": "N1",
+  "meaning": "act like ~; pretend to be ~",
+  "regex": "(?:大人|偉|上品|いい子|良い子|善人|学者|先輩|お姉さん|お兄さん|聖人|紳士|悪|かわい子|可愛い子|知った|通)ぶ(?:る|って|った|らない|りやがって)",
+  "match": [
+   "偉ぶるのはやめろ。",
+   "いい子ぶってんじゃねえよ。"
+  ],
+  "no_match": [
+   "偉い人が来る。"
+  ]
+ },
+ {
+  "id": "n1-sae-no-dani",
+  "pattern": "〜ずして",
+  "level": "N1",
+  "meaning": "without ~ing (literary)",
+  "regex": "[わかさたまらがばなせ]ずして",
+  "match": [
+   "戦わずして勝つ。",
+   "労せずして金を得る。"
+  ],
+  "no_match": [
+   "戦わずに逃げた。"
+  ]
+ },
+ {
+  "id": "n1-zu-tomo",
+  "pattern": "〜ずとも",
+  "level": "N1",
+  "meaning": "even without ~ing",
+  "regex": "ずとも",
+  "match": [
+   "言わずとも分かる。"
+  ],
+  "no_match": [
+   "ずっと友達だ。"
+  ]
+ },
+ {
+  "id": "n1-zu-jimai",
+  "pattern": "〜ずじまい",
+  "level": "N1",
+  "meaning": "ended up never ~ing",
+  "regex": "ずじまい",
+  "match": [
+   "結局、彼女に会えずじまいだった。"
+  ],
+  "no_match": [
+   "店じまいした。"
+  ]
+ },
+ {
+  "id": "n1-zu-mo-gana",
+  "pattern": "〜ずもがな",
+  "level": "N1",
+  "meaning": "needless to say ~",
+  "regex": "ずもがな",
+  "match": [
+   "言わずもがなのことだ。"
+  ],
+  "no_match": [
+   "言わずに帰った。"
+  ]
+ },
+ {
+  "id": "n1-te-shikaru-beki",
+  "pattern": "〜てしかるべき",
+  "level": "N1",
+  "meaning": "it's only right that ~",
+  "regex": "[てで](?:しかる|然る|叱る)べき",
+  "match": [
+   "彼は表彰されてしかるべきだ。"
+  ],
+  "no_match": [
+   "しかるべき対応をする。"
+  ]
+ },
+ {
+  "id": "n1-te-mo-sashitsukaenai",
+  "pattern": "〜てもさしつかえない",
+  "level": "N1",
+  "meaning": "it's acceptable to ~; no problem if ~",
+  "regex": "[てで]も(?:さしつかえ|差し支え|差支え)(?:ない|ありません|なかろう|ございません)",
+  "match": [
+   "ここで写真を撮っても差し支えありません。"
+  ],
+  "no_match": [
+   "差し支えがあれば言って。"
+  ]
+ },
+ {
+  "id": "n1-te-habakaranai",
+  "pattern": "〜てはばからない",
+  "level": "N1",
+  "meaning": "~ without hesitation; not shy about ~",
+  "regex": "[てで](?:はばから|憚ら)(?:ない|ず|なかった)",
+  "match": [
+   "彼は天才だと公言してはばからない。"
+  ],
+  "no_match": [
+   "人目をはばかった。"
+  ]
+ },
+ {
+  "id": "n1-temae",
+  "pattern": "〜手前",
+  "level": "N1",
+  "meaning": "since (I) already ~, (I) can't back down",
+  "regex": "(?:った|した|いた|んだ|けた|せた|れた|める|言う|る)手前",
+  "match": [
+   "行くと言った手前、今さら断れない。"
+  ],
+  "no_match": [
+   "駅の手前で降りた。"
+  ]
+ },
+ {
+  "id": "n1-to-shita-koto-ga",
+  "pattern": "〜としたことが",
+  "level": "N1",
+  "meaning": "for someone like ~ (I can't believe I ~)",
+  "regex": "としたことが",
+  "match": [
+   "私としたことが、うっかりしていた。"
+  ],
+  "no_match": [
+   "お茶をしたことがある。"
+  ]
+ },
+ {
+  "id": "n1-to-itte-mo-kagon",
+  "pattern": "〜と言っても過言ではない",
+  "level": "N1",
+  "meaning": "it's no exaggeration to say ~",
+  "regex": "と(?:言|い)っても過言(?:では|じゃ)",
+  "match": [
+   "彼は天才と言っても過言ではない。"
+  ],
+  "no_match": [
+   "それは過言だ。"
+  ]
+ },
+ {
+  "id": "n1-demo-nandemo-nai",
+  "pattern": "〜でもなんでもない",
+  "level": "N1",
+  "meaning": "not ~ at all",
+  "regex": "でも(?:なん|何)でもな",
+  "match": [
+   "彼は友達でもなんでもない。"
+  ],
+  "no_match": [
+   "何でもない。"
+  ]
+ },
+ {
+  "id": "n1-dewa-nakarou-ka",
+  "pattern": "〜ではなかろうか",
+  "level": "N1",
+  "meaning": "might it not be ~? (formal)",
+  "regex": "(?:では|じゃ)なかろう",
+  "match": [
+   "それは誤解ではなかろうか。"
+  ],
+  "no_match": [
+   "誤解ではないだろうか。"
+  ]
+ },
+ {
+  "id": "n1-kare-kare",
+  "pattern": "〜かれ〜かれ",
+  "level": "N1",
+  "meaning": "whether ~ or ~ (sooner or later etc.)",
+  "regex": "(?:遅|おそ)かれ(?:早|はや)かれ|(?:多|おお)かれ(?:少|すく)なかれ|(?:良|善|よ)かれ(?:悪|あ)しかれ",
+  "match": [
+   "遅かれ早かれ、バレるよ。"
+  ],
+  "no_match": [
+   "遅かったね。"
+  ]
+ },
+ {
+  "id": "n1-te-kono-kata",
+  "pattern": "〜てこのかた",
+  "level": "N1",
+  "meaning": "ever since ~ (until now)",
+  "regex": "(?:生まれ|物心ついて|始まっ|来|入っ)てこの(?:かた|方)(?!は|が|を|に|と)",
+  "match": [
+   "生まれてこのかた、海を見たことがない。"
+  ],
+  "no_match": [
+   "来てこの方が案内してくれた。"
+  ]
+ },
+ {
+  "id": "n1-tokoro-o",
+  "pattern": "〜ところを",
+  "level": "N1",
+  "meaning": "while/despite (troubling you during) ~",
+  "regex": "(?:お忙しい|お疲れの|お休みの|お取り込み中の|お急ぎの|お楽しみの)ところ(?:を)?|ところを(?:すみません|申し訳|恐縮|ありがとう|助け)",
+  "match": [
+   "お忙しいところを、ありがとうございます。"
+  ],
+  "no_match": [
+   "いいところを見せたい。"
+  ]
+ },
+ {
+  "id": "n1-mi-ru-ya",
+  "pattern": "〜とみるや",
+  "level": "N1",
+  "meaning": "the instant (one) saw ~",
+  "regex": "と(?:見|み)るや",
+  "match": [
+   "敵が弱ったと見るや、一気に攻めた。"
+  ],
+  "no_match": [
+   "見るやつがいない。"
+  ]
+ },
+ {
+  "id": "n1-to-bakari-omotte",
+  "pattern": "〜とばかり思っていた",
+  "level": "N1",
+  "meaning": "I was sure that ~ (but wasn't)",
+  "regex": "とばかり(?:思|おも)",
+  "match": [
+   "彼は独身だとばかり思っていた。"
+  ],
+  "no_match": [
+   "彼とばかり遊んでいた。"
+  ]
+ }
+]

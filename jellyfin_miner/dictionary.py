@@ -4,6 +4,7 @@ JMdict (EDRDG, CC-BY-SA 4.0): readings, an approximate frequency rank and the fi
 Kanjium (CC-BY-SA 4.0): pitch accents as downstep numbers, e.g. "0" or "0,2".
 Jitendex (CC-BY-SA 4.0, English), Japanese and English Wiktionary (CC-BY-SA 4.0): full entries as Yomitan HTML.
 KANJIDIC2 (EDRDG, CC-BY-SA 4.0): each kanji's meanings and readings, for the Kanji tab.
+JMnedict (EDRDG, CC-BY-SA 4.0): which words can also be people's names, for the names filter.
 
 Yomitan dictionaries you put in user_files/dictionaries are converted once into user_files/dictionaries.sqlite
 (user_files survives add-on updates) and looked up alongside the bundled ones.
@@ -86,6 +87,9 @@ class Dictionary:
         if html and kanji:  # only alongside a real entry: a word no dictionary knows gets no card details anyway
             html += f'<li data-dictionary="{KANJI}"><i>({KANJI}, KANJIDIC)</i> <span>{kanji}</span></li>'
         return f"<ol>{html}</ol>" if html else ""
+
+    def is_name(self, word):
+        return self.db.execute("select 1 from name where form = ?", (word,)).fetchone() is not None
 
     def pitch(self, word, reading):
         row = self.db.execute("select accent from pitch where word = ? and reading = ?", (word, reading)).fetchone()

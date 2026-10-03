@@ -13,7 +13,13 @@
   "words": {
     "per_episode": 3,
     "max_rank": 20000,
-    "known": [{"note_type": "Jellyfin Miner", "field": "Word"}]
+    "known": [
+      {
+        "note_type": "Jellyfin Miner",
+        "field": "Word"
+      }
+    ],
+    "skip_names": true
   },
   "cards": {
     "deck": "Default",
@@ -26,6 +32,7 @@
       "sentence_audio": "Audio",
       "picture": "Picture",
       "source": "Source",
+      "grammar": "Grammar",
       "definitions": "Definitions",
       "pitch": "",
       "frequency": ""
@@ -34,6 +41,16 @@
     "extra_sentences_per_episode": 3,
     "audio_format": "sound"
   },
-  "translation": {"base_url": "", "model": "", "api_key": "", "extra_prompt": ""},
+  "grammar": {
+    "enabled": true,
+    "easiest_level": "N5",
+    "max_per_sentence": 3
+  },
+  "translation": {
+    "base_url": "",
+    "model": "",
+    "api_key": "",
+    "extra_prompt": ""
+  },
   "ffmpeg_path": ""
 }
