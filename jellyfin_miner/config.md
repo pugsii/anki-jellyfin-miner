@@ -27,4 +27,7 @@ English subtitles at the same moment are used when the episode has them. Otherwi
 - `model`, `api_key`
 - `extra_prompt`: added to the instructions. For Qwen3 models, `/no_think` makes them much faster.
 
+**Dictionaries**
+New cards get Jitendex, English and Japanese Wiktionary, and a Kanji tab. To add your own Yomitan dictionaries (.zip), click *View Files* and put them in `user_files/dictionaries`; they're converted the next time the add-on mines.
+
 **`ffmpeg_path`**: only needed if ffmpeg isn't on your PATH (Anki's Linux Flatpak includes it).
