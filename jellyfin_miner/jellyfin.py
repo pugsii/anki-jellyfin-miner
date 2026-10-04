@@ -15,11 +15,11 @@ class Jellyfin:
     def __init__(self, url, api_key, timeout=20):
         self.url, self.key, self.timeout = url.rstrip("/"), api_key, timeout
 
-    def _get(self, path, raw=False, **params):
+    def _get(self, path, raw=False, timeout=None, **params):
         query = urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
         request = urllib.request.Request(f"{self.url}{path}{'?' + query if query else ''}",
                                          headers={"Authorization": f'MediaBrowser Token="{self.key}"'})
-        with urllib.request.urlopen(request, timeout=self.timeout) as response:
+        with urllib.request.urlopen(request, timeout=timeout or self.timeout) as response:
             body = response.read()
         if raw is None:  # bytes as they are (images)
             return body
@@ -91,7 +91,8 @@ class Jellyfin:
         title = lambda s: (s.get("Title") or s.get("DisplayTitle") or "").lower()
         for track in sorted(tracks, key=lambda s: ("sign" in title(s) or "song" in title(s), bool(s.get("IsForced")))):
             fmt = TEXT_SUBS[track["Codec"].lower()]
-            text = self._get(f"/Videos/{item['Id']}/{source['Id']}/Subtitles/{track['Index']}/0/Stream.{fmt}", raw=True)
+            # embedded subtitles are extracted on the first request, which can take a while
+            text = self._get(f"/Videos/{item['Id']}/{source['Id']}/Subtitles/{track['Index']}/0/Stream.{fmt}", raw=True, timeout=120)
             if languages != JAPANESE or looks_japanese(text):
                 return text, fmt
         return None

@@ -16,8 +16,25 @@ def from_subtitles(cue, english_cues):
 
 def with_model(text, base_url, model, api_key="", extra_prompt="", timeout=60):
     """Any OpenAI-compatible chat endpoint (LocalAI, Ollama, LM Studio, OpenAI...)."""
+    return ask(PROMPT, text, base_url, model, api_key, extra_prompt, timeout)
+
+
+EXAMPLE_PROMPT = ("Write one short, natural Japanese example sentence that a JLPT N4 learner could read, using the given "
+                  "word. Reply with exactly two lines: the Japanese sentence, then its English translation. No romaji, "
+                  "no notes.")
+
+
+def example_with_model(word, base_url, model, api_key="", extra_prompt="", timeout=60):
+    """(Japanese, English) example sentence for a word, written by the model, or None if the reply doesn't fit."""
+    lines = [l.strip() for l in ask(EXAMPLE_PROMPT, word, base_url, model, api_key, extra_prompt, timeout).split("\n") if l.strip()]
+    ja = next((l for l in lines if re.search(r"[ぁ-んァ-ン一-鿿]", l)), None)
+    en = next((l for l in lines if l != ja and not re.search(r"[ぁ-んァ-ン一-鿿]", l)), "")
+    return (ja, en) if ja and word in ja else None
+
+
+def ask(system, text, base_url, model, api_key="", extra_prompt="", timeout=60):
     body = {"model": model, "temperature": 0.2, "max_tokens": 1500,  # room for reasoning models to think first
-            "messages": [{"role": "system", "content": f"{PROMPT} {extra_prompt}".strip()},
+            "messages": [{"role": "system", "content": f"{system} {extra_prompt}".strip()},
                          {"role": "user", "content": text}]}
     headers = {"Content-Type": "application/json", **({"Authorization": f"Bearer {api_key}"} if api_key else {})}
     request = urllib.request.Request(base_url.rstrip("/") + "/chat/completions", json.dumps(body).encode(), headers)

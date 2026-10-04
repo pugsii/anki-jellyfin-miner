@@ -16,7 +16,7 @@ def clean(text):
     if re.fullmatch(r"[（(][^（()）]+[）)]", text):                  # a whole line in brackets is inner monologue:
         text = text[1:-1]                                              # keep the words
     text = re.sub(r"[（(][^（()）]{1,8}[）)]", "", text)             # speaker labels/notes anywhere: （男） （２人）
-    text = re.sub(r"[♪♫〜～➡→⇒]+", " ", text)
+    text = re.sub(r"[♪♫〜～➡→⇒《》≪≫]+", " ", text)  # music, arrows, and the brackets some subs put round thoughts
     text = re.sub(r"\s+", " ", text.replace("\n", " ")).strip()
     return re.sub(r"(?<=[\u3000-\u9fff！？。、…」』])\s+(?=[\u3000-\u9fff「『])", "", text)  # Japanese has no spaces
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":  # self-check
     assert parse_srt(srt) == [(1.5, 3.0, "今日も面接だった")], parse_srt(srt)
     assert clean("ヒトガミを疑い でも 敵対はしない➡") == "ヒトガミを疑いでも敵対はしない" and clean("OK 大丈夫") == "OK 大丈夫"
     assert clean("でも最悪死者が出るんだ。 （２人）んっ…。") == "でも最悪死者が出るんだ。んっ…。"
-    assert clean("（どうして俺が…）") == "どうして俺が…"
+    assert clean("（どうして俺が…）") == "どうして俺が…" and clean("封印といっても限定的なものなのか？》") == "封印といっても限定的なものなのか？"
     ass = ("[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
            "Dialogue: 0,0:00:05.10,0:00:07.00,Default,,0,0,0,,{\\an8}見逃して\\Nあげましょう\n"
            "Dialogue: 0,0:00:06.00,0:00:08.00,Signs,,0,0,0,,看板\n"

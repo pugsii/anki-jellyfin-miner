@@ -12,7 +12,7 @@ Words you already have can also get the new scene added as an extra example sent
 
 On Anki's home screen, below your decks, a progress bar shows mining as it happens, and a **Recently watched** row shows the shows you've watched lately with how many cards each has given you (click one to mine more episodes).
 
-Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** shows your library as a poster grid and scores each show, live, by how much of its dialogue you already know, with the words to learn first. **Mine an episode…** picks shows from the same grid. Posters are cached in `user_files/covers`. Search by any of a show's names (Japanese, romaji, English, abbreviations): for anime with an AniList id in Jellyfin, the add-on asks [AniList](https://anilist.co)'s public API for its titles once and caches them in `user_files/titles.json`.
+Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** shows your library as a poster grid and scores each show, live, by how much of its dialogue you already know, with the words to learn first. **Mine an episode…** picks shows from the same grid. **Prepare for this show…** makes spoiler-free cards for a show you haven't started: its most-said unknown words, with example sentences from anime you've already watched (real scenes) and from the dictionary, never from the show itself. They go in a `::Prep` subdeck, and once you watch the show the miner adds its real scenes to them. Posters are cached in `user_files/covers`. Search by any of a show's names (Japanese, romaji, English, abbreviations): for anime with an AniList id in Jellyfin, the add-on asks [AniList](https://anilist.co)'s public API for its titles once and caches them in `user_files/titles.json`.
 
 ## How it picks words
 
@@ -63,7 +63,7 @@ python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz JMnedict.xm
     kty-ja-ja.zip "Wiktionary 国語" kty-ja-en.zip "Wiktionary EN"
 ```
 
-The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py && python3 grammar.py && python3 scores.py && python3 titles.py && python3 home.py`, and `python3 tools/check_grammar.py` checks the grammar patterns.
+The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py && python3 grammar.py && python3 scores.py && python3 titles.py && python3 home.py && python3 prep.py`, and `python3 tools/check_grammar.py` checks the grammar patterns.
 
 ## Credits and licences
 

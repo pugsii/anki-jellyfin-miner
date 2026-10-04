@@ -12,9 +12,9 @@ from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButto
                     QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QVBoxLayout, QWidget)
 from aqt.utils import showInfo, showWarning, tooltip
 
-from . import analysis, cards, home, mining, posters, scores
-from .dictionary import Dictionary
-from .jellyfin import JAPANESE, Jellyfin, label
+from . import analysis, cards, grammar, home, mining, posters, prep, scores, subtitles, translate
+from .dictionary import Dictionary, gloss
+from .jellyfin import ENGLISH, JAPANESE, Jellyfin, label
 
 ADDON = __name__.split(".")[0]  # the add-on's folder name, which Anki keys its config by
 STATE = "jellyfin_miner"  # collection config: {"since": ISO time, "done": [episode ids]}
@@ -370,8 +370,13 @@ class ScoreGrid(QDialog):
         self.mine_button = QPushButton("Mine an episode…")
         self.mine_button.setEnabled(False)
         self.mine_button.clicked.connect(lambda: self.mine(self.grid.show_at(self.grid.currentItem())))
+        self.prep_button = QPushButton("Prepare for this show…")
+        self.prep_button.setToolTip("Spoiler-free cards for this show's most useful unknown words")
+        self.prep_button.setEnabled(False)
+        self.prep_button.clicked.connect(lambda: prepare(self.grid.show_at(self.grid.currentItem()), self))
         bottom = QHBoxLayout()
         bottom.addWidget(self.detail, 1)
+        bottom.addWidget(self.prep_button)
         bottom.addWidget(self.mine_button)
         close = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         close.rejected.connect(self.reject)
@@ -399,6 +404,7 @@ class ScoreGrid(QDialog):
 
     def show_detail(self, show):
         self.mine_button.setEnabled(bool(show))
+        self.prep_button.setEnabled(bool(show) and (self.results.get(show["Id"]) or (None,))[0] is not None)
         if not show:
             return
         name = html.escape(show["Name"])
@@ -412,6 +418,163 @@ class ScoreGrid(QDialog):
     def mine(self, show):
         if show:
             pick_episodes(start=show, parent=self)
+
+
+class PrepDialog(QDialog):
+    """Pick the words to prepare for a show: its most-said unknown words, the top 20 ticked."""
+
+    def __init__(self, show, counts, known, dict_, parent=None):
+        super().__init__(parent or mw)
+        self.counts, self.known, self.dict_ = counts, known, dict_
+        self.setWindowTitle(f"Prepare for {show['Name']}")
+        self.resize(560, 620)
+        note = QLabel("Spoiler-free cards for the words this show uses most that you don't know yet. Example sentences "
+                      "come from anime you've already watched and from the dictionary, never from this show; after you "
+                      "watch it, the miner adds its real scenes to these cards.")
+        note.setWordWrap(True)
+        self.words = QListWidget()
+        for n, (word, said) in enumerate(prep.candidates(counts, known, dict_, config()["words"]["max_rank"])):
+            entry = dict_.entry(word)
+            row = QListWidgetItem(f"{word}　{entry['readings'][0]}　·　{gloss(entry)}　·　said {said}×")
+            row.setData(Qt.ItemDataRole.UserRole, word)
+            row.setFlags(row.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            row.setCheckState(Qt.CheckState.Checked if n < 20 else Qt.CheckState.Unchecked)
+            self.words.addItem(row)
+        self.words.itemChanged.connect(lambda _: self.update_gain())
+        self.gain = QLabel()
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        self.ok = buttons.button(QDialogButtonBox.StandardButton.Ok)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout = QVBoxLayout(self)
+        for widget in (note, self.words, self.gain, buttons):
+            layout.addWidget(widget)
+        self.update_gain()
+
+    def selected(self):
+        return [self.words.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.words.count())
+                if self.words.item(i).checkState() == Qt.CheckState.Checked]
+
+    def update_gain(self):
+        words = self.selected()
+        before, after = prep.gain(self.counts, self.known, self.dict_, words)
+        self.gain.setText(f"You know <b>{before:.0%}</b> of its words now; with these {len(words)}: <b>{after:.0%}</b>.")
+        self.ok.setText(f"Create {len(words)} card{'s' if len(words) != 1 else ''}")
+        self.ok.setEnabled(bool(words))
+
+
+def prepare(show, parent=None):
+    """Prepare for this show: pick words, then make spoiler-free cards for them in <deck>::Prep."""
+    c = config()
+    if not show:
+        return
+    counts = scores.load_cache().get(show["Id"], {}).get("counts")
+    if not counts:
+        return showInfo("Check this show in Can I watch this yet? first: its words come from that.", parent=parent)
+    if running:
+        return tooltip("Jellyfin Miner is busy; try again in a minute")
+    known, _ = known_words(c)
+    dict_ = Dictionary()
+    dialog = PrepDialog(show, counts, analysis.with_readings(known, dict_), dict_, parent)
+    if dialog.exec() and dialog.selected():
+        make_prep_cards(show, dialog.selected())
+
+
+def make_prep_cards(show, words):
+    global running
+    c = config()
+    try:
+        model = note_type(c)
+    except ValueError as e:
+        return showWarning(str(e))
+    workdir, log, running = tempfile.mkdtemp(prefix="jellyfin_miner_"), [], True
+    llm = c.get("translation") or {}
+    g = c["grammar"]
+    notes = lambda text: grammar.notes_html(grammar.find(text, g["easiest_level"], g["max_per_sentence"])) if g["enabled"] else ""
+
+    def progress(fraction, what):
+        mw.taskman.run_on_main(lambda: set_progress({"label": f"Preparing {show['Name']}: {what}", "fraction": fraction}))
+
+    def work():
+        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
+        user_id = jf.user_id(c["jellyfin"]["user"])
+        ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
+        index = prep.update_index(jf, user_id, ignored, log=lambda what: progress(0.0, what))
+        dict_, results, episodes = Dictionary(), [], {}
+        for n, word in enumerate(words):
+            progress(0.1 + 0.9 * n / len(words), f"{word} ({n + 1} of {len(words)})")
+            entry = dict_.entry(word)
+            fields = cards.word_fields(word, {"entry": entry, "reading": entry["readings"][0]}, dict_)
+            scenes, kinds = [], []
+            hit = prep.watched_scene(index, word)  # any episode you've watched, this show's included
+            if hit:
+                ep_id, i = hit
+                try:
+                    if ep_id not in episodes:
+                        item = jf._get("/Items", userId=user_id, Ids=ep_id, Fields="MediaStreams,MediaSources")["Items"][0]
+                        try:
+                            english = jf.subtitles(item, ENGLISH)
+                        except Exception:  # no English line: the translation model fills in
+                            english = None
+                        episodes[ep_id] = (item, subtitles.parse(*english) if english else [])
+                    item, english_cues = episodes[ep_id]
+                    cues = [tuple(cue) for cue in index[ep_id]["cues"]]
+                    scenes.append(mining.cut_scene(jf, item, cues, i, word, english_cues, c, workdir, log.append))
+                    kinds.append("watched")
+                except Exception as e:  # the dictionary example still makes a card
+                    log.append(f"{word}: couldn't cut the scene ({e})")
+            example = prep.dictionary_example(fields["definitions"])
+            if example:
+                scenes.append(prep.text_scene(*example, word, "Jitendex (Tatoeba)", notes(example[0])))
+                kinds.append("dictionary")
+            if not scenes and llm.get("base_url") and llm.get("model"):
+                made = None
+                try:
+                    made = translate.example_with_model(word, llm["base_url"], llm["model"], llm.get("api_key", ""),
+                                                        llm.get("extra_prompt", ""))
+                except Exception as e:
+                    log.append(f"{word}: the model couldn't write an example ({e})")
+                if made:
+                    scenes.append(prep.text_scene(*made, word, "AI example", notes(made[0])))
+                    kinds.append("AI")
+            results.append((word, fields, scenes, kinds))
+        return results
+
+    def done(future):
+        global running
+        running = False
+        set_progress(None)
+        try:
+            if not mw.col:
+                return
+            results = future.result()
+            deck_id = mw.col.decks.id(c["cards"]["deck"] + "::Prep")
+            mapping, fmt = c["cards"]["fields"], c["cards"]["audio_format"]
+            tag = "prep::" + "_".join(show["Name"].split())
+            for word, fields, scenes, kinds in results:
+                note = mw.col.new_note(model)
+                first = cards.scene_fields(add_media(scenes[0]), fmt) if scenes else {}
+                for field, value in cards.new_note_values({**fields, **first}, mapping).items():
+                    if field in note:
+                        note[field] = value
+                for scene in scenes[1:c["cards"]["max_sentences"]]:
+                    cards.append_scene(note, cards.scene_fields(add_media(scene), fmt), mapping)
+                note.tags = ["jellyfin_miner", tag]
+                mw.col.add_note(note, deck_id)
+        except Exception as e:
+            return report_error(e, True)
+        finally:
+            shutil.rmtree(workdir, ignore_errors=True)
+        kinds = [k for *_, ks in results for k in ks]
+        showInfo(f"Made {len(results)} spoiler-free cards for {show['Name']} in {c['cards']['deck']}::Prep.\n\n"
+                 f"{kinds.count('watched')} with a scene from an anime you've watched, {kinds.count('dictionary')} with a "
+                 f"dictionary example, {kinds.count('AI')} with an AI-written example."
+                 + ("\n\n" + "\n".join(log) if log else ""))
+        if mw.state == "deckBrowser":
+            mw.deckBrowser.refresh()
+
+    progress(0.0, "starting")
+    mw.taskman.run_in_background(work, done)
 
 
 score_window = None  # kept open alongside Anki (non-modal), so it isn't garbage-collected

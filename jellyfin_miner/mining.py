@@ -5,6 +5,39 @@ from . import analysis, cards, grammar, media, subtitles, translate
 from .jellyfin import ENGLISH, JAPANESE, japanese_audio, label
 
 
+def cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log=print):
+    """Cue i of an episode as a scene: the line (furigana, `target` in bold), its English (from the English
+    subtitles, else the configured model), an audio clip and a screenshot, the source, and grammar notes."""
+    start, end, text = cues[i]
+    llm = cfg.get("translation") or {}
+    english_line = translate.from_subtitles(cues[i], english_cues)
+    if not english_line and llm.get("base_url") and llm.get("model"):
+        try:
+            english_line = translate.with_model(text, llm["base_url"], llm["model"], llm.get("api_key", ""),
+                                                llm.get("extra_prompt", ""))
+        except Exception as e:  # the model being down shouldn't lose the card
+            log(f"translation failed ({e}); left blank")
+    ffmpeg = media.find_ffmpeg(cfg.get("ffmpeg_path", ""))
+    url, headers, track = jf.stream_url(item), jf.stream_headers(), japanese_audio(item)
+    base = os.path.join(workdir, f"jfm_{item['Id'][:8]}_{int(start * 10)}")
+    audio, picture = base + ".mp3", base + ".jpg"
+    try:
+        media.audio_clip(ffmpeg, url, headers, start, end, track, audio)
+    except Exception as e:
+        log(f"audio clip failed at {start:.0f}s ({e})")
+        audio = None
+    try:
+        media.screenshot(ffmpeg, url, headers, start, end, picture)
+    except Exception as e:
+        log(f"screenshot failed at {start:.0f}s ({e})")
+        picture = None
+    minutes, seconds = divmod(int(start), 60)
+    g = cfg["grammar"]
+    notes = grammar.notes_html(grammar.find(text, g["easiest_level"], g["max_per_sentence"])) if g["enabled"] else ""
+    return {"sentence": analysis.sentence(analysis.tokens(text), target), "translation": english_line,
+            "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}", "grammar": notes}
+
+
 def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, progress=lambda fraction, what: None):
     """Plan the cards for one episode.
 
@@ -23,37 +56,7 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, pr
     progress(0.05, "finding words")
     english = jf.subtitles(item, ENGLISH)
     english_cues = subtitles.parse(*english) if english else []
-    url, headers, track = jf.stream_url(item), jf.stream_headers(), japanese_audio(item)
-    ffmpeg = media.find_ffmpeg(cfg.get("ffmpeg_path", ""))
-    llm = cfg.get("translation") or {}
-
-    def scene(i, target):
-        start, end, text = cues[i]
-        english_line = translate.from_subtitles(cues[i], english_cues)
-        if not english_line and llm.get("base_url") and llm.get("model"):
-            try:
-                english_line = translate.with_model(text, llm["base_url"], llm["model"], llm.get("api_key", ""),
-                                                    llm.get("extra_prompt", ""))
-            except Exception as e:  # the model being down shouldn't lose the card
-                log(f"translation failed ({e}); left blank")
-        base = os.path.join(workdir, f"jfm_{item['Id'][:8]}_{int(start * 10)}")
-        audio, picture = base + ".mp3", base + ".jpg"
-        try:
-            media.audio_clip(ffmpeg, url, headers, start, end, track, audio)
-        except Exception as e:
-            log(f"audio clip failed at {start:.0f}s ({e})")
-            audio = None
-        try:
-            media.screenshot(ffmpeg, url, headers, start, end, picture)
-        except Exception as e:
-            log(f"screenshot failed at {start:.0f}s ({e})")
-            picture = None
-        minutes, seconds = divmod(int(start), 60)
-        g = cfg["grammar"]
-        notes = grammar.notes_html(grammar.find(text, g["easiest_level"], g["max_per_sentence"])) if g["enabled"] else ""
-        return {"sentence": analysis.sentence(analysis.tokens(text), target), "translation": english_line,
-                "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}", "grammar": notes}
-
+    scene = lambda i, target: cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log)
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
     words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"], cfg["words"]["skip_names"])
     picked = analysis.pick(words, cfg["words"]["per_episode"])
