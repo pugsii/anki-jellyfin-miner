@@ -320,6 +320,7 @@ class EpisodePicker(QDialog):
         self.episodes.setAlternatingRowColors(True)
         self.episodes.setUniformRowHeights(True)
         self.episodes.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.episodes.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.episodes.itemSelectionChanged.connect(self.update_footer)
         self.episodes.itemDoubleClicked.connect(lambda item, _: item.isDisabled() or self.accept())
         header = self.episodes.header()
@@ -786,12 +787,8 @@ def on_profile_open():
     global timer, menu, hooked
     if menu is None:  # profiles can be reopened; add the menu once
         menu = QMenu("Jellyfin Miner", mw)
-        for entry in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes), None,
-                      ("Can I watch this yet?", watch_scores)):
-            if entry is None:
-                menu.addSeparator()
-                continue
-            text, action = entry
+        for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes),
+                             ("Can I watch this yet?", watch_scores)):
             item = QAction(text, mw)
             item.triggered.connect(action)
             menu.addAction(item)

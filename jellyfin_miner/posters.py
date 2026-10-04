@@ -58,6 +58,7 @@ class ShowGrid(QListWidget):
         self.setTextElideMode(Qt.TextElideMode.ElideRight)
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.setVerticalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)  # scrolls with the wheel; no bar
         self.setStyleSheet("QListView::item { padding: 5px 4px 2px; border-radius: 10px; }"
                            "QListView::item:selected { background: palette(highlight); color: palette(highlighted-text); }")
         self.items, self.posters, self.badges, self.names, self.query = {}, {}, {}, {}, ""
