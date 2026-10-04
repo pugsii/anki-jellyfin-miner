@@ -7,10 +7,10 @@ poster at any time.
 from pathlib import Path
 
 from aqt import mw
-
-from . import titles
 from aqt.qt import (QAbstractItemView, QColor, QFont, QIcon, QLineEdit, QListView, QListWidget, QListWidgetItem,
                     QPainter, QPainterPath, QPixmap, QRectF, QSize, Qt)
+
+from . import titles
 
 COVERS = Path(__file__).parent / "user_files" / "covers"
 W, H = 150, 225          # poster size on screen (2:3, like Jellyfin)

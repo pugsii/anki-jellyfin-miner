@@ -3,6 +3,7 @@
 The mapping (config "fields") says which note field gets each piece; pieces mapped to "" are skipped:
 word, gloss, sentence, translation, sentence_audio, picture, source, grammar, definitions, pitch, frequency.
 """
+import html
 import re
 
 if __package__:
@@ -21,13 +22,16 @@ def word_fields(word, info, dict_):
 
 
 def scene_fields(scene, audio_format):
-    """The sentence-level pieces: sentence, translation, sentence_audio, picture, source, grammar."""
+    """The sentence-level pieces: sentence, translation, sentence_audio, picture, source, grammar. Card fields are
+    HTML, so text from outside (subtitles, the AI model, dictionaries, show names) is escaped here; the sentence
+    (furigana markup) and grammar notes are built as HTML already."""
     audio = scene.get("audio") or ""
     if audio:
         audio = f'<audio src="{audio}"></audio>' if audio_format == "html" else f"[sound:{audio}]"
     picture = f'<img src="{scene["picture"]}">' if scene.get("picture") else ""
-    return {"sentence": scene["sentence"], "translation": scene.get("translation", ""),
-            "sentence_audio": audio, "picture": picture, "source": scene["source"], "grammar": scene.get("grammar", "")}
+    return {"sentence": scene["sentence"], "translation": html.escape(scene.get("translation") or "", quote=False),
+            "sentence_audio": audio, "picture": picture, "source": html.escape(scene["source"], quote=False),
+            "grammar": scene.get("grammar", "")}
 
 
 def new_note_values(pieces, mapping):
@@ -72,4 +76,6 @@ if __name__ == "__main__":  # self-check
     append_scene(note, {"sentence": "四つ目", "grammar": "g4"}, {"sentence": "S", "grammar": "Missing"})  # field not on the note
     assert note["S"].endswith("<hr>四つ目") and "Missing" not in note
     assert not has_room(note, "四つ目", {"sentence": "S"}, 2)
+    f = scene_fields({"sentence": "x", "translation": "Tom & <Jerry>", "source": "A<B> S1E1"}, "html")
+    assert f["translation"] == "Tom &amp; &lt;Jerry&gt;" and f["source"] == "A&lt;B&gt; S1E1"
     print("selftest ok")

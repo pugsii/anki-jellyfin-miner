@@ -2,9 +2,9 @@
 import datetime
 import html
 import re
-import time
 import shutil
 import tempfile
+import time
 
 from aqt import gui_hooks, mw
 from aqt.deckbrowser import DeckBrowser
@@ -562,7 +562,7 @@ def prepare(show, parent=None):
     if running:
         return tooltip("Jellyfin Miner is busy; try again in a minute")
     known, _ = known_words(c)
-    dict_ = Dictionary()
+    dict_ = Dictionary(user_dir=None)  # on the main thread: the bundled data is all the dialog needs
     dialog = PrepDialog(show, counts, analysis.with_readings(known, dict_), dict_, parent)
     if dialog.exec() and dialog.selected():
         make_prep_cards(show, dialog.selected())
@@ -599,7 +599,7 @@ def make_prep_cards(show, words):
                 ep_id, i = hit
                 try:
                     if ep_id not in episodes:
-                        item = jf._get("/Items", userId=user_id, Ids=ep_id, Fields="MediaStreams,MediaSources")["Items"][0]
+                        item = jf.get("/Items", userId=user_id, Ids=ep_id, Fields="MediaStreams,MediaSources")["Items"][0]
                         try:
                             english = jf.subtitles(item, ENGLISH)
                         except Exception:  # no English line: the translation model fills in
@@ -790,7 +790,7 @@ def on_profile_open():
         for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes),
                              ("Can I watch this yet?", watch_scores)):
             item = QAction(text, mw)
-            item.triggered.connect(action)
+            item.triggered.connect(lambda _checked=False, action=action: action())  # not Qt's `checked` as an argument
             menu.addAction(item)
         mw.form.menuTools.addMenu(menu)
     if not hooked:

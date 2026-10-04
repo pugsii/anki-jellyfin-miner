@@ -26,7 +26,9 @@ def structured(node):
         return ""
     # Of the data attributes, only "content" (the part: sense, glossary, example...) is kept for styling
     attrs = [f'data-sc-content="{html.escape(str(node["data"]["content"]))}"'] if "content" in (node.get("data") or {}) else []
-    attrs += [f'{a.lower()}="{html.escape(str(node[a]))}"' for a in ("lang", "href", "colSpan", "rowSpan") if a in node]
+    attrs += [f'{a.lower()}="{html.escape(str(node[a]))}"' for a in ("lang", "colSpan", "rowSpan") if a in node]
+    if re.match(r"https?://|\?", str(node.get("href", ""))):  # web links and Yomitan's own ?query links only
+        attrs.append(f'href="{html.escape(node["href"])}"')
     if node.get("style"):
         css = "; ".join(f"{re.sub(r'[A-Z]', lambda m: '-' + m.group().lower(), k)}: {v}" for k, v in node["style"].items())
         attrs.append(f'style="{html.escape(css)}"')
@@ -108,4 +110,6 @@ if __name__ == "__main__":  # self-check
     assert pointers(term("面接", ["人柄や能力を調べるため、直接その人に会って対話すること。"])) == []
     assert structured({"tag": "li", "style": {"listStyleType": '"①"'}, "data": {"content": "sense", "x": 1}, "content": ["a<b", {"tag": "br"}]}) \
         == '<li data-sc-content="sense" style="list-style-type: &quot;①&quot;">a&lt;b<br></li>'
+    assert 'href' not in structured({"tag": "a", "href": "javascript:alert(1)", "content": "x"})
+    assert structured({"tag": "a", "href": "https://jitendex.org", "content": "x"}) == '<a href="https://jitendex.org">x</a>'
     print("selftest ok")

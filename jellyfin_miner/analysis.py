@@ -1,4 +1,5 @@
 """Pick words worth learning from an episode's subtitles, and write sentences with furigana."""
+import html
 import re
 import sys
 from collections import Counter, defaultdict
@@ -48,7 +49,7 @@ def sentence(toks, target):
     """Anki furigana for a whole line, with the first occurrence of `target` (a dictionary form) in <b>."""
     out, bold = "", False
     for t in toks:
-        piece = t.surface
+        piece = html.escape(t.surface, quote=False)  # card fields are HTML
         if KANJI.search(t.surface) and t.reading != "*":
             piece = "".join(f" {s}[{r}]" if r else s for s, r in segments(t.surface, hira(t.reading)))
         if not bold and t.base_form == target:
@@ -151,6 +152,7 @@ if __name__ == "__main__":  # self-check (uses the bundled dictionary)
     assert with_reading("見逃す", "みのがす") == "見逃[みのが]す"
     toks = tokens("特別に見逃してあげましょう。")
     assert sentence(toks, "見逃す") == "特別[とくべつ]に<b> 見逃[みのが]し</b>てあげましょう。", sentence(toks, "見逃す")
+    assert "&lt;" in sentence(tokens("<i>ねえ</i>"), "x") and "<i>" not in sentence(tokens("<i>ねえ</i>"), "x")
     cues = [(0, 1, "今日も面接だったが見事に落とされたよ。"), (1, 2, "面接は明日だ。"), (2, 3, "特別に見逃してあげましょう。")]
     d = Dictionary()
     assert "子ども" not in candidates([(0, 1, "子どもがいる。")], with_readings({"子供"}, d), d, 24000)

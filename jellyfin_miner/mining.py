@@ -56,7 +56,11 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, pr
         return [], []
     cues = subtitles.parse(*subs)
     progress(0.05, "finding words")
-    english = jf.subtitles(item, ENGLISH)
+    try:
+        english = jf.subtitles(item, ENGLISH)
+    except Exception as e:  # optional: without them the model translates (or the translation stays blank)
+        english = None
+        log(f"{label(item)}: couldn't read the English subtitles ({e})")
     english_cues = subtitles.parse(*english) if english else []
     scene = lambda i, target: cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log)
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
@@ -71,8 +75,8 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, pr
         progress(0.1 + 0.9 * len(new) / max(total, 1), f"clip {len(new) + 1} of {total}")
         new.append({"word": w, "word_fields": cards.word_fields(w, words[w], dict_),
                     "scene": scene(analysis.best_line(cues, words[w]), w), "tags": tags})
-    for w, lines in extra:
+    for w, used_in in extra:
         progress(0.1 + 0.9 * (len(new) + len(appends)) / max(total, 1), f"clip {len(new) + len(appends) + 1} of {total}")
-        appends.append({"word": w, "scene": scene(min(lines, key=lambda i: abs(len(cues[i][2]) - 18)), w)})
+        appends.append({"word": w, "scene": scene(min(used_in, key=lambda i: abs(len(cues[i][2]) - 18)), w)})
     log(f"{label(item)}: {len(words)} unknown words found, {len(new)} new cards, {len(appends)} extra sentences")
     return new, appends

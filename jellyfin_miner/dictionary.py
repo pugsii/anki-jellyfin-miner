@@ -63,8 +63,9 @@ def user_dictionaries(bundled, folder=USER_DIR):
 
 class Dictionary:
     def __init__(self, path=PATH, user_dir=USER_DIR):
+        """user_dir=None leaves out your own dictionaries (converting them can take a minute: not on the main thread)."""
         self.db = sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=False)
-        self.sources = [self.db] + [db for db in [user_dictionaries(self.db, user_dir)] if db]
+        self.sources = [self.db] + [db for db in [user_dir and user_dictionaries(self.db, user_dir)] if db]
         self.zdicts = {name: data for db in self.sources for name, data in db.execute("select dict, data from zdict")}
 
     def entry(self, word, reading=None):

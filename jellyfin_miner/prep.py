@@ -65,7 +65,7 @@ def update_index(jf, user_id, ignored=(), log=print):
     """Add every watched episode with Japanese subtitles that isn't indexed yet, and return the index:
     {episode id: {"label", "series", "cues", "words"}}."""
     index = load_index()
-    played = jf._get("/Items", userId=user_id, IncludeItemTypes="Episode", Recursive="true", IsPlayed="true",
+    played = jf.get("/Items", userId=user_id, IncludeItemTypes="Episode", Recursive="true", IsPlayed="true",
                      Fields="MediaStreams,MediaSources")["Items"]
     new = [ep for ep in played if ep["Id"] not in index and ep.get("SeriesId") not in ignored]
     for n, ep in enumerate(new, 1):
