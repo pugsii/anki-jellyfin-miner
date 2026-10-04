@@ -8,8 +8,9 @@ import tempfile
 
 from aqt import gui_hooks, mw
 from aqt.deckbrowser import DeckBrowser
-from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QHBoxLayout, QLabel,
-                    QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QVBoxLayout, QWidget)
+from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QFont, QHBoxLayout, QHeaderView,
+                    QLabel, QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QTreeWidget,
+                    QTreeWidgetItem, QVBoxLayout, QWidget)
 from aqt.utils import showInfo, showWarning, tooltip
 
 from . import analysis, cards, grammar, home, mining, posters, prep, scores, subtitles, translate
@@ -102,6 +103,17 @@ def add_media(scene):
     return {**scene, **{k: mw.col.media.add_file(scene[k]) for k in ("audio", "picture") if scene.get(k)}}
 
 
+def prep_deck(c):
+    return c["cards"]["deck"] + "::Prep"
+
+
+def prep_words(c, extendable):
+    """Words whose notes are still prep cards (in the ::Prep subdeck)."""
+    did = mw.col.decks.id_for_name(prep_deck(c))
+    nids = set(mw.col.find_notes(f"did:{did}")) if did else set()
+    return frozenset(w for w, nid in extendable.items() if nid in nids)
+
+
 def save(results, model, c, extendable, state):
     """Add the planned notes, one episode at a time; each episode is recorded as done once saved, so an error
     part-way never leads to the same episode being mined again (duplicates)."""
@@ -125,6 +137,11 @@ def save(results, model, c, extendable, state):
                     cards.append_scene(note, cards.scene_fields(add_media(a["scene"]), c["cards"]["audio_format"]), c["cards"]["fields"])
                     col.update_note(note)
                     extended += 1
+                    # a prep card has met its word in something you watched: it joins your mining deck
+                    # (moving keeps its review history)
+                    prepped = [cid for cid in note.card_ids() if col.decks.name(col.get_card(cid).did) == prep_deck(c)]
+                    if prepped:
+                        col.set_deck(prepped, deck_id)
         state["done"] = (state["done"] + [item["Id"]])[-2000:]
         col.set_config(STATE, state)
     return added, extended
@@ -159,6 +176,7 @@ def run(episodes=None, announce=False):
     except ValueError as e:
         return showWarning(str(e)) if manual else None
     known, extendable = known_words(c)
+    prepared = prep_words(c, extendable)  # read here: the collection is only touched on the main thread
     state = mw.col.get_config(STATE, {"since": None, "done": []})
     now = datetime.datetime.now(datetime.timezone.utc)
     utc = lambda t: t.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -183,7 +201,8 @@ def run(episodes=None, announce=False):
                           "fraction": (n + fraction) / len(todo)}
                 mw.taskman.run_on_main(lambda: set_progress(state_))
             try:
-                new, appends = mining.mine_episode(jf, item, c, known, set(extendable), dict_, workdir, log.append, progress)
+                new, appends = mining.mine_episode(jf, item, c, known, set(extendable), dict_, workdir, log.append, progress,
+                                                   prepared)
             except Exception as e:  # one broken episode shouldn't lose the others; it's retried next time
                 log.append(f"{label(item)}: failed ({e})")
                 failed.append(label(item))
@@ -427,20 +446,35 @@ class PrepDialog(QDialog):
         super().__init__(parent or mw)
         self.counts, self.known, self.dict_ = counts, known, dict_
         self.setWindowTitle(f"Prepare for {show['Name']}")
-        self.resize(560, 620)
+        self.resize(640, 660)
         note = QLabel("Spoiler-free cards for the words this show uses most that you don't know yet. Example sentences "
                       "come from anime you've already watched and from the dictionary, never from this show; after you "
                       "watch it, the miner adds its real scenes to these cards.")
         note.setWordWrap(True)
-        self.words = QListWidget()
+        # one row per word, in columns: tick + word (larger), reading, meaning, times said
+        self.words = QTreeWidget()
+        self.words.setHeaderLabels(["Word", "Reading", "Meaning", "Said"])
+        self.words.setRootIsDecorated(False)
+        self.words.setAlternatingRowColors(True)
+        self.words.setUniformRowHeights(True)
+        word_font = QFont(self.font())
+        word_font.setPointSizeF(self.font().pointSizeF() * 1.25)
         for n, (word, said) in enumerate(prep.candidates(counts, known, dict_, config()["words"]["max_rank"])):
             entry = dict_.entry(word)
-            row = QListWidgetItem(f"{word}　{entry['readings'][0]}　·　{gloss(entry)}　·　said {said}×")
-            row.setData(Qt.ItemDataRole.UserRole, word)
+            row = QTreeWidgetItem([word, entry["readings"][0], gloss(entry), f"{said}×"])
+            row.setData(0, Qt.ItemDataRole.UserRole, word)
+            row.setFont(0, word_font)
+            row.setForeground(1, self.palette().placeholderText())
+            row.setTextAlignment(3, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             row.setFlags(row.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            row.setCheckState(Qt.CheckState.Checked if n < 20 else Qt.CheckState.Unchecked)
-            self.words.addItem(row)
-        self.words.itemChanged.connect(lambda _: self.update_gain())
+            row.setCheckState(0, Qt.CheckState.Checked if n < 20 else Qt.CheckState.Unchecked)
+            self.words.addTopLevelItem(row)
+        header = self.words.header()
+        for col, mode in enumerate((QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.ResizeToContents,
+                                    QHeaderView.ResizeMode.Stretch, QHeaderView.ResizeMode.ResizeToContents)):
+            header.setSectionResizeMode(col, mode)
+        header.setStretchLastSection(False)
+        self.words.itemChanged.connect(lambda *_: self.update_gain())
         self.gain = QLabel()
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         self.ok = buttons.button(QDialogButtonBox.StandardButton.Ok)
@@ -452,8 +486,8 @@ class PrepDialog(QDialog):
         self.update_gain()
 
     def selected(self):
-        return [self.words.item(i).data(Qt.ItemDataRole.UserRole) for i in range(self.words.count())
-                if self.words.item(i).checkState() == Qt.CheckState.Checked]
+        rows = (self.words.topLevelItem(i) for i in range(self.words.topLevelItemCount()))
+        return [row.data(0, Qt.ItemDataRole.UserRole) for row in rows if row.checkState(0) == Qt.CheckState.Checked]
 
     def update_gain(self):
         words = self.selected()
@@ -548,7 +582,7 @@ def make_prep_cards(show, words):
             if not mw.col:
                 return
             results = future.result()
-            deck_id = mw.col.decks.id(c["cards"]["deck"] + "::Prep")
+            deck_id = mw.col.decks.id(prep_deck(c))
             mapping, fmt = c["cards"]["fields"], c["cards"]["audio_format"]
             tag = "prep::" + "_".join(show["Name"].split())
             for word, fields, scenes, kinds in results:

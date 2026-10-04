@@ -38,11 +38,13 @@ def cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log=print):
             "audio": audio, "picture": picture, "source": f"{label(item)} {minutes}:{seconds:02d}", "grammar": notes}
 
 
-def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, progress=lambda fraction, what: None):
+def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, progress=lambda fraction, what: None,
+                 prepared=frozenset()):
     """Plan the cards for one episode.
 
     known: words already in your decks (never picked as new words);
-    extendable: words whose note can take another sentence (scenes get added to those).
+    extendable: words whose note can take another sentence (scenes get added to those);
+    prepared: words from prep cards: each gets this episode's scene if it's used, on top of the usual limit.
     Returns (new, appends): [{"word", "word_fields", "scene", "tags"}] and [{"word", "scene"}]; scenes hold
     media as file paths in `workdir`, to be added to Anki's media folder by the caller.
     progress(fraction of this episode done, what's happening) is called as it goes.
@@ -60,8 +62,9 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, pr
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
     words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"], cfg["words"]["skip_names"])
     picked = analysis.pick(words, cfg["words"]["per_episode"])
-    extra = list(analysis.known_lines(cues, extendable).items())[:cfg["cards"]["extra_sentences_per_episode"]] \
-        if cfg["cards"]["max_sentences"] > 1 and extendable else []
+    lines = analysis.known_lines(cues, extendable) if cfg["cards"]["max_sentences"] > 1 and extendable else {}
+    extra = [(w, l) for w, l in lines.items() if w in prepared] + \
+        [(w, l) for w, l in lines.items() if w not in prepared][:cfg["cards"]["extra_sentences_per_episode"]]
     total = len(picked) + len(extra)
     new, appends = [], []
     for w in picked:  # each scene is an audio clip and a screenshot: the slow part
