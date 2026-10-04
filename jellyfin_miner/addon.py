@@ -8,9 +8,8 @@ import tempfile
 
 from aqt import gui_hooks, mw
 from aqt.deckbrowser import DeckBrowser
-from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QFont, QHBoxLayout, QHeaderView,
-                    QLabel, QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QTreeWidget,
-                    QTreeWidgetItem, QVBoxLayout, QWidget)
+from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QFont, QHBoxLayout, QHeaderView, QLabel, QLineEdit, QMenu,
+                    QPushButton, QStackedWidget, Qt, QTimer, QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
 from aqt.utils import showInfo, showWarning, tooltip
 
 from . import analysis, cards, grammar, home, mining, posters, prep, scores, subtitles, translate
@@ -254,17 +253,50 @@ def shows_for(c):
     return jf, user_id, [s for s in jf.series(user_id) if s["Id"] not in ignored]
 
 
+def muted(text="", wrap=True):
+    """Secondary text: explanations, counts, status."""
+    label = QLabel(text)
+    label.setWordWrap(wrap)
+    label.setStyleSheet("color: palette(placeholder-text);")
+    return label
+
+
+def row(*parts):
+    """A horizontal row; None stands for stretchable space. Search boxes and wrapping text take any spare width,
+    so buttons keep their natural size and line up on the right."""
+    line = QHBoxLayout()
+    for part in parts:
+        if part is None:
+            line.addStretch(1)
+        elif isinstance(part, QHBoxLayout):
+            line.addLayout(part)
+        else:
+            line.addWidget(part, 1 if isinstance(part, QLineEdit) or isinstance(part, QLabel) and part.wordWrap() else 0)
+    return line
+
+
+def dialog_layout(dialog, *parts):
+    layout = QVBoxLayout(dialog)
+    layout.setSpacing(10)
+    for part in parts:
+        layout.addLayout(part) if isinstance(part, QHBoxLayout) else layout.addWidget(part)
+    return layout
+
+
 class EpisodePicker(QDialog):
-    """Tools → Jellyfin Miner → Mine an episode…: pick a show from its poster, then episodes."""
+    """Tools → Jellyfin Miner → Mine an episode…: pick a show from its poster, then episodes.
+
+    One footer for both steps: what's selected on the left, the buttons on the right; "Mine" only appears
+    once you're choosing episodes."""
 
     def __init__(self, jf, user_id, shows, start=None, parent=None):
         super().__init__(parent or mw)
         self.jf, self.user_id, self.closed = jf, user_id, False
         self.finished.connect(lambda _: setattr(self, "closed", True))
         self.setWindowTitle("Mine an episode")
-        self.resize(900, 680)
+        self.resize(940, 700)
         self.pages = QStackedWidget()
-        # page 1: the shows
+        # step 1: the shows
         self.grid = posters.ShowGrid()
         for show in shows:
             self.grid.add(show)
@@ -275,34 +307,43 @@ class EpisodePicker(QDialog):
         box.setContentsMargins(0, 0, 0, 0)
         box.addWidget(posters.search_box(self.grid))
         box.addWidget(self.grid)
-        # page 2: its episodes
+        # step 2: its episodes, as a table
         back = QPushButton("← All shows")
         back.clicked.connect(lambda: self.pages.setCurrentIndex(0))
         self.title = QLabel()
         self.title.setStyleSheet("font-size: 16px; font-weight: 600;")
-        self.episodes = QListWidget()
+        unwatched = QPushButton("Select unwatched")
+        unwatched.clicked.connect(self.select_unwatched)
+        self.episodes = QTreeWidget()
+        self.episodes.setHeaderLabels(["Episode", "Title", "Watched", "Japanese subtitles"])
+        self.episodes.setRootIsDecorated(False)
+        self.episodes.setAlternatingRowColors(True)
+        self.episodes.setUniformRowHeights(True)
         self.episodes.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.episodes.itemSelectionChanged.connect(self.update_button)
+        self.episodes.itemSelectionChanged.connect(self.update_footer)
+        self.episodes.itemDoubleClicked.connect(lambda item, _: item.isDisabled() or self.accept())
+        header = self.episodes.header()
+        for col, mode in enumerate((QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.Stretch,
+                                    QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.ResizeToContents)):
+            header.setSectionResizeMode(col, mode)
+        header.setStretchLastSection(False)
         episodes_page = QWidget()
         box = QVBoxLayout(episodes_page)
         box.setContentsMargins(0, 0, 0, 0)
-        top = QHBoxLayout()
-        top.addWidget(back)
-        top.addWidget(self.title, 1)
-        box.addLayout(top)
-        box.addWidget(QLabel("Episodes (Ctrl/Shift to pick several)"))
+        box.addLayout(row(back, self.title, None, unwatched))
         box.addWidget(self.episodes)
         self.pages.addWidget(shows_page)
         self.pages.addWidget(episodes_page)
-        self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        self.buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Mine selected")
-        self.buttons.accepted.connect(self.accept)
-        self.buttons.rejected.connect(self.reject)
-        self.pages.currentChanged.connect(self.update_button)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.pages)
-        layout.addWidget(self.buttons)
-        self.update_button()
+        # footer
+        self.status = muted(wrap=False)
+        self.close_button = QPushButton("Cancel")
+        self.close_button.clicked.connect(self.reject)
+        self.mine_button = QPushButton()
+        self.mine_button.setDefault(True)
+        self.mine_button.clicked.connect(self.accept)
+        self.pages.currentChanged.connect(self.update_footer)
+        dialog_layout(self, self.pages, row(self.status, None, self.close_button, self.mine_button))
+        self.update_footer()
         posters.load_posters(jf, shows, self.grid, lambda: self.closed)
         if start:
             self.open_show(start)
@@ -320,19 +361,35 @@ class EpisodePicker(QDialog):
         for ep in episodes:
             streams = ep["MediaSources"][0].get("MediaStreams", []) if ep.get("MediaSources") else []
             has_subs = any(s["Type"] == "Subtitle" and (s.get("Language") or "").lower() in JAPANESE for s in streams)
-            watched = "✓ " if ep.get("UserData", {}).get("Played") else ""
-            row = QListWidgetItem(f"{watched}S{ep.get('ParentIndexNumber', 0)}E{ep.get('IndexNumber', 0)}  {ep.get('Name', '')}"
-                                  + ("" if has_subs else "   (no Japanese subtitles)"))
-            row.setData(Qt.ItemDataRole.UserRole, ep)
-            if not has_subs:
-                row.setFlags(row.flags() & ~Qt.ItemFlag.ItemIsEnabled)
-            self.episodes.addItem(row)
+            watched = ep.get("UserData", {}).get("Played")
+            item = QTreeWidgetItem([f"S{ep.get('ParentIndexNumber', 0)}E{ep.get('IndexNumber', 0)}", ep.get("Name", ""),
+                                    "✓" if watched else "", "yes" if has_subs else "none"])
+            item.setData(0, Qt.ItemDataRole.UserRole, ep)
+            item.setTextAlignment(2, Qt.AlignmentFlag.AlignCenter)
+            if not has_subs:  # nothing to mine: shown for completeness, but can't be picked
+                item.setDisabled(True)
+            self.episodes.addTopLevelItem(item)
+        self.update_footer()
 
-    def update_button(self, *_):
-        self.buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.pages.currentIndex() == 1 and bool(self.selected()))
+    def select_unwatched(self):
+        self.episodes.clearSelection()
+        for i in range(self.episodes.topLevelItemCount()):
+            item = self.episodes.topLevelItem(i)
+            if not item.isDisabled() and not item.text(2):
+                item.setSelected(True)
+
+    def update_footer(self, *_):
+        choosing = self.pages.currentIndex() == 1
+        n = len(self.selected())
+        self.mine_button.setVisible(choosing)
+        self.mine_button.setEnabled(n > 0)
+        self.mine_button.setText(f"Mine {n} episode{'s' if n != 1 else ''}" if n else "Mine")
+        self.close_button.setText("Cancel" if choosing else "Close")
+        self.status.setText(("Ctrl/Shift-click to pick several; double-click to mine one" if not n else
+                             f"{n} episode{'s' if n != 1 else ''} selected") if choosing else "Choose a show")
 
     def selected(self):
-        return [row.data(Qt.ItemDataRole.UserRole) for row in self.episodes.selectedItems()]
+        return [item.data(0, Qt.ItemDataRole.UserRole) for item in self.episodes.selectedItems()]
 
 
 def pick_episodes(start=None, parent=None):
@@ -366,11 +423,10 @@ class ScoreGrid(QDialog):
         self.jf, self.user_id, self.closed, self.results = jf, user_id, False, {}
         self.finished.connect(lambda _: setattr(self, "closed", True))
         self.setWindowTitle("Can I watch this yet?")
-        self.resize(980, 760)
-        note = QLabel("How much of each show's dialogue you already know, from up to 3 episodes you haven't seen "
-                      "(katakana loanwords and names aside). <b>90–95%</b> is the sweet spot for learning from a show; "
-                      "75–90% is watchable with effort, and every word you learn raises the score.")
-        note.setWordWrap(True)
+        self.resize(1000, 780)
+        note = muted("How much of each show's dialogue you already know, from up to 3 episodes you haven't seen. "
+                     "<b>90%+</b> (green) is the sweet spot for learning from a show; <b>75–90%</b> (amber) is watchable "
+                     "with effort. Katakana loanwords and names don't count.")
         self.grid = posters.ShowGrid()
         for show in shows:
             self.grid.add(show)
@@ -380,28 +436,21 @@ class ScoreGrid(QDialog):
         self.sort = QComboBox()
         self.sort.addItems(["Most known first", "By name"])
         self.sort.currentIndexChanged.connect(lambda _: self.resort())
-        self.status = QLabel(f"Checking {len(shows)} shows…")
-        top = QHBoxLayout()
-        top.addWidget(posters.search_box(self.grid), 1)
-        top.addWidget(self.sort)
+        self.status = muted(f"Checking {len(shows)} shows…", wrap=False)
         self.detail = QLabel("Select a show to see the words to learn first.")
         self.detail.setWordWrap(True)
-        self.mine_button = QPushButton("Mine an episode…")
-        self.mine_button.setEnabled(False)
-        self.mine_button.clicked.connect(lambda: self.mine(self.grid.show_at(self.grid.currentItem())))
         self.prep_button = QPushButton("Prepare for this show…")
         self.prep_button.setToolTip("Spoiler-free cards for this show's most useful unknown words")
         self.prep_button.setEnabled(False)
         self.prep_button.clicked.connect(lambda: prepare(self.grid.show_at(self.grid.currentItem()), self))
-        bottom = QHBoxLayout()
-        bottom.addWidget(self.detail, 1)
-        bottom.addWidget(self.prep_button)
-        bottom.addWidget(self.mine_button)
-        close = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
-        close.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        for part in (note, top, self.grid, self.status, bottom, close):
-            layout.addLayout(part) if isinstance(part, QHBoxLayout) else layout.addWidget(part)
+        self.mine_button = QPushButton("Mine an episode…")
+        self.mine_button.setEnabled(False)
+        self.mine_button.setDefault(True)
+        self.mine_button.clicked.connect(lambda: self.mine(self.grid.show_at(self.grid.currentItem())))
+        close = QPushButton("Close")
+        close.clicked.connect(self.reject)
+        dialog_layout(self, note, row(posters.search_box(self.grid), self.sort, self.status), self.grid,
+                      row(self.detail, self.prep_button, self.mine_button, close))
         posters.load_posters(jf, shows, self.grid, lambda: self.closed)
 
     def set_score(self, show_id, share, learn):
@@ -411,10 +460,10 @@ class ScoreGrid(QDialog):
         current = self.grid.show_at(self.grid.currentItem())
         if current and current["Id"] == show_id:
             self.show_detail(current)
-        self.status.setText(f"Checked {len(self.results)} of {len(self.grid.items)} shows…")
+        self.status.setText(f"Checking… {len(self.results)} of {len(self.grid.items)}")
 
     def finish(self):
-        self.status.setText(f"All {len(self.grid.items)} shows checked. Double-click a show to mine an episode.")
+        self.status.setText(f"All {len(self.grid.items)} shows checked")
         self.resort()
 
     def resort(self):
@@ -432,7 +481,7 @@ class ScoreGrid(QDialog):
         share, learn = self.results[show["Id"]]
         if share is None:
             return self.detail.setText(f"<b>{name}</b>: no Japanese subtitles to check.")
-        self.detail.setText(f"<b>{name}</b>: {share:.0%} known. Learn these first: {html.escape('、'.join(learn)) or '—'}")
+        self.detail.setText(f"<b>{name}</b> · {share:.0%} known<br>Learn first: {html.escape('、'.join(learn)) or '—'}")
 
     def mine(self, show):
         if show:
@@ -447,10 +496,9 @@ class PrepDialog(QDialog):
         self.counts, self.known, self.dict_ = counts, known, dict_
         self.setWindowTitle(f"Prepare for {show['Name']}")
         self.resize(640, 660)
-        note = QLabel("Spoiler-free cards for the words this show uses most that you don't know yet. Example sentences "
-                      "come from anime you've already watched and from the dictionary, never from this show; after you "
-                      "watch it, the miner adds its real scenes to these cards.")
-        note.setWordWrap(True)
+        note = muted("Spoiler-free cards for the words this show uses most that you don't know yet. Example sentences "
+                     "come from anime you've already watched and from the dictionary, never from this show. Once you "
+                     "watch it, each card gets its real scene and moves into your deck.")
         # one row per word, in columns: tick + word (larger), reading, meaning, times said
         self.words = QTreeWidget()
         self.words.setHeaderLabels(["Word", "Reading", "Meaning", "Said"])
@@ -461,33 +509,38 @@ class PrepDialog(QDialog):
         word_font.setPointSizeF(self.font().pointSizeF() * 1.25)
         for n, (word, said) in enumerate(prep.candidates(counts, known, dict_, config()["words"]["max_rank"])):
             entry = dict_.entry(word)
-            row = QTreeWidgetItem([word, entry["readings"][0], gloss(entry), f"{said}×"])
-            row.setData(0, Qt.ItemDataRole.UserRole, word)
-            row.setFont(0, word_font)
-            row.setForeground(1, self.palette().placeholderText())
-            row.setTextAlignment(3, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-            row.setFlags(row.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            row.setCheckState(0, Qt.CheckState.Checked if n < 20 else Qt.CheckState.Unchecked)
-            self.words.addTopLevelItem(row)
+            item = QTreeWidgetItem([word, entry["readings"][0], gloss(entry), f"{said}×"])
+            item.setData(0, Qt.ItemDataRole.UserRole, word)
+            item.setFont(0, word_font)
+            item.setForeground(1, self.palette().placeholderText())
+            item.setTextAlignment(3, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item.setCheckState(0, Qt.CheckState.Checked if n < 20 else Qt.CheckState.Unchecked)
+            self.words.addTopLevelItem(item)
         header = self.words.header()
         for col, mode in enumerate((QHeaderView.ResizeMode.ResizeToContents, QHeaderView.ResizeMode.ResizeToContents,
                                     QHeaderView.ResizeMode.Stretch, QHeaderView.ResizeMode.ResizeToContents)):
             header.setSectionResizeMode(col, mode)
         header.setStretchLastSection(False)
         self.words.itemChanged.connect(lambda *_: self.update_gain())
+        tick = lambda n: lambda: [self.words.topLevelItem(i).setCheckState(0, Qt.CheckState.Checked if i < n else Qt.CheckState.Unchecked)
+                                  for i in range(self.words.topLevelItemCount())]
+        quick = [QPushButton(text) for text in ("Top 10", "Top 20", "All", "None")]
+        for button, n in zip(quick, (10, 20, 10_000, 0)):
+            button.clicked.connect(tick(n))
         self.gain = QLabel()
-        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        self.ok = buttons.button(QDialogButtonBox.StandardButton.Ok)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        for widget in (note, self.words, self.gain, buttons):
-            layout.addWidget(widget)
+        cancel = QPushButton("Cancel")
+        cancel.clicked.connect(self.reject)
+        self.ok = QPushButton()
+        self.ok.setDefault(True)
+        self.ok.clicked.connect(self.accept)
+        dialog_layout(self, note, row(muted("Tick:", wrap=False), *quick, None), self.words,
+                      row(self.gain, None, cancel, self.ok))
         self.update_gain()
 
     def selected(self):
-        rows = (self.words.topLevelItem(i) for i in range(self.words.topLevelItemCount()))
-        return [row.data(0, Qt.ItemDataRole.UserRole) for row in rows if row.checkState(0) == Qt.CheckState.Checked]
+        items = (self.words.topLevelItem(i) for i in range(self.words.topLevelItemCount()))
+        return [item.data(0, Qt.ItemDataRole.UserRole) for item in items if item.checkState(0) == Qt.CheckState.Checked]
 
     def update_gain(self):
         words = self.selected()
@@ -730,8 +783,12 @@ def on_profile_open():
     global timer, menu, hooked
     if menu is None:  # profiles can be reopened; add the menu once
         menu = QMenu("Jellyfin Miner", mw)
-        for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes),
-                             ("Can I watch this yet?", watch_scores)):
+        for entry in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes), None,
+                      ("Can I watch this yet?", watch_scores)):
+            if entry is None:
+                menu.addSeparator()
+                continue
+            text, action = entry
             item = QAction(text, mw)
             item.triggered.connect(action)
             menu.addAction(item)
