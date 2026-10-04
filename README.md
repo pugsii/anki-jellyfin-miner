@@ -14,7 +14,7 @@ Words you already have can get the new scene added as an extra example sentence.
 
 ![A mined card for 魔物: the scene from 葬送のフリーレン, the line with furigana, its translation, a grammar note and the dictionary meaning](docs/screenshots/mined-card.png)
 
-*A mined card, shown with the **Kotoba Theme** add-on's note type.*
+*A mined card, shown with the [Kotoba Theme](https://github.com/pugsii/anki-kotoba-theme) add-on's note type.*
 
 ## What else it does
 
@@ -57,7 +57,7 @@ Only episodes you actually played count, not ones marked as watched (it checks J
 
 It checks for newly watched episodes when Anki opens and every 30 minutes; *Tools → Jellyfin Miner* has the rest.
 
-Cards use a simple built-in note type by default. For the full design (example sentences you can flip through, grammar notes, dictionary tabs, listening cards and 13 colour themes), install the **Kotoba Theme** add-on, use its *Tools → Kotoba: install or update note type*, and set `cards.note_type` to `Kotoba`.
+Cards use a simple built-in note type by default. For the full design (example sentences you can flip through, grammar notes, dictionary tabs, listening cards and 13 colour themes), install the [Kotoba Theme](https://github.com/pugsii/anki-kotoba-theme) add-on, use its *Tools → Kotoba: install or update note type*, and set `cards.note_type` to `Kotoba`.
 
 ## Adding your own dictionaries
 
