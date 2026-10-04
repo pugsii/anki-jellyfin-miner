@@ -16,9 +16,11 @@ CSS = """
 .jfm-card { background: var(--kt-panel, var(--canvas-elevated)); border-radius: 14px; padding: 14px 16px 16px; }
 .jfm-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .jfm-head h2 { font-size: 15px; font-weight: 600; margin: 0; flex: 1; }
-.jfm-action { font: inherit; font-size: 12px; color: var(--kt-muted, var(--fg-subtle)); background: none; cursor: pointer;
+/* Anki styles every button on its pages (margins, hover border and shadow); these draw their own */
+.jfm-home button, .jfm-home button:hover, .jfm-home button:active { margin: 0; box-shadow: none; font-weight: inherit; }
+.jfm-home .jfm-action { font: inherit; font-size: 12px; color: var(--kt-muted, var(--fg-subtle)); background: none; cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--kt-fg, var(--fg)) 14%, transparent); border-radius: 999px; padding: 3px 10px; }
-.jfm-action:hover { color: var(--kt-fg, var(--fg)); background: color-mix(in srgb, var(--kt-fg, var(--fg)) 6%, transparent); }
+.jfm-home .jfm-action:hover { border-color: color-mix(in srgb, var(--kt-fg, var(--fg)) 28%, transparent); color: var(--kt-fg, var(--fg)); background: color-mix(in srgb, var(--kt-fg, var(--fg)) 6%, transparent); }
 .jfm-progress { margin-bottom: 14px; }
 .jfm-progress[hidden] { display: none; }
 .jfm-label { font-size: 13px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 12px; }
