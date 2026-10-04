@@ -62,6 +62,12 @@ class ShowGrid(QListWidget):
                            "QListView::item:selected { background: palette(highlight); color: palette(highlighted-text); }")
         self.items, self.posters, self.badges, self.names, self.query = {}, {}, {}, {}, ""
 
+    def updateGeometries(self):
+        """Qt sets the scroll step from the cell height, so a wheel notch jumped about three rows of posters; a fixed
+        step gives a third of a row per notch."""
+        super().updateGeometries()
+        self.verticalScrollBar().setSingleStep(30)
+
     def resizeEvent(self, event):
         """Spread the columns over the full width with equal space on both sides. Qt needs 10-16px free on the
         right before wrapping, so cells fill all but 32px and the left margin takes half of what's left."""

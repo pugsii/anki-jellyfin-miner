@@ -771,6 +771,9 @@ def on_set_content(web_content, context):
 
 
 def on_message(handled, message, context):
+    if message in ("jfm:run", "jfm:scores"):
+        run_now() if message == "jfm:run" else watch_scores()
+        return True, None
     if not message.startswith("jfm:show:"):
         return handled
     show = next((s for s in recent if s["id"] == message[9:]), None)
