@@ -22,6 +22,7 @@
 - `max_sentences`: above 1, words you already have get new scenes added as extra sentences (separated by horizontal lines), up to this many, and `extra_sentences_per_episode` per episode. Only for note types built to show several sentences.
 - `audio_format`: `"sound"` (Anki plays it automatically) or `"html"` (a play button only).
 - `picture_format`: `"still"` (a screenshot, about 25 KB) or `"animated"` (a silent, looping clip of the line, up to 6 seconds: about 150 KB, and a second or two more per card to make).
+  To swap the screenshots on cards you already have for clips, see `tools/animate_existing.py` in the repository.
 
 **`grammar`**: notes on the grammar each sentence uses
 - `enabled`: add a note for each JLPT grammar pattern (N5–N1, plus casual speech like 〜ちゃう and 〜じゃん) found in the sentence: the pattern, its level and a one-line meaning.
