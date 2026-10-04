@@ -1,0 +1,13 @@
+Jellyfin Miner: https://github.com/pugsii/anki-jellyfin-miner
+The add-on's code is MIT licensed (LICENSE.txt). The bundled data and analyser keep their own licences:
+
+data/dictionary.sqlite is built from (and is shared under CC BY-SA 4.0, https://creativecommons.org/licenses/by-sa/4.0/):
+- JMdict, JMnedict and KANJIDIC2, (c) the Electronic Dictionary Research and Development Group,
+  CC BY-SA 4.0: https://www.edrdg.org/edrdg/licence.html
+- Kanjium pitch accent data, CC BY-SA 4.0: https://github.com/mifunetoshiro/kanjium
+- Jitendex (c) Stephen Kraus, CC BY-SA 4.0: https://jitendex.org
+- Japanese and English Wiktionary (https://ja.wiktionary.org, https://en.wiktionary.org), via Kaikki
+  (https://kaikki.org) and kaikki-to-yomitan, CC BY-SA 4.0
+
+vendor/janome: Janome (Apache 2.0), with the mecab-ipadic dictionary (NAIST licence); see
+vendor/Janome-0.5.0.dist-info/LICENSE.txt and NOTICE.txt.

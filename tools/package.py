@@ -31,6 +31,7 @@ def main():
         for path in sorted(ADDON.rglob("*")):
             if included(path):
                 z.write(path, path.relative_to(ADDON).as_posix())  # Anki wants the add-on's files at the top
+        z.write(ROOT / "LICENSE", "LICENSE.txt")
     print(f"{OUT.relative_to(ROOT)}: {OUT.stat().st_size / 1e6:.1f} MB")
 
 
