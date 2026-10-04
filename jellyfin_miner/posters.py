@@ -7,6 +7,8 @@ poster at any time.
 from pathlib import Path
 
 from aqt import mw
+
+from . import titles
 from aqt.qt import (QAbstractItemView, QColor, QFont, QIcon, QLineEdit, QListView, QListWidget, QListWidgetItem,
                     QPainter, QPainterPath, QPixmap, QRectF, QSize, Qt)
 
@@ -58,7 +60,20 @@ class ShowGrid(QListWidget):
         self.setVerticalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setStyleSheet("QListView::item { padding: 5px 4px 2px; border-radius: 10px; }"
                            "QListView::item:selected { background: palette(highlight); color: palette(highlighted-text); }")
-        self.items, self.posters, self.badges = {}, {}, {}
+        self.items, self.posters, self.badges, self.names, self.query = {}, {}, {}, {}, ""
+
+    def resizeEvent(self, event):
+        """Spread the columns over the full width with equal space on both sides. Qt needs 10-16px free on the
+        right before wrapping, so cells fill all but 32px and the left margin takes half of what's left."""
+        super().resizeEvent(event)
+        width = self.viewport().width() + self.viewportMargins().left()
+        cols = max(1, (width - 32) // (W + 22))
+        cell = (width - 32) // cols
+        margin = (width - cols * cell) // 2
+        if margin != self.viewportMargins().left():
+            self.setViewportMargins(margin, 0, 0, 0)
+        if cell != self.gridSize().width():
+            self.setGridSize(QSize(cell, H + 52))
 
     def add(self, show):
         item = Item(show["Name"])
@@ -83,9 +98,15 @@ class ShowGrid(QListWidget):
         self.items[show_id].setData(SORT, sort_key)
         self.redraw(show_id)
 
+    def set_names(self, names):
+        """{show id: every name it goes by}, for searching; applies the current search again."""
+        self.names.update(names)
+        self.filter(self.query)
+
     def filter(self, text):
-        for item in self.items.values():
-            item.setHidden(text.lower() not in item.text().lower())
+        self.query = text
+        for show_id, item in self.items.items():
+            item.setHidden(not titles.matches(text, self.names.get(show_id) or [item.text()]))
 
     def redraw(self, show_id):
         """Poster (cropped to 2:3, rounded corners) or a placeholder, then the badge, at screen resolution."""
@@ -133,16 +154,18 @@ class ShowGrid(QListWidget):
 
 def search_box(grid):
     box = QLineEdit()
-    box.setPlaceholderText("Search shows…")
+    box.setPlaceholderText("Search shows: Japanese, romaji or English title…")
     box.setClearButtonEnabled(True)
     box.textChanged.connect(grid.filter)
     return box
 
 
 def load_posters(jf, shows, grid, stopped):
-    """Fetch posters in the background and put each on the grid as it arrives. `stopped()` ends it early
-    (the dialog was closed)."""
+    """Fetch every show's names (for searching) and posters in the background, putting each on the grid as it
+    arrives. `stopped()` ends it early (the dialog was closed)."""
     def work():
+        names = titles.all_names(shows)
+        mw.taskman.run_on_main(lambda: stopped() or grid.set_names(names))
         for show in shows:
             if stopped():
                 return

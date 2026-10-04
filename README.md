@@ -10,7 +10,7 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 
 Words you already have can also get the new scene added as an extra example sentence.
 
-Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** shows your library as a poster grid and scores each show, live, by how much of its dialogue you already know, with the words to learn first. **Mine an episode…** picks shows from the same grid. Posters are cached in `user_files/covers`.
+Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** shows your library as a poster grid and scores each show, live, by how much of its dialogue you already know, with the words to learn first. **Mine an episode…** picks shows from the same grid. Posters are cached in `user_files/covers`. Search by any of a show's names (Japanese, romaji, English, abbreviations): for anime with an AniList id in Jellyfin, the add-on asks [AniList](https://anilist.co)'s public API for its titles once and caches them in `user_files/titles.json`.
 
 ## How it picks words
 
@@ -61,7 +61,7 @@ python3 tools/build_data.py JMdict_e.gz accents.txt kanjidic2.xml.gz JMnedict.xm
     kty-ja-ja.zip "Wiktionary 国語" kty-ja-en.zip "Wiktionary EN"
 ```
 
-The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py && python3 grammar.py && python3 scores.py`, and `python3 tools/check_grammar.py` checks the grammar patterns.
+The pure-Python modules have self-tests: `cd jellyfin_miner && python3 subtitles.py && python3 analysis.py && python3 dictionary.py && python3 translate.py && python3 cards.py && python3 jellyfin.py && python3 yomitan.py && python3 grammar.py && python3 scores.py && python3 titles.py`, and `python3 tools/check_grammar.py` checks the grammar patterns.
 
 ## Credits and licences
 

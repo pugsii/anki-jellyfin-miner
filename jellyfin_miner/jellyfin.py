@@ -64,7 +64,8 @@ class Jellyfin:
         return [i for i in items if i.get("Type") == "Episode" and i["UserData"].get("Played")]
 
     def series(self, user_id):
-        return self._get("/Items", userId=user_id, IncludeItemTypes="Series", Recursive="true", SortBy="SortName")["Items"]
+        return self._get("/Items", userId=user_id, IncludeItemTypes="Series", Recursive="true", SortBy="SortName",
+                         Fields="OriginalTitle,SortName,ProviderIds")["Items"]
 
     def ignored_series(self, user_id, libraries):
         """Ids of the series in the libraries named (any case), e.g. a Jellyseerr/JellyBridge "Discover" library
