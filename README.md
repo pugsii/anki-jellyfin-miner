@@ -10,6 +10,10 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 
 Words you already have can get the new scene added as an extra example sentence.
 
+![A mined card for 魔物: the scene from 葬送のフリーレン, the line with furigana, its translation, a grammar note and the dictionary meaning](docs/screenshots/mined-card.png)
+
+*A mined card, shown with the **Kotoba Theme** add-on's note type.*
+
 ## What else it does
 
 - **Home screen:** below your decks, a progress bar while it mines, and a **Recently watched** row with each show's poster and how many cards it has given you. Click a show to mine more of its episodes.
@@ -17,6 +21,17 @@ Words you already have can get the new scene added as an extra example sentence.
 - **Prepare for this show:** spoiler-free cards for a show you haven't started: its most-said unknown words, with example sentences from anime you've already watched and from the dictionary, never from the show itself. They go in a `::Prep` subdeck; when you watch the show, each card gets its real scene and moves into your deck (review history kept).
 - **Mine an episode:** pick any show and episodes yourself.
 - **Search** the poster grids by any of a show's names: Japanese, romaji, English or abbreviations.
+
+<p>
+<img src="docs/screenshots/miner-home.png" width="49%" alt="Anki's home screen with a Recently watched row of posters, each with its card count, and the progress bar while mining">
+<img src="docs/screenshots/can-i-watch.png" width="49%" alt="Can I watch this yet?: posters scored by how much of each show's dialogue you know, with the words to learn first">
+</p>
+<p>
+<img src="docs/screenshots/mine-an-episode.png" width="57%" alt="Mine an episode: a show's episodes, whether you've watched them and whether they have Japanese subtitles">
+<img src="docs/screenshots/prepare.png" width="41%" alt="Prepare for this show: the show's most-said words you don't know, with how often each is said">
+</p>
+
+*The home screen while mining, Can I watch this yet?, picking episodes to mine, and preparing for ダンジョン飯.*
 
 ## How it picks words
 
