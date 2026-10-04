@@ -10,7 +10,7 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 
 Words you already have can also get the new scene added as an extra example sentence.
 
-Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** scores the shows in your library by how much of their dialogue you already know, and lists the words to learn first.
+Also in *Tools → Jellyfin Miner*: **Can I watch this yet?** shows your library as a poster grid and scores each show, live, by how much of its dialogue you already know, with the words to learn first. **Mine an episode…** picks shows from the same grid. Posters are cached in `user_files/covers`.
 
 ## How it picks words
 

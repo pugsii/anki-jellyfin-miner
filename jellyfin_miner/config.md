@@ -34,7 +34,7 @@ English subtitles at the same moment are used when the episode has them. Otherwi
 - `extra_prompt`: added to the instructions. For Qwen3 models, `/no_think` makes them much faster.
 
 **Can I watch this yet?**
-*Tools → Jellyfin Miner → Can I watch this yet?* scores every show by how much of its dialogue you already know (from up to 3 episodes you haven't seen), and lists the words to learn first. 90–95% is the sweet spot.
+*Tools → Jellyfin Miner → Can I watch this yet?* shows your library as posters and scores every show, live, by how much of its dialogue you already know (from up to 3 episodes you haven't seen); select one for the words to learn first, or double-click it to mine an episode. 90–95% is the sweet spot. *Mine an episode…* uses the same poster grid.
 
 **Dictionaries**
 New cards get Jitendex, English and Japanese Wiktionary, and a Kanji tab. To add your own Yomitan dictionaries (.zip), click *View Files* and put them in `user_files/dictionaries`; they're converted the next time the add-on mines.

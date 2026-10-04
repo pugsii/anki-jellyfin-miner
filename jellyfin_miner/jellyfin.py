@@ -21,7 +21,18 @@ class Jellyfin:
                                          headers={"Authorization": f'MediaBrowser Token="{self.key}"'})
         with urllib.request.urlopen(request, timeout=self.timeout) as response:
             body = response.read()
+        if raw is None:  # bytes as they are (images)
+            return body
         return body.decode("utf-8-sig") if raw else json.loads(body)
+
+    def image(self, item_id, tag=None, height=450):
+        """An item's poster (Primary image) as JPEG bytes, or None if it has none."""
+        try:
+            return self._get(f"/Items/{item_id}/Images/Primary", raw=None, tag=tag, fillHeight=height, quality=90)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            raise
 
     def user_id(self, name):
         for user in self._get("/Users"):

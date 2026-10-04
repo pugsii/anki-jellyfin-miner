@@ -1,15 +1,16 @@
 """Jellyfin Miner's Anki side: menu, timer, background runs and saving notes. Settings are explained in config.md."""
 import datetime
+import html
 import re
 import shutil
 import tempfile
 
 from aqt import gui_hooks, mw
-from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QHeaderView, QLabel,
-                    QListWidget, QListWidgetItem, QMenu, Qt, QTableWidget, QTableWidgetItem, QTimer, QVBoxLayout)
+from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QHBoxLayout, QLabel,
+                    QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QVBoxLayout, QWidget)
 from aqt.utils import showInfo, showWarning, tooltip
 
-from . import analysis, cards, mining, scores
+from . import analysis, cards, mining, posters, scores
 from .dictionary import Dictionary
 from .jellyfin import JAPANESE, Jellyfin, label
 
@@ -212,136 +213,235 @@ def run(episodes=None, announce=False):
     mw.taskman.run_in_background(work, done)
 
 
-class EpisodePicker(QDialog):
-    """Tools → Jellyfin Miner → Mine an episode…: pick a series and episodes."""
+def shows_for(c):
+    """(Jellyfin client, user id, shows outside the ignored libraries), or raises if Jellyfin can't be reached."""
+    jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
+    user_id = jf.user_id(c["jellyfin"]["user"])
+    ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
+    return jf, user_id, [s for s in jf.series(user_id) if s["Id"] not in ignored]
 
-    def __init__(self, jf, user_id, ignore_libraries):
-        super().__init__(mw)
-        self.jf, self.user_id = jf, user_id
+
+class EpisodePicker(QDialog):
+    """Tools → Jellyfin Miner → Mine an episode…: pick a show from its poster, then episodes."""
+
+    def __init__(self, jf, user_id, shows, start=None, parent=None):
+        super().__init__(parent or mw)
+        self.jf, self.user_id, self.closed = jf, user_id, False
+        self.finished.connect(lambda _: setattr(self, "closed", True))
         self.setWindowTitle("Mine an episode")
-        self.resize(480, 520)
-        self.series = QComboBox()
-        ignored = jf.ignored_series(user_id, ignore_libraries)
-        self.series_items = [s for s in jf.series(user_id) if s["Id"] not in ignored]
-        self.series.addItems([s["Name"] for s in self.series_items])
+        self.resize(900, 680)
+        self.pages = QStackedWidget()
+        # page 1: the shows
+        self.grid = posters.ShowGrid()
+        for show in shows:
+            self.grid.add(show)
+        self.grid.itemActivated.connect(lambda item: self.open_show(self.grid.show_at(item)))
+        self.grid.itemClicked.connect(lambda item: self.open_show(self.grid.show_at(item)))
+        shows_page = QWidget()
+        box = QVBoxLayout(shows_page)
+        box.setContentsMargins(0, 0, 0, 0)
+        box.addWidget(posters.search_box(self.grid))
+        box.addWidget(self.grid)
+        # page 2: its episodes
+        back = QPushButton("← All shows")
+        back.clicked.connect(lambda: self.pages.setCurrentIndex(0))
+        self.title = QLabel()
+        self.title.setStyleSheet("font-size: 16px; font-weight: 600;")
         self.episodes = QListWidget()
         self.episodes.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Mine selected")
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
+        self.episodes.itemSelectionChanged.connect(self.update_button)
+        episodes_page = QWidget()
+        box = QVBoxLayout(episodes_page)
+        box.setContentsMargins(0, 0, 0, 0)
+        top = QHBoxLayout()
+        top.addWidget(back)
+        top.addWidget(self.title, 1)
+        box.addLayout(top)
+        box.addWidget(QLabel("Episodes (Ctrl/Shift to pick several)"))
+        box.addWidget(self.episodes)
+        self.pages.addWidget(shows_page)
+        self.pages.addWidget(episodes_page)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        self.buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Mine selected")
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        self.pages.currentChanged.connect(self.update_button)
         layout = QVBoxLayout(self)
-        for widget in (QLabel("Series"), self.series, QLabel("Episodes (Ctrl/Shift to pick several)"), self.episodes, buttons):
-            layout.addWidget(widget)
-        self.series.currentIndexChanged.connect(self.load_episodes)
-        if self.series_items:
-            self.load_episodes(0)
+        layout.addWidget(self.pages)
+        layout.addWidget(self.buttons)
+        self.update_button()
+        posters.load_posters(jf, shows, self.grid, lambda: self.closed)
+        if start:
+            self.open_show(start)
 
-    def load_episodes(self, index):
-        self.episodes.clear()
-        if index < 0:
+    def open_show(self, show):
+        if not show:
             return
+        self.title.setText(show["Name"])
+        self.episodes.clear()
+        self.pages.setCurrentIndex(1)
         try:
-            episodes = self.jf.episodes(self.series_items[index]["Id"], self.user_id)
+            episodes = self.jf.episodes(show["Id"], self.user_id)
         except Exception as e:
             return showWarning(f"Couldn't load episodes: {e}", parent=self)
         for ep in episodes:
             streams = ep["MediaSources"][0].get("MediaStreams", []) if ep.get("MediaSources") else []
             has_subs = any(s["Type"] == "Subtitle" and (s.get("Language") or "").lower() in JAPANESE for s in streams)
-            row = QListWidgetItem(f"S{ep.get('ParentIndexNumber', 0)}E{ep.get('IndexNumber', 0)}  {ep.get('Name', '')}"
+            watched = "✓ " if ep.get("UserData", {}).get("Played") else ""
+            row = QListWidgetItem(f"{watched}S{ep.get('ParentIndexNumber', 0)}E{ep.get('IndexNumber', 0)}  {ep.get('Name', '')}"
                                   + ("" if has_subs else "   (no Japanese subtitles)"))
             row.setData(Qt.ItemDataRole.UserRole, ep)
             if not has_subs:
                 row.setFlags(row.flags() & ~Qt.ItemFlag.ItemIsEnabled)
             self.episodes.addItem(row)
 
+    def update_button(self, *_):
+        self.buttons.button(QDialogButtonBox.StandardButton.Ok).setEnabled(self.pages.currentIndex() == 1 and bool(self.selected()))
+
     def selected(self):
         return [row.data(Qt.ItemDataRole.UserRole) for row in self.episodes.selectedItems()]
 
 
-def pick_episodes():
+def pick_episodes(start=None, parent=None):
     c = config()
     if not configured(c):
         return showWarning("Set the Jellyfin address, API key and user first: Tools → Add-ons → Jellyfin Miner → Config.")
     try:
-        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
-        picker = EpisodePicker(jf, jf.user_id(c["jellyfin"]["user"]), c["jellyfin"]["ignored_libraries"])
+        jf, user_id, shows = shows_for(c)
     except Exception as e:
         return showWarning(f"Couldn't reach Jellyfin: {e}")
+    picker = EpisodePicker(jf, user_id, shows, start, parent)
     if picker.exec() and picker.selected():
         run(picker.selected())
 
 
-class ScoreTable(QDialog):
-    """Tools → Jellyfin Miner → Can I watch this yet?: shows by how much of their dialogue you know."""
+def score_badge(share):
+    """(text, colour, sort key) for a show's poster: green in the 90%+ sweet spot, amber when watchable with
+    effort, grey below; best first when sorted."""
+    if share is None:
+        return "no subs", "#80000000", 2
+    color = "#2e7d32" if share >= 0.9 else "#c77700" if share >= 0.75 else "#5f6368"
+    return f"{share:.0%}", color, -share
 
-    def __init__(self, rows):
+
+class ScoreGrid(QDialog):
+    """Tools → Jellyfin Miner → Can I watch this yet?: every show's poster with how much of its dialogue you
+    know, filled in live as each show is checked."""
+
+    def __init__(self, jf, user_id, shows):
         super().__init__(mw)
+        self.jf, self.user_id, self.closed, self.results = jf, user_id, False, {}
+        self.finished.connect(lambda _: setattr(self, "closed", True))
         self.setWindowTitle("Can I watch this yet?")
-        self.resize(760, 560)
+        self.resize(980, 760)
         note = QLabel("How much of each show's dialogue you already know, from up to 3 episodes you haven't seen "
-                      "(katakana loanwords and names aside). 90–95% is the sweet spot for learning from a show; "
+                      "(katakana loanwords and names aside). <b>90–95%</b> is the sweet spot for learning from a show; "
                       "75–90% is watchable with effort, and every word you learn raises the score.")
         note.setWordWrap(True)
-        table = QTableWidget(len(rows), 3)
-        table.setHorizontalHeaderLabels(["Show", "Known", "Learn these first"])
-        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        table.verticalHeader().hide()
-        for r, (name, share, learn) in enumerate(rows):
-            table.setItem(r, 0, QTableWidgetItem(name))
-            known = QTableWidgetItem("no Japanese subtitles" if share is None else f"{share:.0%}")
-            known.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            table.setItem(r, 1, known)
-            table.setItem(r, 2, QTableWidgetItem("、".join(learn)))
-        header = table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
-        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
-        buttons.rejected.connect(self.reject)
+        self.grid = posters.ShowGrid()
+        for show in shows:
+            self.grid.add(show)
+            self.grid.set_badge(show["Id"], "…", "#80000000")
+        self.grid.currentItemChanged.connect(lambda item, _: self.show_detail(self.grid.show_at(item)))
+        self.grid.itemActivated.connect(lambda item: self.mine(self.grid.show_at(item)))
+        self.sort = QComboBox()
+        self.sort.addItems(["Most known first", "By name"])
+        self.sort.currentIndexChanged.connect(lambda _: self.resort())
+        self.status = QLabel(f"Checking {len(shows)} shows…")
+        top = QHBoxLayout()
+        top.addWidget(posters.search_box(self.grid), 1)
+        top.addWidget(self.sort)
+        self.detail = QLabel("Select a show to see the words to learn first.")
+        self.detail.setWordWrap(True)
+        self.mine_button = QPushButton("Mine an episode…")
+        self.mine_button.setEnabled(False)
+        self.mine_button.clicked.connect(lambda: self.mine(self.grid.show_at(self.grid.currentItem())))
+        bottom = QHBoxLayout()
+        bottom.addWidget(self.detail, 1)
+        bottom.addWidget(self.mine_button)
+        close = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        close.rejected.connect(self.reject)
         layout = QVBoxLayout(self)
-        for widget in (note, table, buttons):
-            layout.addWidget(widget)
+        for part in (note, top, self.grid, self.status, bottom, close):
+            layout.addLayout(part) if isinstance(part, QHBoxLayout) else layout.addWidget(part)
+        posters.load_posters(jf, shows, self.grid, lambda: self.closed)
+
+    def set_score(self, show_id, share, learn):
+        self.results[show_id] = (share, learn)
+        text, color, key = score_badge(share)
+        self.grid.set_badge(show_id, text, color, key)
+        current = self.grid.show_at(self.grid.currentItem())
+        if current and current["Id"] == show_id:
+            self.show_detail(current)
+        self.status.setText(f"Checked {len(self.results)} of {len(self.grid.items)} shows…")
+
+    def finish(self):
+        self.status.setText(f"All {len(self.grid.items)} shows checked. Double-click a show to mine an episode.")
+        self.resort()
+
+    def resort(self):
+        posters.Item.by_name = self.sort.currentIndex() == 1
+        self.grid.sortItems()
+
+    def show_detail(self, show):
+        self.mine_button.setEnabled(bool(show))
+        if not show:
+            return
+        name = html.escape(show["Name"])
+        if show["Id"] not in self.results:
+            return self.detail.setText(f"<b>{name}</b>: still checking…")
+        share, learn = self.results[show["Id"]]
+        if share is None:
+            return self.detail.setText(f"<b>{name}</b>: no Japanese subtitles to check.")
+        self.detail.setText(f"<b>{name}</b>: {share:.0%} known. Learn these first: {html.escape('、'.join(learn)) or '—'}")
+
+    def mine(self, show):
+        if show:
+            pick_episodes(start=show, parent=self)
+
+
+score_window = None  # kept open alongside Anki (non-modal), so it isn't garbage-collected
 
 
 def watch_scores():
-    """Score every show in the background (subtitle downloads are cached), then show the table."""
-    global running
+    """Open the poster grid at once and score the shows in the background, filling it in live (subtitle
+    downloads and posters are cached, so later runs are quick)."""
+    global running, score_window
     c = config()
     if not configured(c):
         return showWarning("Set the Jellyfin address, API key and user first: Tools → Add-ons → Jellyfin Miner → Config.")
     if running:
         return tooltip("Jellyfin Miner is busy; try again in a minute")
+    try:
+        jf, user_id, shows = shows_for(c)
+    except Exception as e:
+        return showWarning(f"Couldn't reach Jellyfin: {e}")
     known, _ = known_words(c)
+    dialog = score_window = ScoreGrid(jf, user_id, shows)
+    dialog.show()
     running = True
-    tooltip("Jellyfin Miner: checking your shows… (the first time takes a few minutes)")
 
     def work():
-        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
-        user_id = jf.user_id(c["jellyfin"]["user"])
-        ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
-        shows = [s for s in jf.series(user_id) if s["Id"] not in ignored]
-        dict_, cache, rows = Dictionary(), scores.load_cache(), []
+        dict_, cache = Dictionary(), scores.load_cache()
         known_all = analysis.with_readings(known, dict_)
-        for n, show in enumerate(shows, 1):
-            mw.taskman.run_on_main(lambda n=n, name=show["Name"]: tooltip(f"Checking {n}/{len(shows)}: {name}", period=4000))
+        for show in shows:
+            if dialog.closed:
+                break
             try:
                 counts = scores.series_counts(jf, show, user_id, dict_, cache)
             except Exception:  # one show failing shouldn't lose the rest
                 counts = None
             share, learn = scores.score(counts, known_all, dict_) if counts else (None, [])
-            rows.append((show["Name"], share, learn))
+            mw.taskman.run_on_main(lambda i=show["Id"], s=share, l=learn: dialog.closed or dialog.set_score(i, s, l))
         scores.save_cache(cache)
-        return rows
 
     def done(future):
         global running
         running = False
-        try:
-            rows = future.result()
-        except Exception as e:
-            return showWarning(f"Couldn't check your shows: {e}")
-        rows = sorted((r for r in rows if r[1] is not None), key=lambda r: -r[1]) + [r for r in rows if r[1] is None]
-        ScoreTable(rows).exec()
+        if future.exception() and not dialog.closed:
+            return showWarning(f"Couldn't check your shows: {future.exception()}", parent=dialog)
+        if not dialog.closed:
+            dialog.finish()
 
     mw.taskman.run_in_background(work, done)
 
