@@ -2,15 +2,17 @@
 import datetime
 import html
 import re
+import time
 import shutil
 import tempfile
 
 from aqt import gui_hooks, mw
+from aqt.deckbrowser import DeckBrowser
 from aqt.qt import (QAbstractItemView, QAction, QComboBox, QDialog, QDialogButtonBox, QHBoxLayout, QLabel,
                     QListWidget, QListWidgetItem, QMenu, QPushButton, QStackedWidget, Qt, QTimer, QVBoxLayout, QWidget)
 from aqt.utils import showInfo, showWarning, tooltip
 
-from . import analysis, cards, mining, posters, scores
+from . import analysis, cards, home, mining, posters, scores
 from .dictionary import Dictionary
 from .jellyfin import JAPANESE, Jellyfin, label
 
@@ -21,6 +23,10 @@ running = False
 timer = None
 menu = None
 warned = False
+progress_state = None   # {"label", "fraction"} while mining, for the home screen's progress bar
+recent = []             # recently watched shows for the home screen (home.recent_shows), refreshed in the background
+recent_at = 0.0
+hooked = False
 
 
 def config():
@@ -170,9 +176,14 @@ def run(episodes=None, announce=False):
                      if i["Id"] not in state["done"] and i.get("SeriesId") not in ignored]
         caught_up = manual or len(items) <= c["auto_mine"]["max_episodes_per_run"]
         dict_, results = Dictionary(), []
-        for item in (items if manual else items[:c["auto_mine"]["max_episodes_per_run"]]):
+        todo = items if manual else items[:c["auto_mine"]["max_episodes_per_run"]]
+        for n, item in enumerate(todo):
+            def progress(fraction, what, n=n, item=item):
+                state_ = {"label": f"Mining {label(item)}: {what}" + (f" (episode {n + 1} of {len(todo)})" if len(todo) > 1 else ""),
+                          "fraction": (n + fraction) / len(todo)}
+                mw.taskman.run_on_main(lambda: set_progress(state_))
             try:
-                new, appends = mining.mine_episode(jf, item, c, known, set(extendable), dict_, workdir, log.append)
+                new, appends = mining.mine_episode(jf, item, c, known, set(extendable), dict_, workdir, log.append, progress)
             except Exception as e:  # one broken episode shouldn't lose the others; it's retried next time
                 log.append(f"{label(item)}: failed ({e})")
                 failed.append(label(item))
@@ -184,6 +195,9 @@ def run(episodes=None, announce=False):
     def done(future):
         global running
         running = False
+        set_progress(None)
+        if mw.col:
+            refresh_recent()  # new cards and newly watched episodes
         try:
             if not mw.col:  # the profile was closed while mining
                 return
@@ -446,8 +460,77 @@ def watch_scores():
     mw.taskman.run_in_background(work, done)
 
 
+def set_progress(state):
+    """Show (or with None, hide) the home screen's progress bar, updating it in place when it's on screen."""
+    global progress_state
+    progress_state = state
+    if mw.state == "deckBrowser":
+        mw.deckBrowser.web.eval(home.progress_js(state))
+
+
+def refresh_recent(force=True):
+    """Fetch the recently watched shows (last 60 days) and their posters in the background, then redraw the home
+    screen. Without force, only if the list is over 15 minutes old."""
+    global recent_at
+    c = config()
+    if not configured(c) or (not force and time.time() - recent_at < 900):
+        return
+    recent_at = time.time()
+
+    def work():
+        jf = Jellyfin(c["jellyfin"]["url"], c["jellyfin"]["api_key"])
+        user_id = jf.user_id(c["jellyfin"]["user"])
+        ignored = jf.ignored_series(user_id, c["jellyfin"]["ignored_libraries"])
+        since = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=60)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        shows = home.recent_shows(jf.recently_watched(user_id, since), ignored)
+        for show in shows:
+            try:
+                posters.cover_bytes(jf, {"Id": show["id"], "ImageTags": {"Primary": show["tag"]}})
+            except Exception:  # no poster: a blank tile
+                pass
+        return shows
+
+    def done(future):
+        global recent
+        if future.exception():
+            return  # Jellyfin unreachable: keep what's shown
+        recent = future.result()
+        if mw.col and mw.state == "deckBrowser":
+            mw.deckBrowser.refresh()
+
+    mw.taskman.run_in_background(work, done)
+
+
+def cover_url(show):
+    path = posters.COVERS / f"{show['id']}-{show['tag']}.jpg"
+    return f"/_addons/{ADDON}/user_files/covers/{path.name}" if show["tag"] and path.exists() else None
+
+
+def cards_from(show):
+    """How many notes this show has given you (they're tagged src::anime::<name>)."""
+    tag = "src::anime::" + "_".join(show["name"].split())
+    return len(mw.col.find_notes('"tag:' + re.sub(r'([\\"*_])', r"\\\1", tag) + '"'))
+
+
+def on_set_content(web_content, context):
+    """Adds the section below the decks. Registered after the other add-ons have loaded, so it adds to a home
+    screen the Kotoba Theme has redrawn rather than being replaced by it."""
+    if isinstance(context, DeckBrowser) and configured(config()) and mw.col:
+        web_content.body += home.section(recent, progress_state, cover_url, cards_from)
+        refresh_recent(force=False)
+
+
+def on_message(handled, message, context):
+    if not message.startswith("jfm:show:"):
+        return handled
+    show = next((s for s in recent if s["id"] == message[9:]), None)
+    if show:
+        pick_episodes(start={"Id": show["id"], "Name": show["name"]})
+    return True, None
+
+
 def on_profile_open():
-    global timer, menu
+    global timer, menu, hooked
     if menu is None:  # profiles can be reopened; add the menu once
         menu = QMenu("Jellyfin Miner", mw)
         for text, action in (("Mine new episodes now", run_now), ("Mine an episode…", pick_episodes),
@@ -456,7 +539,13 @@ def on_profile_open():
             item.triggered.connect(action)
             menu.addAction(item)
         mw.form.menuTools.addMenu(menu)
+    if not hooked:
+        mw.addonManager.setWebExports(__name__, r"user_files/covers/.+\.jpg")
+        gui_hooks.webview_will_set_content.append(on_set_content)
+        gui_hooks.webview_did_receive_js_message.append(on_message)
+        hooked = True
     c = config()
+    QTimer.singleShot(2000, refresh_recent)
     if c["auto_mine"]["enabled"] and configured(c):
         QTimer.singleShot(15_000, run)
         timer = QTimer(mw)

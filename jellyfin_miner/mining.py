@@ -5,19 +5,22 @@ from . import analysis, cards, grammar, media, subtitles, translate
 from .jellyfin import ENGLISH, JAPANESE, japanese_audio, label
 
 
-def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
+def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print, progress=lambda fraction, what: None):
     """Plan the cards for one episode.
 
     known: words already in your decks (never picked as new words);
     extendable: words whose note can take another sentence (scenes get added to those).
     Returns (new, appends): [{"word", "word_fields", "scene", "tags"}] and [{"word", "scene"}]; scenes hold
     media as file paths in `workdir`, to be added to Anki's media folder by the caller.
+    progress(fraction of this episode done, what's happening) is called as it goes.
     """
+    progress(0.0, "reading subtitles")
     subs = jf.subtitles(item, JAPANESE)
     if not subs:
         log(f"{label(item)}: no Japanese text subtitles (or none that are really Japanese), skipped")
         return [], []
     cues = subtitles.parse(*subs)
+    progress(0.05, "finding words")
     english = jf.subtitles(item, ENGLISH)
     english_cues = subtitles.parse(*english) if english else []
     url, headers, track = jf.stream_url(item), jf.stream_headers(), japanese_audio(item)
@@ -53,12 +56,17 @@ def mine_episode(jf, item, cfg, known, extendable, dict_, workdir, log=print):
 
     tags = ["jellyfin_miner", "src::anime::" + "_".join((item.get("SeriesName") or "unknown").split())]
     words = analysis.candidates(cues, analysis.with_readings(known, dict_), dict_, cfg["words"]["max_rank"], cfg["words"]["skip_names"])
-    new = [{"word": w, "word_fields": cards.word_fields(w, words[w], dict_),
-            "scene": scene(analysis.best_line(cues, words[w]), w), "tags": tags}
-           for w in analysis.pick(words, cfg["words"]["per_episode"])]
-    appends = []
-    if cfg["cards"]["max_sentences"] > 1 and extendable:
-        for w, lines in list(analysis.known_lines(cues, extendable).items())[:cfg["cards"]["extra_sentences_per_episode"]]:
-            appends.append({"word": w, "scene": scene(min(lines, key=lambda i: abs(len(cues[i][2]) - 18)), w)})
+    picked = analysis.pick(words, cfg["words"]["per_episode"])
+    extra = list(analysis.known_lines(cues, extendable).items())[:cfg["cards"]["extra_sentences_per_episode"]] \
+        if cfg["cards"]["max_sentences"] > 1 and extendable else []
+    total = len(picked) + len(extra)
+    new, appends = [], []
+    for w in picked:  # each scene is an audio clip and a screenshot: the slow part
+        progress(0.1 + 0.9 * len(new) / max(total, 1), f"clip {len(new) + 1} of {total}")
+        new.append({"word": w, "word_fields": cards.word_fields(w, words[w], dict_),
+                    "scene": scene(analysis.best_line(cues, words[w]), w), "tags": tags})
+    for w, lines in extra:
+        progress(0.1 + 0.9 * (len(new) + len(appends)) / max(total, 1), f"clip {len(new) + len(appends) + 1} of {total}")
+        appends.append({"word": w, "scene": scene(min(lines, key=lambda i: abs(len(cues[i][2]) - 18)), w)})
     log(f"{label(item)}: {len(words)} unknown words found, {len(new)} new cards, {len(appends)} extra sentences")
     return new, appends
