@@ -39,7 +39,8 @@
     },
     "max_sentences": 1,
     "extra_sentences_per_episode": 3,
-    "audio_format": "sound"
+    "audio_format": "sound",
+    "picture_format": "still"
   },
   "grammar": {
     "enabled": true,

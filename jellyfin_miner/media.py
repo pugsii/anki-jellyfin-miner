@@ -1,4 +1,4 @@
-"""Cut a sentence's audio and a screenshot out of an episode with ffmpeg."""
+"""Cut a sentence's audio and a screenshot (or a short animated clip) out of an episode with ffmpeg."""
 import os
 import shutil
 import subprocess
@@ -36,3 +36,31 @@ def screenshot(ffmpeg, url, headers, start, end, out, width=640):
             break
     if os.path.exists(attempt):
         os.remove(attempt)
+
+
+def animated_clip(ffmpeg, url, headers, start, end, out, width=480, fps=12, longest=6.0):
+    """A silent, looping animated WebP of the line (its first `longest` seconds). Anki, AnkiDroid and AnkiMobile
+    play these in an ordinary <img>."""
+    _run(ffmpeg, ["-headers", headers, "-ss", f"{start:.2f}", "-i", url, "-t", f"{min(end - start, longest):.2f}", "-an",
+                  "-vf", f"fps={fps},scale={width}:-2:flags=lanczos", "-c:v", "libwebp_anim", "-quality", "60",
+                  "-compression_level", "5", "-loop", "0", str(out)], timeout=180)
+
+
+if __name__ == "__main__":  # self-check on a generated test video, served over HTTP as Jellyfin serves episodes
+    import functools, http.server, tempfile, threading
+    from PIL import Image
+    ffmpeg = find_ffmpeg()
+    with tempfile.TemporaryDirectory() as d:
+        _run(ffmpeg, ["-f", "lavfi", "-i", "testsrc=duration=10:size=640x360:rate=24", "-pix_fmt", "yuv420p", f"{d}/test.mp4"])
+        quiet = type("Quiet", (http.server.SimpleHTTPRequestHandler,), {"log_message": lambda *a: None})
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(quiet, directory=d))
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        url, headers = f"http://127.0.0.1:{server.server_port}/test.mp4", "X-Test: 1\r\n"
+        screenshot(ffmpeg, url, headers, 2, 4, f"{d}/still.jpg")
+        animated_clip(ffmpeg, url, headers, 2, 9.5, f"{d}/clip.webp")
+        server.shutdown()
+        clip = Image.open(f"{d}/clip.webp")
+        assert Image.open(f"{d}/still.jpg").size == (640, 360)
+        # 6 seconds at most (the line is 7.5), at 12 frames a second; it loops
+        assert clip.size == (480, 270) and 60 <= clip.n_frames <= 73 and clip.info.get("loop") == 0, (clip.size, clip.n_frames)
+    print("selftest ok")

@@ -7,7 +7,8 @@ from .jellyfin import ENGLISH, JAPANESE, japanese_audio, label
 
 def cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log=print):
     """Cue i of an episode as a scene: the line (furigana, `target` in bold), its English (from the English
-    subtitles, else the configured model), an audio clip and a screenshot, the source, and grammar notes."""
+    subtitles, else the configured model), an audio clip and a screenshot (or an animated clip: picture_format), the
+    source, and grammar notes."""
     start, end, text = cues[i]
     llm = cfg.get("translation") or {}
     english_line = translate.from_subtitles(cues[i], english_cues)
@@ -21,13 +22,21 @@ def cut_scene(jf, item, cues, i, target, english_cues, cfg, workdir, log=print):
     url, headers, track = jf.stream_url(item), jf.stream_headers(), japanese_audio(item)
     base = os.path.join(workdir, f"jfm_{item['Id'][:8]}_{int(start * 10)}")
     audio, picture = base + ".mp3", base + ".jpg"
+    animated = cfg["cards"].get("picture_format") == "animated"  # .get: configs from before the option have no key
     try:
         media.audio_clip(ffmpeg, url, headers, start, end, track, audio)
     except Exception as e:
         log(f"audio clip failed at {start:.0f}s ({e})")
         audio = None
     try:
-        media.screenshot(ffmpeg, url, headers, start, end, picture)
+        if animated:
+            try:
+                media.animated_clip(ffmpeg, url, headers, start, end, base + ".webp")
+                picture = base + ".webp"
+            except Exception as e:
+                log(f"animated clip failed at {start:.0f}s ({e}); used a screenshot")
+        if not picture.endswith(".webp"):
+            media.screenshot(ffmpeg, url, headers, start, end, picture)
     except Exception as e:
         log(f"screenshot failed at {start:.0f}s ({e})")
         picture = None

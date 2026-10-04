@@ -6,7 +6,7 @@ An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org
 
 - the line the word was said in, with furigana and the word in bold
 - an English translation (from the episode's English subtitles, or optionally an AI model)
-- an audio clip of the line and a screenshot of the scene
+- an audio clip of the line and a screenshot of the scene, or a short animated clip of it (`picture_format`)
 - the grammar the sentence uses: JLPT N5–N1 patterns and casual speech (〜ちゃう, 〜じゃん), each with a one-line meaning
 - reading, pitch accent, meaning, and full dictionary entries: Jitendex and English Wiktionary, Japanese Wiktionary (国語), KANJIDIC for each kanji, plus any Yomitan dictionaries you add
 
@@ -101,7 +101,7 @@ For development, link or copy `jellyfin_miner/` into Anki's `addons21` folder in
 The pure-Python modules have self-tests (run them from `jellyfin_miner/`; most need the built data):
 
 ```bash
-for m in subtitles analysis dictionary translate cards jellyfin yomitan grammar scores titles home prep; do python3 $m.py; done
+for m in subtitles media analysis dictionary translate cards jellyfin yomitan grammar scores titles home prep; do python3 $m.py; done
 python3 ../tools/check_grammar.py   # every grammar pattern against its test sentences
 ```
 
