@@ -1,5 +1,7 @@
 # Jellyfin Miner
 
+> **A note on how this was made:** this project was vibe-coded, start to finish. Its author never reviewed a single line of the code; they described what they wanted, looked at the results in Anki, and prompted their way here. Every line was written by Claude (Anthropic's AI, working in Claude Code), and so was this note: the author asked for it and didn't write a word of it. They're mostly enjoying how far AI coding has come. It works well for them, but read the code before you trust it with anything important.
+
 An Anki add-on that turns the anime you watch on [Jellyfin](https://jellyfin.org) into flashcards. After you watch an episode, it picks a few useful words you don't have yet and makes a card for each one, with:
 
 - the line the word was said in, with furigana and the word in bold
