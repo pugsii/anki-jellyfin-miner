@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+dist/
+# built by the steps in README.md (Building from source)
+jellyfin_miner/vendor/
+jellyfin_miner/data/
+# your settings and caches, made by Anki and the add-on
+jellyfin_miner/meta.json
+jellyfin_miner/user_files/*
+!jellyfin_miner/user_files/dictionaries/
+jellyfin_miner/user_files/dictionaries/*
+!jellyfin_miner/user_files/dictionaries/README.txt
